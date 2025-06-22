@@ -14,7 +14,7 @@ namespace DividiFacil.Domain.Models
         public DateTime? FechaEnvio { get; set; }
         public string CanalEnvio { get; set; } = "Email";
 
-        // Relaciones de navegación
+        // Propiedades de navegación
         public virtual Usuario? Usuario { get; set; }
         public virtual Grupo? Grupo { get; set; }
     }

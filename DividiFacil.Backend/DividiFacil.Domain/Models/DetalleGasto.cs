@@ -4,15 +4,14 @@ namespace DividiFacil.Domain.Models
 {
     public class DetalleGasto
     {
-        public Guid IdDetalle { get; set; }
+        public Guid IdDetalleGasto { get; set; }
         public Guid IdGasto { get; set; }
-        public Guid IdUsuario { get; set; }
-        public decimal MontoDebe { get; set; }
-        public string Estado { get; set; } = "Pendiente";
-        public DateTime? FechaPago { get; set; }
+        public Guid IdMiembroDeudor { get; set; }
+        public decimal Monto { get; set; }
+        public bool Pagado { get; set; }
 
-        // Relaciones de navegación
+        // Propiedades de navegación
         public virtual Gasto? Gasto { get; set; }
-        public virtual Usuario? Usuario { get; set; }
+        public virtual MiembroGrupo? MiembroDeudor { get; set; }
     }
 }

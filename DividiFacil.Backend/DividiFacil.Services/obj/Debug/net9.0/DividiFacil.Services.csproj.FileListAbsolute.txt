@@ -1,3 +1,9 @@
+C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.Services\obj\Debug\net9.0\DividiFacil.Services.csproj.AssemblyReference.cache
+C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.Services\obj\Debug\net9.0\DividiFacil.Services.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.Services\obj\Debug\net9.0\DividiFacil.Services.AssemblyInfoInputs.cache
+C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.Services\obj\Debug\net9.0\DividiFacil.Services.AssemblyInfo.cs
+C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.Services\obj\Debug\net9.0\DividiFacil.Services.csproj.CoreCompileInputs.cache
+C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.Services\obj\Debug\net9.0\DividiFacil.Services.sourcelink.json
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.Services\bin\Debug\net9.0\DividiFacil.Services.deps.json
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.Services\bin\Debug\net9.0\DividiFacil.Services.dll
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.Services\bin\Debug\net9.0\DividiFacil.Services.pdb
@@ -5,12 +11,6 @@ C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFac
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.Services\bin\Debug\net9.0\DividiFacil.Domain.dll
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.Services\bin\Debug\net9.0\DividiFacil.Data.pdb
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.Services\bin\Debug\net9.0\DividiFacil.Domain.pdb
-C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.Services\obj\Debug\net9.0\DividiFacil.Services.csproj.AssemblyReference.cache
-C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.Services\obj\Debug\net9.0\DividiFacil.Services.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.Services\obj\Debug\net9.0\DividiFacil.Services.AssemblyInfoInputs.cache
-C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.Services\obj\Debug\net9.0\DividiFacil.Services.AssemblyInfo.cs
-C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.Services\obj\Debug\net9.0\DividiFacil.Services.csproj.CoreCompileInputs.cache
-C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.Services\obj\Debug\net9.0\DividiFacil.Services.sourcelink.json
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.Services\obj\Debug\net9.0\DividiFa.AC02B374.Up2Date
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.Services\obj\Debug\net9.0\DividiFacil.Services.dll
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.Services\obj\Debug\net9.0\refint\DividiFacil.Services.dll

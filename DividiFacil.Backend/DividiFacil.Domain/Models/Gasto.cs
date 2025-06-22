@@ -7,17 +7,17 @@ namespace DividiFacil.Domain.Models
     {
         public Guid IdGasto { get; set; }
         public Guid IdGrupo { get; set; }
-        public Guid IdPagador { get; set; }
+        public Guid IdMiembroPagador { get; set; }
         public decimal Monto { get; set; }
-        public string Concepto { get; set; } = string.Empty;
-        public DateTime Fecha { get; set; }
-        public string TipoGasto { get; set; } = "Normal";
-        public DateTime? FechaVencimiento { get; set; }
+        public string Descripcion { get; set; } = string.Empty;
+        public string? Categoria { get; set; }
+        public DateTime FechaCreacion { get; set; }
+        public DateTime FechaGasto { get; set; }
         public string? ComprobantePath { get; set; }
 
-        // Relaciones de navegación
+        // Propiedades de navegación
         public virtual Grupo? Grupo { get; set; }
-        public virtual Usuario? Pagador { get; set; }
-        public virtual ICollection<DetalleGasto>? Detalles { get; set; }
+        public virtual MiembroGrupo? MiembroPagador { get; set; }
+        public virtual ICollection<DetalleGasto>? DetallesGasto { get; set; }
     }
 }

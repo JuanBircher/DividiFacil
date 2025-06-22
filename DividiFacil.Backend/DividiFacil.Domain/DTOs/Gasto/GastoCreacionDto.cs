@@ -6,26 +6,25 @@ namespace DividiFacil.Domain.DTOs.Gasto
 {
     public class GastoCreacionDto
     {
-        [Required(ErrorMessage = "El grupo es obligatorio")]
+        [Required(ErrorMessage = "El ID del grupo es obligatorio")]
         public Guid IdGrupo { get; set; }
 
-        [Required(ErrorMessage = "El monto es obligatorio")]
-        [Range(0.01, double.MaxValue, ErrorMessage = "El monto debe ser mayor que cero")]
+        [Required(ErrorMessage = "El monto del gasto es obligatorio")]
+        [Range(0.01, double.MaxValue, ErrorMessage = "El monto debe ser mayor que 0")]
         public decimal Monto { get; set; }
 
-        [Required(ErrorMessage = "El concepto es obligatorio")]
-        [StringLength(200, ErrorMessage = "El concepto no puede exceder los 200 caracteres")]
-        public string Concepto { get; set; } = string.Empty;
+        [Required(ErrorMessage = "La descripción del gasto es obligatoria")]
+        [StringLength(200, ErrorMessage = "La descripción no puede exceder los 200 caracteres")]
+        public string Descripcion { get; set; }
 
-        public DateTime? Fecha { get; set; }
+        [StringLength(50, ErrorMessage = "La categoría no puede exceder los 50 caracteres")]
+        public string Categoria { get; set; }
 
-        [RegularExpression("^(Normal|Recurrente|Rotativo)$",
-            ErrorMessage = "El tipo de gasto debe ser: Normal, Recurrente o Rotativo")]
-        public string TipoGasto { get; set; } = "Normal";
+        public DateTime? FechaGasto { get; set; }
 
-        public DateTime? FechaVencimiento { get; set; }
+        public string? ComprobantePath { get; set; }
 
-        // Lista de usuarios que participan y cuánto debe pagar cada uno
-        public List<DetalleGastoCreacionDto> Detalles { get; set; } = new List<DetalleGastoCreacionDto>();
+        [Required(ErrorMessage = "Debe especificar al menos un detalle de gasto")]
+        public List<DetalleGastoCreacionDto> Detalles { get; set; } = new();
     }
 }

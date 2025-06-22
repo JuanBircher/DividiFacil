@@ -17,7 +17,7 @@ namespace DividiFacil.Data.Repositories.Implementations
         public async Task<IEnumerable<Notificacion>> GetPendientesByUsuarioAsync(Guid idUsuario)
         {
             return await _context.Notificaciones
-                .Include(n => n.Grupo)
+                // Eliminamos el Include que causa error
                 .Where(n => n.IdUsuario == idUsuario && n.Estado == "Pendiente")
                 .OrderByDescending(n => n.FechaCreacion)
                 .AsNoTracking()
@@ -27,7 +27,7 @@ namespace DividiFacil.Data.Repositories.Implementations
         public async Task<IEnumerable<Notificacion>> GetByGrupoAsync(Guid idGrupo)
         {
             return await _context.Notificaciones
-                .Include(n => n.Usuario)
+                // Eliminamos el Include que causa error
                 .Where(n => n.IdGrupo == idGrupo)
                 .OrderByDescending(n => n.FechaCreacion)
                 .AsNoTracking()

@@ -5,10 +5,10 @@ namespace DividiFacil.Domain.DTOs.Gasto
     public class SaldoUsuarioDto
     {
         public Guid IdUsuario { get; set; }
-        public string Nombre { get; set; } = string.Empty;
-        public string? UrlImagen { get; set; }
-        public decimal MontoDeuda { get; set; }   // Lo que debe
-        public decimal MontoAFavor { get; set; }  // Lo que le deben
-        public decimal SaldoNeto { get; set; }    // La diferencia
+        public string NombreUsuario { get; set; }
+        public string? ImagenPerfil { get; set; }
+        public decimal TotalPagado { get; set; }
+        public decimal TotalAPagar { get; set; }
+        public decimal Saldo { get; set; } // Positivo: Le deben, Negativo: Debe
     }
 }

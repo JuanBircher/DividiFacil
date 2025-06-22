@@ -14,15 +14,28 @@ namespace DividiFacil.Data.Repositories.Implementations
         {
         }
 
-        public async Task<IEnumerable<Pago>> GetByPagadorAsync(Guid idPagador)
+        // Implementación del método faltante
+        public async Task DeleteAsync(Pago pago)
+        {
+            _context.Pagos.Remove(pago);
+            await _context.SaveChangesAsync();
+        }
+
+        // Aquí irían los demás métodos de la interfaz IPagoRepository
+        // Por ejemplo:
+        public async Task<Pago> GetByIdAsync(Guid id)
         {
             return await _context.Pagos
                 .Include(p => p.Pagador)
                 .Include(p => p.Receptor)
-                .Include(p => p.Grupo)
+                .FirstOrDefaultAsync(p => p.IdPago == id);
+        }
+
+        public async Task<IEnumerable<Pago>> GetByPagadorAsync(Guid idPagador)
+        {
+            return await _context.Pagos
+                .Include(p => p.Receptor)
                 .Where(p => p.IdPagador == idPagador)
-                .OrderByDescending(p => p.FechaCreacion)
-                .AsNoTracking()
                 .ToListAsync();
         }
 
@@ -30,11 +43,7 @@ namespace DividiFacil.Data.Repositories.Implementations
         {
             return await _context.Pagos
                 .Include(p => p.Pagador)
-                .Include(p => p.Receptor)
-                .Include(p => p.Grupo)
                 .Where(p => p.IdReceptor == idReceptor)
-                .OrderByDescending(p => p.FechaCreacion)
-                .AsNoTracking()
                 .ToListAsync();
         }
 
@@ -43,10 +52,7 @@ namespace DividiFacil.Data.Repositories.Implementations
             return await _context.Pagos
                 .Include(p => p.Pagador)
                 .Include(p => p.Receptor)
-                .Include(p => p.Grupo)
                 .Where(p => p.IdGrupo == idGrupo)
-                .OrderByDescending(p => p.FechaCreacion)
-                .AsNoTracking()
                 .ToListAsync();
         }
     }

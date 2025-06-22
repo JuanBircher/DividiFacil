@@ -14,50 +14,36 @@ namespace DividiFacil.Data.Repositories.Implementations
         {
         }
 
+        public async new Task<Gasto?> GetByIdAsync(Guid id)
+        {
+            return await _context.Gastos
+                .Include(g => g.Grupo)
+                .Include(g => g.MiembroPagador)
+                .FirstOrDefaultAsync(g => g.IdGasto == id);
+        }
+
         public async Task<IEnumerable<Gasto>> GetByGrupoAsync(Guid idGrupo)
         {
             return await _context.Gastos
-                .Include(g => g.Pagador)
-                .Include(g => g.Detalles)
+                .Include(g => g.MiembroPagador)
                 .Where(g => g.IdGrupo == idGrupo)
-                .OrderByDescending(g => g.Fecha)
-                .AsNoTracking()
+                .OrderByDescending(g => g.FechaCreacion)
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Gasto>> GetRecientesByUsuarioAsync(Guid idUsuario, int cantidad)
+        public async Task<IEnumerable<Gasto>> GetByMiembroPagadorAsync(Guid idMiembroPagador)
         {
-            // Obtenemos los grupos a los que pertenece el usuario
-            var gruposIds = await _context.MiembrosGrupo
-                .Where(m => m.IdUsuario == idUsuario)
-                .Select(m => m.IdGrupo)
-                .ToListAsync();
-
-            // Obtenemos los gastos recientes de esos grupos
             return await _context.Gastos
-                .Include(g => g.Pagador)
                 .Include(g => g.Grupo)
-                .Where(g => gruposIds.Contains(g.IdGrupo))
-                .OrderByDescending(g => g.Fecha)
-                .Take(cantidad)
-                .AsNoTracking()
+                .Where(g => g.IdMiembroPagador == idMiembroPagador)
+                .OrderByDescending(g => g.FechaCreacion)
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<DetalleGasto>> GetDetallesByGastoAsync(Guid idGasto)
+        public async Task DeleteAsync(Gasto gasto)
         {
-            return await _context.DetallesGasto
-                .Include(d => d.Usuario)
-                .Where(d => d.IdGasto == idGasto)
-                .AsNoTracking()
-                .ToListAsync();
-        }
-
-        public async Task<decimal> GetTotalGastosGrupoAsync(Guid idGrupo)
-        {
-            return await _context.Gastos
-                .Where(g => g.IdGrupo == idGrupo)
-                .SumAsync(g => g.Monto);
+            _context.Gastos.Remove(gasto);
+            await _context.SaveChangesAsync();
         }
     }
 }

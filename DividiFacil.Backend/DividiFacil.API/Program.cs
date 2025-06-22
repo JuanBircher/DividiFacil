@@ -102,8 +102,23 @@ builder.Services.AddCors(options =>
 // Registrar servicios de la aplicación
 builder.Services.RegisterRepositories();
 builder.Services.RegisterServices();
+
+// Registrar los repositorios
+builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+builder.Services.AddScoped<IGrupoRepository, GrupoRepository>();
+builder.Services.AddScoped<IMiembroGrupoRepository, MiembroGrupoRepository>();
+builder.Services.AddScoped<IGastoRepository, GastoRepository>();
+builder.Services.AddScoped<IDetalleGastoRepository, DetalleGastoRepository>();
 builder.Services.AddScoped<IPagoRepository, PagoRepository>();
+builder.Services.AddScoped<ICajaComunRepository, CajaComunRepository>();
+
+// Registrar los servicios
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
+builder.Services.AddScoped<IGrupoService, GrupoService>();
+builder.Services.AddScoped<IGastoService, GastoService>();
+builder.Services.AddScoped<IBalanceService, BalanceService>();
 builder.Services.AddScoped<IPagoService, PagoService>();
+builder.Services.AddScoped<ICajaComunService, CajaComunService>();
 
 // Asegúrate de que esta línea esté presente y no comentada
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
