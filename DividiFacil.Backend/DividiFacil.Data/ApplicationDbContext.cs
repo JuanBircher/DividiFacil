@@ -19,6 +19,7 @@ namespace DividiFacil.Data
         public DbSet<CajaComun> CajaComun { get; set; }
         public DbSet<MovimientoCaja> MovimientosCaja { get; set; }
         public DbSet<Notificacion> Notificaciones { get; set; }
+        public DbSet<Pago> Pagos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -176,6 +177,33 @@ namespace DividiFacil.Data
                       .WithMany()
                       .HasForeignKey(n => n.IdGrupo)
                       .OnDelete(DeleteBehavior.NoAction);
+            });
+
+            modelBuilder.Entity<Pago>(entity =>
+            {
+                entity.ToTable("Pagos");
+                entity.HasKey(e => e.IdPago);
+                entity.Property(e => e.Monto).HasColumnType("decimal(18,2)").IsRequired();
+                entity.Property(e => e.Concepto).HasMaxLength(200).IsRequired();
+                entity.Property(e => e.Estado).HasMaxLength(50).HasDefaultValue("Pendiente");
+                entity.Property(e => e.FechaCreacion).HasDefaultValueSql("GETDATE()");
+                entity.Property(e => e.ComprobantePath).HasMaxLength(500);
+                entity.Property(e => e.MotivoRechazo).HasMaxLength(500);
+
+                entity.HasOne(p => p.Pagador)
+                        .WithMany()
+                        .HasForeignKey(p => p.IdPagador)
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                entity.HasOne(p => p.Receptor)
+                        .WithMany()
+                        .HasForeignKey(p => p.IdReceptor)
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                entity.HasOne(p => p.Grupo)
+                        .WithMany()
+                        .HasForeignKey(p => p.IdGrupo)
+                        .OnDelete(DeleteBehavior.NoAction);
             });
         }
     }

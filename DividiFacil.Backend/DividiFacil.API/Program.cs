@@ -1,6 +1,10 @@
 using DividiFacil.API.Extensions;
 using DividiFacil.API.Middleware;
 using DividiFacil.Data;
+using DividiFacil.Data.Repositories.Implementations;
+using DividiFacil.Data.Repositories.Interfaces;
+using DividiFacil.Services.Implementations;
+using DividiFacil.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -98,6 +102,8 @@ builder.Services.AddCors(options =>
 // Registrar servicios de la aplicación
 builder.Services.RegisterRepositories();
 builder.Services.RegisterServices();
+builder.Services.AddScoped<IPagoRepository, PagoRepository>();
+builder.Services.AddScoped<IPagoService, PagoService>();
 
 // Asegúrate de que esta línea esté presente y no comentada
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
