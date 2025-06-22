@@ -188,3 +188,4 @@ C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFac
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\obj\Debug\net9.0\DividiFacil.API.pdb
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\obj\Debug\net9.0\DividiFacil.API.genruntimeconfig.cache
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\obj\Debug\net9.0\ref\DividiFacil.API.dll
+C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
