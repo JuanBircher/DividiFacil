@@ -11,5 +11,7 @@ namespace DividiFacil.Services.Interfaces
         Task<ResponseDto<BalanceGrupoDto>> CalcularBalanceGrupoAsync(Guid idGrupo, string idUsuarioSolicitante);
         Task<ResponseDto<List<DeudaSimplificadaDto>>> SimplificarDeudasAsync(Guid idGrupo, string idUsuarioSolicitante);
         Task<ResponseDto<List<BalanceUsuarioDto>>> ObtenerBalanceUsuarioAsync(string idUsuario);
+        Task<ResponseDto<List<MovimientoDto>>> ObtenerHistorialMovimientosAsync(Guid idGrupo, string idUsuarioSolicitante);
+
     }
 }

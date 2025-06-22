@@ -1,8 +1,7 @@
 ﻿using DividiFacil.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Linq;
-using System.Linq.Expressions;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace DividiFacil.Data.Repositories.Implementations
@@ -16,14 +15,9 @@ namespace DividiFacil.Data.Repositories.Implementations
             _context = context;
         }
 
-        public IQueryable<T> GetAll()
+        public async Task<IEnumerable<T>> GetAllAsync()
         {
-            return _context.Set<T>().AsNoTracking();
-        }
-
-        public IQueryable<T> GetByCondition(Expression<Func<T, bool>> expression)
-        {
-            return _context.Set<T>().Where(expression).AsNoTracking();
+            return await _context.Set<T>().ToListAsync();
         }
 
         public async Task<T?> GetByIdAsync(Guid id)
@@ -36,14 +30,21 @@ namespace DividiFacil.Data.Repositories.Implementations
             await _context.Set<T>().AddAsync(entity);
         }
 
-        public void Update(T entity)
+        public async Task UpdateAsync(T entity)
         {
+            // Entity Framework Core no tiene un método asíncrono específico para actualizar
+            // pero mantenemos la firma asíncrona por consistencia
             _context.Set<T>().Update(entity);
+            await Task.CompletedTask;
         }
 
-        public void Delete(T entity)
+        public async Task DeleteAsync(Guid id)
         {
-            _context.Set<T>().Remove(entity);
+            var entity = await GetByIdAsync(id);
+            if (entity != null)
+            {
+                _context.Set<T>().Remove(entity);
+            }
         }
 
         public async Task SaveAsync()

@@ -87,7 +87,7 @@ namespace DividiFacil.Services.Implementations
             usuario.Telefono = actualizacionDto.Telefono;
             usuario.UrlImagen = actualizacionDto.UrlImagen;
 
-            _usuarioRepository.Update(usuario);
+            await _usuarioRepository.UpdateAsync(usuario);
             await _usuarioRepository.SaveAsync();
 
             return new ResponseDto<UsuarioDto>

@@ -16,19 +16,120 @@ namespace DividiFacil.Services.Implementations
         private readonly IGastoRepository _gastoRepository;
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly IDetalleGastoRepository _detalleGastoRepository;
+        private readonly IPagoRepository _pagoRepository;
+
 
         public BalanceService(
             IGrupoRepository grupoRepository,
             IMiembroGrupoRepository miembroGrupoRepository,
             IGastoRepository gastoRepository,
             IUsuarioRepository usuarioRepository,
-            IDetalleGastoRepository detalleGastoRepository)
+            IDetalleGastoRepository detalleGastoRepository,
+            IPagoRepository pagoRepository)
         {
             _grupoRepository = grupoRepository;
             _miembroGrupoRepository = miembroGrupoRepository;
             _gastoRepository = gastoRepository;
             _usuarioRepository = usuarioRepository;
             _detalleGastoRepository = detalleGastoRepository;
+            _pagoRepository = pagoRepository;
+        }
+
+        public async Task<ResponseDto<List<MovimientoDto>>> ObtenerHistorialMovimientosAsync(Guid idGrupo, string idUsuarioSolicitante)
+        {
+            var response = new ResponseDto<List<MovimientoDto>>();
+
+            try
+            {
+                // Verificar que el grupo existe
+                var grupo = await _grupoRepository.GetByIdAsync(idGrupo);
+                if (grupo == null)
+                {
+                    response.Exito = false;
+                    response.Mensaje = "Grupo no encontrado";
+                    return response;
+                }
+
+                // Verificar que el usuario es miembro del grupo
+                if (!Guid.TryParse(idUsuarioSolicitante, out var idUsuarioGuid))
+                {
+                    response.Exito = false;
+                    response.Mensaje = "ID de usuario inválido";
+                    return response;
+                }
+
+                var miembro = await _miembroGrupoRepository.GetByUsuarioYGrupoAsync(idUsuarioGuid, idGrupo);
+                if (miembro == null)
+                {
+                    response.Exito = false;
+                    response.Mensaje = "No eres miembro de este grupo";
+                    return response;
+                }
+
+                var movimientos = new List<MovimientoDto>();
+
+                // Obtener todos los gastos del grupo
+                var gastos = await _gastoRepository.GetByGrupoAsync(idGrupo);
+                foreach (var gasto in gastos)
+                {
+                    // Determinar el usuario creador del gasto
+                    var miembroPagador = await _miembroGrupoRepository.GetByIdAsync(gasto.IdMiembroPagador);
+
+                    if (miembroPagador != null)
+                    {
+                        var usuario = await _usuarioRepository.GetByIdAsync(miembroPagador.IdUsuario);
+
+                        movimientos.Add(new MovimientoDto
+                        {
+                            IdMovimiento = gasto.IdGasto,
+                            TipoMovimiento = "Gasto",
+                            Concepto = gasto.Descripcion,
+                            FechaCreacion = gasto.FechaCreacion,
+                            Monto = gasto.Monto,
+                            Estado = "Completado",
+                            IdUsuarioRelacionado = miembroPagador.IdUsuario,
+                            NombreUsuarioRelacionado = usuario?.Nombre ?? "Usuario desconocido",
+                            ImagenPerfilRelacionado = usuario?.UrlImagen,
+                            EsPropio = miembroPagador.IdUsuario == idUsuarioGuid,
+                            IdGrupo = idGrupo,
+                            NombreGrupo = grupo.NombreGrupo ?? "Grupo sin nombre"
+                        });
+                    }
+                }
+
+                // Obtener todos los pagos del grupo
+                var pagos = await _pagoRepository.GetByGrupoAsync(idGrupo);
+                foreach (var pago in pagos)
+                {
+                    var usuarioReceptor = await _usuarioRepository.GetByIdAsync(pago.IdReceptor);
+
+                    movimientos.Add(new MovimientoDto
+                    {
+                        IdMovimiento = pago.IdPago,
+                        TipoMovimiento = "Pago",
+                        Concepto = pago.Concepto,
+                        FechaCreacion = pago.FechaCreacion,
+                        Monto = pago.Monto,
+                        Estado = pago.Estado,
+                        IdUsuarioRelacionado = pago.IdReceptor,
+                        NombreUsuarioRelacionado = usuarioReceptor?.Nombre ?? "Usuario desconocido",
+                        ImagenPerfilRelacionado = usuarioReceptor?.UrlImagen,
+                        EsPropio = pago.IdPagador == idUsuarioGuid || pago.IdReceptor == idUsuarioGuid,
+                        IdGrupo = idGrupo,
+                        NombreGrupo = grupo.NombreGrupo ?? "Grupo sin nombre"
+                    });
+                }
+
+                // Ordenar movimientos por fecha (más reciente primero)
+                response.Data = movimientos.OrderByDescending(m => m.FechaCreacion).ToList();
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Exito = false;
+                response.Mensaje = $"Error al obtener historial: {ex.Message}";
+                return response;
+            }
         }
 
         public async Task<ResponseDto<BalanceGrupoDto>> CalcularBalanceGrupoAsync(Guid idGrupo, string idUsuarioSolicitante)

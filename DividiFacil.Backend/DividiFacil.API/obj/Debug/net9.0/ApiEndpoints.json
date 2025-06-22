@@ -82,5 +82,594 @@
       }
     ],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "BalanceController",
+    "Method": "GetBalanceGrupo",
+    "RelativePath": "api/Balance/grupo/{idGrupo}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idGrupo",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "DividiFacil.Domain.DTOs.Base.ResponseDto\u00601[[DividiFacil.Domain.DTOs.Balance.BalanceGrupoDto, DividiFacil.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "DividiFacil.Domain.DTOs.Base.ResponseDto",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 401
+      }
+    ]
+  },
+  {
+    "ContainingType": "BalanceController",
+    "Method": "GetHistorialMovimientos",
+    "RelativePath": "api/Balance/grupo/{idGrupo}/movimientos",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idGrupo",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "DividiFacil.Domain.DTOs.Base.ResponseDto\u00601[[System.Collections.Generic.List\u00601[[DividiFacil.Domain.DTOs.Balance.MovimientoDto, DividiFacil.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "DividiFacil.Domain.DTOs.Base.ResponseDto",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 401
+      }
+    ]
+  },
+  {
+    "ContainingType": "BalanceController",
+    "Method": "GetDeudasSimplificadas",
+    "RelativePath": "api/Balance/grupo/{idGrupo}/simplificado",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idGrupo",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "DividiFacil.Domain.DTOs.Base.ResponseDto\u00601[[System.Collections.Generic.List\u00601[[DividiFacil.Domain.DTOs.Balance.DeudaSimplificadaDto, DividiFacil.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "DividiFacil.Domain.DTOs.Base.ResponseDto",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 401
+      }
+    ]
+  },
+  {
+    "ContainingType": "BalanceController",
+    "Method": "GetBalanceUsuario",
+    "RelativePath": "api/Balance/usuario",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "DividiFacil.Domain.DTOs.Base.ResponseDto\u00601[[System.Collections.Generic.List\u00601[[DividiFacil.Domain.DTOs.Balance.BalanceUsuarioDto, DividiFacil.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 200
+      },
+      {
+        "Type": "DividiFacil.Domain.DTOs.Base.ResponseDto",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 400
+      },
+      {
+        "Type": "Microsoft.AspNetCore.Mvc.ProblemDetails",
+        "MediaTypes": [
+          "application/json"
+        ],
+        "StatusCode": 401
+      }
+    ]
+  },
+  {
+    "ContainingType": "DividiFacil.API.Controllers.GastosController",
+    "Method": "CrearGasto",
+    "RelativePath": "api/Gastos",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "gastoDto",
+        "Type": "DividiFacil.Domain.DTOs.Gasto.GastoCreacionDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DividiFacil.API.Controllers.GastosController",
+    "Method": "GetGastoById",
+    "RelativePath": "api/Gastos/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DividiFacil.API.Controllers.GastosController",
+    "Method": "EliminarGasto",
+    "RelativePath": "api/Gastos/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DividiFacil.API.Controllers.GastosController",
+    "Method": "MarcarComoPagado",
+    "RelativePath": "api/Gastos/{idGasto}/detalle/{idDetalle}/marcar-pagado",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idGasto",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "idDetalle",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DividiFacil.API.Controllers.GastosController",
+    "Method": "GetGastosByGrupo",
+    "RelativePath": "api/Gastos/grupo/{idGrupo}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idGrupo",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DividiFacil.API.Controllers.GastosController",
+    "Method": "GetSaldosGrupo",
+    "RelativePath": "api/Gastos/grupo/{idGrupo}/saldos",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idGrupo",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DividiFacil.API.Controllers.GastosController",
+    "Method": "GetSaldosUsuario",
+    "RelativePath": "api/Gastos/mis-saldos",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DividiFacil.API.Controllers.GastosController",
+    "Method": "GetGastosRecientes",
+    "RelativePath": "api/Gastos/recientes",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "cantidad",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DividiFacil.API.Controllers.GruposController",
+    "Method": "GetGruposByUsuario",
+    "RelativePath": "api/Grupos",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DividiFacil.API.Controllers.GruposController",
+    "Method": "CrearGrupo",
+    "RelativePath": "api/Grupos",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "grupoDto",
+        "Type": "DividiFacil.Domain.DTOs.Grupo.GrupoCreacionDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DividiFacil.API.Controllers.GruposController",
+    "Method": "GetGrupoById",
+    "RelativePath": "api/Grupos/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DividiFacil.API.Controllers.GruposController",
+    "Method": "ActualizarGrupo",
+    "RelativePath": "api/Grupos/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "grupoDto",
+        "Type": "DividiFacil.Domain.DTOs.Grupo.GrupoCreacionDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DividiFacil.API.Controllers.GruposController",
+    "Method": "EliminarGrupo",
+    "RelativePath": "api/Grupos/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DividiFacil.API.Controllers.GruposController",
+    "Method": "GenerarCodigoAcceso",
+    "RelativePath": "api/Grupos/{id}/codigo-acceso",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DividiFacil.API.Controllers.GruposController",
+    "Method": "GetGrupoConMiembros",
+    "RelativePath": "api/Grupos/{id}/miembros",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DividiFacil.API.Controllers.GruposController",
+    "Method": "AgregarMiembro",
+    "RelativePath": "api/Grupos/{id}/miembros",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "invitacionDto",
+        "Type": "DividiFacil.Domain.DTOs.Grupo.InvitacionDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DividiFacil.API.Controllers.GruposController",
+    "Method": "EliminarMiembro",
+    "RelativePath": "api/Grupos/{id}/miembros/{idMiembro}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "idMiembro",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DividiFacil.API.Controllers.GruposController",
+    "Method": "CambiarRolMiembro",
+    "RelativePath": "api/Grupos/{id}/miembros/{idMiembro}/rol",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "idMiembro",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "cambioRolDto",
+        "Type": "DividiFacil.API.Controllers.CambioRolDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DividiFacil.API.Controllers.GruposController",
+    "Method": "GetGrupoByCodigo",
+    "RelativePath": "api/Grupos/codigo/{codigo}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "codigo",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DividiFacil.API.Controllers.PagosController",
+    "Method": "CrearPago",
+    "RelativePath": "api/Pagos",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "pagoDto",
+        "Type": "DividiFacil.Domain.DTOs.Pago.PagoCreacionDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DividiFacil.API.Controllers.PagosController",
+    "Method": "GetPagoById",
+    "RelativePath": "api/Pagos/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DividiFacil.API.Controllers.PagosController",
+    "Method": "EliminarPago",
+    "RelativePath": "api/Pagos/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DividiFacil.API.Controllers.PagosController",
+    "Method": "ConfirmarPago",
+    "RelativePath": "api/Pagos/{id}/confirmar",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DividiFacil.API.Controllers.PagosController",
+    "Method": "RechazarPago",
+    "RelativePath": "api/Pagos/{id}/rechazar",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Guid",
+        "IsRequired": true
+      },
+      {
+        "Name": "rechazoDto",
+        "Type": "DividiFacil.API.Controllers.RechazoDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DividiFacil.API.Controllers.PagosController",
+    "Method": "GetPagosByGrupo",
+    "RelativePath": "api/Pagos/grupo/{idGrupo}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idGrupo",
+        "Type": "System.Guid",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DividiFacil.API.Controllers.PagosController",
+    "Method": "GetPagosRealizados",
+    "RelativePath": "api/Pagos/realizados",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DividiFacil.API.Controllers.PagosController",
+    "Method": "GetPagosRecibidos",
+    "RelativePath": "api/Pagos/recibidos",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
   }
 ]

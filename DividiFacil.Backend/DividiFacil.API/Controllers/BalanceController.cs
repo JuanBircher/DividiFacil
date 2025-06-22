@@ -84,4 +84,26 @@ public class BalanceController : ApiControllerBase
 
         return Ok(resultado);
     }
+
+    /// <summary>
+    /// Obtiene el historial de movimientos de un grupo (gastos y pagos)
+    /// </summary>
+    /// <param name="idGrupo">ID del grupo</param>
+    /// <returns>Lista de movimientos ordenados por fecha</returns>
+    /// <response code="200">Historial obtenido correctamente</response>
+    /// <response code="400">Si hay errores en la solicitud</response>
+    /// <response code="401">Si el usuario no está autenticado</response>
+    [HttpGet("grupo/{idGrupo:guid}/movimientos")]
+    [ProducesResponseType(typeof(ResponseDto<List<MovimientoDto>>), 200)]
+    [ProducesResponseType(typeof(ResponseDto), 400)]
+    [ProducesResponseType(401)]
+    public async Task<IActionResult> GetHistorialMovimientos(Guid idGrupo)
+    {
+        var resultado = await _balanceService.ObtenerHistorialMovimientosAsync(idGrupo, GetUserId());
+
+        if (!resultado.Exito)
+            return BadRequest(resultado);
+
+        return Ok(resultado);
+    }
 }
