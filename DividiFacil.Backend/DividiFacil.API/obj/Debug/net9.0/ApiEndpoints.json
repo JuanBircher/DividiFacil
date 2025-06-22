@@ -1,0 +1,86 @@
+[
+  {
+    "ContainingType": "DividiFacil.API.Controllers.AuthController",
+    "Method": "ExternalLogin",
+    "RelativePath": "api/Auth/external-login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "externalAuth",
+        "Type": "DividiFacil.Domain.DTOs.Auth.ExternalAuthDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DividiFacil.API.Controllers.AuthController",
+    "Method": "Login",
+    "RelativePath": "api/Auth/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "loginDto",
+        "Type": "DividiFacil.Domain.DTOs.Usuario.UsuarioLoginDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DividiFacil.API.Controllers.AuthController",
+    "Method": "Logout",
+    "RelativePath": "api/Auth/logout",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DividiFacil.API.Controllers.AuthController",
+    "Method": "GetUsuarioActual",
+    "RelativePath": "api/Auth/me",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DividiFacil.API.Controllers.AuthController",
+    "Method": "RefreshToken",
+    "RelativePath": "api/Auth/refresh-token",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "refreshTokenDto",
+        "Type": "DividiFacil.Domain.DTOs.Auth.RefreshTokenDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "DividiFacil.API.Controllers.AuthController",
+    "Method": "Registro",
+    "RelativePath": "api/Auth/registro",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "registroDto",
+        "Type": "DividiFacil.Domain.DTOs.Usuario.UsuarioRegistroDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]

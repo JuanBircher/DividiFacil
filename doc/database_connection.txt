@@ -1,0 +1,11 @@
+# Cadena de conexión para desarrollo local
+Server=.\SQLEXPRESS;Database=DividiFacil;Trusted_Connection=True;TrustServerCertificate=True;
+
+# Si usas autenticación SQL en lugar de Windows:
+# Server=.\SQLEXPRESS;Database=DividiFacil;User Id=TuUsuario;Password=TuPassword;TrustServerCertificate=True;
+
+
+Server=JM2804;Database=DividiFacil;Trusted_Connection=True;TrustServerCertificate=True;
+
+
+Server=JM2804;Database=DividiFacil;User Id=juanb;Password=TuPassword;TrustServerCertificate=True;
