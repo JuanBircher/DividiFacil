@@ -448,8 +448,120 @@ namespace DividiFacil.Services.Implementations
 
         public async Task EnviarNotificacionesPendientesAsync()
         {
-            // Implementación básica para evitar error de método no implementado
-            await Task.CompletedTask;
+            try
+            {
+                // Obtener todas las notificaciones pendientes
+                var notificacionesPendientes = await _notificacionRepository.GetAllPendientesAsync();
+
+                if (notificacionesPendientes == null || !notificacionesPendientes.Any())
+                    return;
+
+                foreach (var notificacion in notificacionesPendientes)
+                {
+                    try
+                    {
+                        var usuario = await _usuarioRepository.GetByIdAsync(notificacion.IdUsuario);
+                        if (usuario == null)
+                            continue;
+
+                        // Verificar si el usuario tiene configuración de notificaciones
+                        var configNotificaciones = await _configuracionRepository.GetByUsuarioAsync(notificacion.IdUsuario);
+
+                        // Si el usuario tiene configurado no recibir este tipo de notificación, continuamos
+                        if (!DebeRecibirNotificacion(notificacion.Tipo, configNotificaciones))
+                            continue;
+
+                        // Enviar notificación según el canal configurado
+                        bool enviado = false;
+
+                        if (notificacion.CanalEnvio == "Push" && !string.IsNullOrEmpty(usuario.TokenNotificacion))
+                        {
+                            enviado = await EnviarNotificacionPushAsync(notificacion, usuario.TokenNotificacion);
+                        }
+                        else
+                        {
+                            // Si no se puede por push, intentar por email
+                            enviado = await EnviarNotificacionEmailAsync(notificacion, usuario.Email);
+                        }
+
+                        if (enviado)
+                        {
+                            notificacion.Estado = "Enviado";
+                            notificacion.FechaEnvio = DateTime.UtcNow;
+                            await _notificacionRepository.UpdateAsync(notificacion);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // Loguear el error pero continuar con las demás notificaciones
+                        // TODO: Implementar logging adecuado
+                        Console.WriteLine($"Error al enviar notificación {notificacion.IdNotificacion}: {ex.Message}");
+                    }
+                }
+
+                await _notificacionRepository.SaveAsync();
+            }
+            catch (Exception ex)
+            {
+                // Loguear el error general
+                Console.WriteLine($"Error al procesar notificaciones pendientes: {ex.Message}");
+            }
+        }
+
+        private bool DebeRecibirNotificacion(string tipo, ConfiguracionNotificaciones? config)
+        {
+            // Si no hay configuración, utilizar valores predeterminados (todas activadas)
+            if (config == null)
+                return true;
+
+            // Determinar si se debe enviar la notificación según el tipo
+            return tipo switch
+            {
+                "PagoCreado" => config.NotificarNuevosPagos,
+                "PagoConfirmado" => config.NotificarCambiosEstadoPagos,
+                "PagoRechazado" => config.NotificarCambiosEstadoPagos,
+                "NuevoGasto" => config.NotificarNuevosGastos,
+                "GrupoInvitacion" => config.NotificarInvitacionesGrupo,
+                _ => true // Tipos no específicos se notifican por defecto
+            };
+        }
+
+        private async Task<bool> EnviarNotificacionPushAsync(Notificacion notificacion, string tokenDispositivo)
+        {
+            // Implementación básica - reemplazar por un servicio real de notificaciones push
+            try
+            {
+                // Aquí iría la lógica para enviar la notificación push
+                // Por ejemplo, usando Firebase Cloud Messaging
+                // await _fcmService.SendNotificationAsync(tokenDispositivo, notificacion.Mensaje);
+
+                await Task.Delay(100); // Simulación de envío
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al enviar notificación push: {ex.Message}");
+                return false;
+            }
+        }
+
+        private async Task<bool> EnviarNotificacionEmailAsync(Notificacion notificacion, string email)
+        {
+            // Implementación básica - reemplazar por un servicio real de email
+            try
+            {
+                // Aquí iría la lógica para enviar el email
+                // Por ejemplo, usando SendGrid o SMTP
+                // await _emailService.SendEmailAsync(email, "Nueva notificación", notificacion.Mensaje);
+
+                await Task.Delay(100); // Simulación de envío
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error al enviar notificación por email: {ex.Message}");
+                return false;
+            }
         }
     }
 }

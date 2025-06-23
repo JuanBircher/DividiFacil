@@ -9,5 +9,6 @@ namespace DividiFacil.Data.Repositories.Interfaces
     {
         Task<IEnumerable<Notificacion>> GetPendientesByUsuarioAsync(Guid idUsuario);
         Task<IEnumerable<Notificacion>> GetByGrupoAsync(Guid idGrupo);
+        Task<IEnumerable<Notificacion>> GetAllPendientesAsync();
     }
 }

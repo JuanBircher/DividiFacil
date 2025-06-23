@@ -33,5 +33,15 @@ namespace DividiFacil.Data.Repositories.Implementations
                 .AsNoTracking()
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<Notificacion>> GetAllPendientesAsync()
+        {
+            return await _context.Notificaciones
+                .Where(n => n.Estado == "Pendiente")
+                .Include(n => n.Usuario)
+                .Include(n => n.Grupo)
+                .AsNoTracking()
+                .ToListAsync();
+        }
     }
 }
