@@ -1,4 +1,5 @@
 using DividiFacil.API.Extensions;
+using DividiFacil.API.Jobs;
 using DividiFacil.API.Middleware;
 using DividiFacil.Data;
 using DividiFacil.Data.Repositories.Implementations;
@@ -112,6 +113,9 @@ builder.Services.AddScoped<IDetalleGastoRepository, DetalleGastoRepository>();
 builder.Services.AddScoped<IPagoRepository, PagoRepository>();
 builder.Services.AddScoped<ICajaComunRepository, CajaComunRepository>();
 builder.Services.AddScoped<IPagoRepository, PagoRepository>();
+builder.Services.AddScoped<IRecordatorioRepository, RecordatorioRepository>();
+builder.Services.AddScoped<IConfiguracionNotificacionesRepository, ConfiguracionNotificacionesRepository>();
+
 
 
 // Registrar los servicios
@@ -122,6 +126,11 @@ builder.Services.AddScoped<IBalanceService, BalanceService>();
 builder.Services.AddScoped<IPagoService, PagoService>();
 builder.Services.AddScoped<ICajaComunService, CajaComunService>();
 builder.Services.AddScoped<IPagoService, PagoService>();
+builder.Services.AddScoped<IRecordatorioRepository, RecordatorioRepository>();
+builder.Services.AddScoped<IConfiguracionNotificacionesRepository, ConfiguracionNotificacionesRepository>();
+builder.Services.AddHostedService<ProcesadorRecordatoriosJob>();
+
+
 
 // Asegúrate de que esta línea esté presente y no comentada
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

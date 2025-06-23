@@ -1,4 +1,5 @@
-﻿using DividiFacil.Data.Repositories.Interfaces;
+﻿using Azure;
+using DividiFacil.Data.Repositories.Interfaces;
 using DividiFacil.Domain.DTOs.Base;
 using DividiFacil.Domain.DTOs.Pago;
 using DividiFacil.Domain.Models;
@@ -17,19 +18,25 @@ namespace DividiFacil.Services.Implementations
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly IGrupoRepository _grupoRepository;
         private readonly IDetalleGastoRepository _detalleGastoRepository;
+        private readonly INotificacionService _notificacionService;
+        private readonly IRecordatorioService _recordatorioService;
 
         public PagoService(
             IPagoRepository pagoRepository,
             IMiembroGrupoRepository miembroGrupoRepository,
             IUsuarioRepository usuarioRepository,
             IGrupoRepository grupoRepository,
-            IDetalleGastoRepository detalleGastoRepository)
+            IDetalleGastoRepository detalleGastoRepository, 
+            INotificacionService notificacionService,
+            IRecordatorioService recordatorioService)
         {
             _pagoRepository = pagoRepository;
             _miembroGrupoRepository = miembroGrupoRepository;
             _usuarioRepository = usuarioRepository;
             _grupoRepository = grupoRepository;
             _detalleGastoRepository = detalleGastoRepository;
+            _notificacionService = notificacionService;
+            _recordatorioService = recordatorioService;
         }
 
         public async Task<ResponseDto<PagoDto>> CrearPagoAsync(PagoCreacionDto pagoCreacionDto, string idUsuarioCreador)
@@ -117,6 +124,10 @@ namespace DividiFacil.Services.Implementations
                 await _pagoRepository.CreateAsync(nuevoPago);
                 await _pagoRepository.SaveAsync();
 
+                await _notificacionService.CrearNotificacionPagoAsync(nuevoPago.IdPago, "Creado");
+                await _recordatorioService.CrearRecordatorioPagoAsync(nuevoPago.IdPago);
+
+
                 // Preparar respuesta
                 var nuevoPagoDto = new PagoDto
                 {
@@ -133,7 +144,7 @@ namespace DividiFacil.Services.Implementations
                     NombreGrupo = grupo.NombreGrupo ?? "Grupo sin nombre",
                     ComprobantePath = nuevoPago.ComprobantePath
                 };
-
+                
                 response.Data = nuevoPagoDto;
                 response.Mensaje = "Pago registrado correctamente";
                 return response;
@@ -192,9 +203,7 @@ namespace DividiFacil.Services.Implementations
                 // Actualizar en la base de datos
                 await _pagoRepository.UpdateAsync(pago);
                 await _pagoRepository.SaveAsync();
-
-                // Aquí se debería actualizar el estado de las deudas relacionadas
-                // Pero eso requeriría una lógica más compleja que implementaremos en una fase posterior
+                await _notificacionService.CrearNotificacionPagoAsync(idPago, "Confirmado");
 
                 response.Mensaje = "Pago confirmado correctamente";
                 return response;
@@ -253,6 +262,7 @@ namespace DividiFacil.Services.Implementations
                 // Actualizar en la base de datos
                 await _pagoRepository.UpdateAsync(pago);
                 await _pagoRepository.SaveAsync();
+                await _notificacionService.CrearNotificacionPagoAsync(idPago, "Rechazado");
 
                 response.Mensaje = "Pago rechazado correctamente";
                 return response;

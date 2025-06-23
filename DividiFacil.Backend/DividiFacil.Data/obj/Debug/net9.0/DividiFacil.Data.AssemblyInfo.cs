@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DividiFacil.Data")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f413b808890eb8d3ed7f1c49bcf2e43efa992e22")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b46cf5a9c8d5afe5e6aacdc8e15af973f44e8725")]
 [assembly: System.Reflection.AssemblyProductAttribute("DividiFacil.Data")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DividiFacil.Data")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

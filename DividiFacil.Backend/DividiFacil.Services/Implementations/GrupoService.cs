@@ -1,4 +1,5 @@
-﻿using DividiFacil.Data.Repositories.Interfaces;
+﻿using DividiFacil.Data.Repositories.Implementations;
+using DividiFacil.Data.Repositories.Interfaces;
 using DividiFacil.Domain.DTOs.Base;
 using DividiFacil.Domain.DTOs.Grupo;
 using DividiFacil.Domain.Models;
@@ -14,11 +15,19 @@ namespace DividiFacil.Services.Implementations
     {
         private readonly IGrupoRepository _grupoRepository;
         private readonly IUsuarioRepository _usuarioRepository;
+        private readonly IMiembroGrupoRepository _miembroGrupoRepository;
+        private readonly INotificacionService _notificacionService;
 
-        public GrupoService(IGrupoRepository grupoRepository, IUsuarioRepository usuarioRepository)
+        public GrupoService(
+            IGrupoRepository grupoRepository,
+            IMiembroGrupoRepository miembroGrupoRepository,
+            IUsuarioRepository usuarioRepository,
+            INotificacionService notificacionService)
         {
             _grupoRepository = grupoRepository;
+            _miembroGrupoRepository = miembroGrupoRepository;
             _usuarioRepository = usuarioRepository;
+            _notificacionService = notificacionService;
         }
 
         public async Task<ResponseDto<GrupoDto>> CrearGrupoAsync(GrupoCreacionDto grupoDto, string idUsuarioCreador)

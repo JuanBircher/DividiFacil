@@ -17,19 +17,25 @@ namespace DividiFacil.Services.Implementations
         private readonly IMiembroGrupoRepository _miembroGrupoRepository;
         private readonly IGrupoRepository _grupoRepository;
         private readonly IUsuarioRepository _usuarioRepository;
+        private readonly INotificacionService _notificacionService;
+        private readonly IRecordatorioService _recordatorioService;
 
         public GastoService(
             IGastoRepository gastoRepository,
             IDetalleGastoRepository detalleGastoRepository,
-            IMiembroGrupoRepository miembroGrupoRepository,
+            IUsuarioRepository usuarioRepository,
             IGrupoRepository grupoRepository,
-            IUsuarioRepository usuarioRepository)
+            IMiembroGrupoRepository miembroGrupoRepository,
+            INotificacionService notificacionService,
+            IRecordatorioService recordatorioService)
         {
             _gastoRepository = gastoRepository;
             _detalleGastoRepository = detalleGastoRepository;
-            _miembroGrupoRepository = miembroGrupoRepository;
-            _grupoRepository = grupoRepository;
             _usuarioRepository = usuarioRepository;
+            _grupoRepository = grupoRepository;
+            _miembroGrupoRepository = miembroGrupoRepository;
+            _notificacionService = notificacionService;
+            _recordatorioService = recordatorioService;
         }
 
         public async Task<ResponseDto<GastoDto>> CrearGastoAsync(GastoCreacionDto gastoDto, string idUsuarioCreador)
@@ -123,6 +129,8 @@ namespace DividiFacil.Services.Implementations
             }
 
             await _detalleGastoRepository.SaveAsync();
+            await _notificacionService.CrearNotificacionGastoAsync(gasto.IdGasto);
+
 
             // Crear respuesta
             var detallesDto = new List<DetalleGastoDto>();

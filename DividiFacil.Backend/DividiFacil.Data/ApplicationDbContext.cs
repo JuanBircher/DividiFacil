@@ -20,6 +20,9 @@ namespace DividiFacil.Data
         public DbSet<MovimientoCaja> MovimientosCaja { get; set; }
         public DbSet<Notificacion> Notificaciones { get; set; }
         public DbSet<Pago> Pagos { get; set; }
+        public DbSet<Recordatorio> Recordatorios { get; set; } = null!;
+        public DbSet<ConfiguracionNotificaciones> ConfiguracionesNotificaciones { get; set; } = null!;
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -184,6 +187,25 @@ namespace DividiFacil.Data
             });
 
             modelBuilder.Entity<Notificacion>().HasNoKey();
+
+            modelBuilder.Entity<Recordatorio>()
+                .HasOne(r => r.Usuario)
+                .WithMany()
+                .HasForeignKey(r => r.IdUsuario)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Recordatorio>()
+                .HasOne(r => r.Grupo)
+                .WithMany()
+                .HasForeignKey(r => r.IdGrupo)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ConfiguracionNotificaciones>()
+                .HasOne(c => c.Usuario)
+                .WithOne()
+                .HasForeignKey<ConfiguracionNotificaciones>(c => c.IdUsuario)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
