@@ -1,6 +1,7 @@
 ﻿using DividiFacil.Domain.DTOs.Gasto;
 using FluentValidation;
 
+
 namespace DividiFacil.API.Validators
 {
     public class GastoCreacionDtoValidator : AbstractValidator<GastoCreacionDto>
