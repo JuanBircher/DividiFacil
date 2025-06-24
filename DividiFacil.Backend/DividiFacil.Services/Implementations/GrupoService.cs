@@ -4,10 +4,12 @@ using DividiFacil.Domain.DTOs.Base;
 using DividiFacil.Domain.DTOs.Grupo;
 using DividiFacil.Domain.Models;
 using DividiFacil.Services.Interfaces;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 
 namespace DividiFacil.Services.Implementations
 {
@@ -17,17 +19,21 @@ namespace DividiFacil.Services.Implementations
         private readonly IUsuarioRepository _usuarioRepository;
         private readonly IMiembroGrupoRepository _miembroGrupoRepository;
         private readonly INotificacionService _notificacionService;
+        private IMemoryCache _cache;
+
 
         public GrupoService(
             IGrupoRepository grupoRepository,
             IMiembroGrupoRepository miembroGrupoRepository,
             IUsuarioRepository usuarioRepository,
-            INotificacionService notificacionService)
+            INotificacionService notificacionService,
+            IMemoryCache cache)
         {
             _grupoRepository = grupoRepository;
             _miembroGrupoRepository = miembroGrupoRepository;
             _usuarioRepository = usuarioRepository;
             _notificacionService = notificacionService;
+            _cache = cache;
         }
 
         public async Task<ResponseDto<GrupoDto>> CrearGrupoAsync(GrupoCreacionDto grupoDto, string idUsuarioCreador)
@@ -95,14 +101,7 @@ namespace DividiFacil.Services.Implementations
         {
             var response = new ResponseDto<GrupoDto>();
 
-            var grupo = await _grupoRepository.GetByIdAsync(id);
-            if (grupo == null)
-            {
-                response.Exito = false;
-                response.Mensaje = "Grupo no encontrado";
-                return response;
-            }
-
+            // Verificar el ID de usuario
             if (!Guid.TryParse(idUsuarioSolicitante, out var idSolicitante))
             {
                 response.Exito = false;
@@ -110,31 +109,52 @@ namespace DividiFacil.Services.Implementations
                 return response;
             }
 
-            // Verificar que el usuario es miembro del grupo
-            bool esMiembro = await _grupoRepository.EsMiembroAsync(idSolicitante, id);
-            if (!esMiembro)
+            // Intentar obtener del caché
+            string cacheKey = $"Grupo_{id}";
+            if (!_cache.TryGetValue(cacheKey, out GrupoDto grupoDto))
             {
-                response.Exito = false;
-                response.Mensaje = "No tienes permiso para ver este grupo";
-                return response;
+                // No está en caché, recuperar de la base de datos
+                var grupo = await _grupoRepository.GetByIdAsync(id);
+
+                if (grupo == null)
+                {
+                    response.Exito = false;
+                    response.Mensaje = "Grupo no encontrado";
+                    return response;
+                }
+
+                // Verificar que el usuario es miembro del grupo
+                bool esMiembro = await _grupoRepository.EsMiembroAsync(idSolicitante, id);
+                if (!esMiembro)
+                {
+                    response.Exito = false;
+                    response.Mensaje = "No tienes permiso para ver este grupo";
+                    return response;
+                }
+
+                var creador = await _usuarioRepository.GetByIdAsync(grupo.IdUsuarioCreador);
+
+                // Crear el DTO
+                grupoDto = new GrupoDto
+                {
+                    IdGrupo = grupo.IdGrupo,
+                    NombreGrupo = grupo.NombreGrupo,
+                    Descripcion = grupo.Descripcion,
+                    ModoOperacion = grupo.ModoOperacion,
+                    IdUsuarioCreador = grupo.IdUsuarioCreador,
+                    NombreCreador = creador?.Nombre ?? "Usuario desconocido",
+                    FechaCreacion = grupo.FechaCreacion,
+                    CodigoAcceso = grupo.CodigoAcceso,
+                    CantidadMiembros = 0, // Debería calcularse en implementación real
+                    TotalGastos = 0 // Debería calcularse en implementación real
+                };
+
+                // Guardar en caché
+                _cache.Set(cacheKey, grupoDto, TimeSpan.FromMinutes(15));
             }
 
-            var creador = await _usuarioRepository.GetByIdAsync(grupo.IdUsuarioCreador);
-
-            response.Data = new GrupoDto
-            {
-                IdGrupo = grupo.IdGrupo,
-                NombreGrupo = grupo.NombreGrupo,
-                Descripcion = grupo.Descripcion,
-                ModoOperacion = grupo.ModoOperacion,
-                IdUsuarioCreador = grupo.IdUsuarioCreador,
-                NombreCreador = creador?.Nombre ?? "Usuario desconocido",
-                FechaCreacion = grupo.FechaCreacion,
-                CodigoAcceso = grupo.CodigoAcceso,
-                CantidadMiembros = 0, // Debería calcularse en una implementación real
-                TotalGastos = 0 // Debería calcularse en una implementación real
-            };
-
+            // Ya tenemos el grupoDto, ya sea desde caché o recién construido
+            response.Data = grupoDto;
             return response;
         }
 

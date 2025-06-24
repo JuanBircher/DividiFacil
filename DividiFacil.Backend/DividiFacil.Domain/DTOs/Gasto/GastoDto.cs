@@ -5,10 +5,10 @@
         public Guid IdGasto { get; set; }
         public Guid IdGrupo { get; set; }
         public string NombreGrupo { get; set; } = string.Empty;
+        public string Descripcion { get; set; } = string.Empty;
         public Guid IdMiembroPagador { get; set; }
         public string NombreMiembroPagador { get; set; } = string.Empty;
         public decimal Monto { get; set; }
-        public string Descripcion { get; set; } = string.Empty;
         public string? Categoria { get; set; } = string.Empty;
         public DateTime FechaCreacion { get; set; }
         public DateTime FechaGasto { get; set; }

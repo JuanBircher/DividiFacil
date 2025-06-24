@@ -638,17 +638,14 @@ namespace DividiFacil.Services.Implementations
                     return response;
                 }
 
-                // Obtener los gastos
-                var gastos = await _gastoRepository.GetByGrupoAsync(idGrupo);
+                // Obtener los gastos paginados (ahora descomponemos la tupla correctamente)
+                var (gastosPaginados, totalItems) = await _gastoRepository.GetPaginatedByGrupoAsync(
+                    idGrupo,
+                    paginacion.Pagina,
+                    paginacion.TamanioPagina);
 
-                // Aplicar paginación manualmente
-                int totalItems = gastos.Count();
+                // Calcular el total de páginas
                 int totalPaginas = (int)Math.Ceiling(totalItems / (double)paginacion.TamanioPagina);
-
-                var gastosPaginados = gastos
-                    .OrderByDescending(g => g.FechaCreacion)
-                    .Skip((paginacion.Pagina - 1) * paginacion.TamanioPagina)
-                    .Take(paginacion.TamanioPagina);
 
                 // Convertir a DTOs
                 var gastosDto = new List<GastoDto>();
