@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DividiFacil.Services")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+044cb1af968096e59f9d24384d2e945c278e2c6e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e3dc4a4d8e5812ea4042c0a25576470b85ba8ad2")]
 [assembly: System.Reflection.AssemblyProductAttribute("DividiFacil.Services")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DividiFacil.Services")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -10,7 +10,6 @@ using System.Text;
 using Microsoft.Extensions.Caching.Memory;
 using FluentValidation.AspNetCore;
 using FluentValidation;
-using DividiFacil.API.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,13 +24,13 @@ builder.Host.UseSerilog();
 builder.Services.AddControllers()
     .AddFluentValidation(fv =>
     {
-        fv.RegisterValidatorsFromAssemblyContaining<GastoCreacionValidator>();
+        fv.RegisterValidatorsFromAssemblyContaining<GastoCreacionDtoValidator>();
         // O registrar manualmente:
         // fv.RegisterValidatorsFromAssemblyContaining<Program>();
     });
 
 // Alternativamente, en .NET 9:
-builder.Services.AddValidatorsFromAssemblyContaining<GastoCreacionValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<GastoCreacionDtoValidator>();
 builder.Services.AddEndpointsApiExplorer();
 
 // Configurar Swagger usando método de extensión
@@ -98,7 +97,7 @@ builder.Services.AddControllers(options =>
 });
 
 builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddValidatorsFromAssemblyContaining<GastoCreacionValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<GastoCreacionDtoValidator>();
 
 // Configurar CORS
 builder.Services.AddCors(options =>
