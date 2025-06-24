@@ -15,11 +15,10 @@ namespace DividiFacil.Domain.DTOs.Gasto
 
         [Required(ErrorMessage = "La descripción del gasto es obligatoria")]
         [StringLength(200, ErrorMessage = "La descripción no puede exceder los 200 caracteres")]
-        public string Descripcion { get; set; }
+        public string Descripcion { get; set; } = string.Empty;
 
         [StringLength(50, ErrorMessage = "La categoría no puede exceder los 50 caracteres")]
-        public string Categoria { get; set; }
-
+        public string Categoria { get; set; } = string.Empty;
         public DateTime? FechaGasto { get; set; }
 
         public string? ComprobantePath { get; set; }

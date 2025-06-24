@@ -16,5 +16,9 @@ namespace DividiFacil.Services.Interfaces
         Task<ResponseDto<IEnumerable<SaldoUsuarioDto>>> GetSaldosUsuarioAsync(string idUsuario);
         Task<ResponseDto> MarcarComoPagadoAsync(Guid idGasto, Guid idDetalle, string idUsuarioSolicitante);
         Task<ResponseDto> EliminarGastoAsync(Guid idGasto, string idUsuarioSolicitante);
+        Task<PaginatedResponseDto<GastoDto>> GetPaginatedByGrupoAsync(
+           Guid idGrupo,
+           PaginacionDto paginacion,
+           string idUsuarioSolicitante);
     }
 }

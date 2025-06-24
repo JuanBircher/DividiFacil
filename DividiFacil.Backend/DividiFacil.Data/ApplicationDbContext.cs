@@ -188,18 +188,27 @@ namespace DividiFacil.Data
 
             modelBuilder.Entity<Notificacion>().HasNoKey();
 
-            modelBuilder.Entity<Recordatorio>()
-                .HasOne(r => r.Usuario)
-                .WithMany()
-                .HasForeignKey(r => r.IdUsuario)
-                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Recordatorio>(entity =>
+            {
+                entity.ToTable("Recordatorios");
+                entity.HasKey(e => e.IdRecordatorio);
+                entity.Property(e => e.Titulo).HasMaxLength(200).IsRequired();
+                entity.Property(e => e.Mensaje).HasMaxLength(500).IsRequired();
+                entity.Property(e => e.Tipo).HasMaxLength(50).IsRequired();
+                entity.Property(e => e.FechaCreacion).HasDefaultValueSql("GETDATE()");
+                entity.Property(e => e.Estado).HasMaxLength(20).HasDefaultValue("Pendiente");
+                entity.Property(e => e.FrecuenciaRepeticion).HasMaxLength(20);
 
-            modelBuilder.Entity<Recordatorio>()
-                .HasOne(r => r.Grupo)
-                .WithMany()
-                .HasForeignKey(r => r.IdGrupo)
-                .IsRequired(false)
-                .OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(r => r.Usuario)
+                        .WithMany()
+                        .HasForeignKey(r => r.IdUsuario)
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(r => r.Grupo)
+                        .WithMany()
+                        .HasForeignKey(r => r.IdGrupo)
+                        .OnDelete(DeleteBehavior.Restrict);
+            });
 
             modelBuilder.Entity<ConfiguracionNotificaciones>()
                 .HasOne(c => c.Usuario)

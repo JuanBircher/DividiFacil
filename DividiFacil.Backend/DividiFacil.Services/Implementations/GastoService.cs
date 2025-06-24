@@ -606,5 +606,91 @@ namespace DividiFacil.Services.Implementations
             response.Mensaje = "Gasto eliminado correctamente";
             return response;
         }
+
+        public async Task<PaginatedResponseDto<GastoDto>> GetPaginatedByGrupoAsync(Guid idGrupo, PaginacionDto paginacion, string idUsuarioSolicitante)
+        {
+            var response = new PaginatedResponseDto<GastoDto>();
+
+            try
+            {
+                if (!Guid.TryParse(idUsuarioSolicitante, out var idUsuarioGuid))
+                {
+                    response.Exito = false;
+                    response.Mensaje = "ID de usuario inválido";
+                    return response;
+                }
+
+                // Verificar que el grupo existe
+                var grupo = await _grupoRepository.GetByIdAsync(idGrupo);
+                if (grupo == null)
+                {
+                    response.Exito = false;
+                    response.Mensaje = "Grupo no encontrado";
+                    return response;
+                }
+
+                // Verificar que el usuario es miembro del grupo
+                var miembro = await _miembroGrupoRepository.GetByUsuarioYGrupoAsync(idUsuarioGuid, idGrupo);
+                if (miembro == null)
+                {
+                    response.Exito = false;
+                    response.Mensaje = "No eres miembro de este grupo";
+                    return response;
+                }
+
+                // Obtener los gastos
+                var gastos = await _gastoRepository.GetByGrupoAsync(idGrupo);
+
+                // Aplicar paginación manualmente
+                int totalItems = gastos.Count();
+                int totalPaginas = (int)Math.Ceiling(totalItems / (double)paginacion.TamanioPagina);
+
+                var gastosPaginados = gastos
+                    .OrderByDescending(g => g.FechaCreacion)
+                    .Skip((paginacion.Pagina - 1) * paginacion.TamanioPagina)
+                    .Take(paginacion.TamanioPagina);
+
+                // Convertir a DTOs
+                var gastosDto = new List<GastoDto>();
+                foreach (var gasto in gastosPaginados)
+                {
+                    var miembroPagador = await _miembroGrupoRepository.GetByIdAsync(gasto.IdMiembroPagador);
+                    var usuarioPagador = miembroPagador != null ?
+                        await _usuarioRepository.GetByIdAsync(miembroPagador.IdUsuario) : null;
+
+                    gastosDto.Add(new GastoDto
+                    {
+                        IdGasto = gasto.IdGasto,
+                        IdGrupo = gasto.IdGrupo,
+                        NombreGrupo = grupo.NombreGrupo ?? string.Empty,
+                        IdMiembroPagador = gasto.IdMiembroPagador,
+                        NombreMiembroPagador = usuarioPagador?.Nombre ?? "Usuario desconocido",
+                        Monto = gasto.Monto,
+                        Descripcion = gasto.Descripcion ?? string.Empty,
+                        Categoria = gasto.Categoria ?? string.Empty,
+                        FechaCreacion = gasto.FechaCreacion,
+                        FechaGasto = gasto.FechaGasto,
+                        ComprobantePath = gasto.ComprobantePath ?? string.Empty
+                    });
+                }
+
+                // Configurar la respuesta paginada
+                response.Items = gastosDto;
+                response.TotalItems = totalItems;
+                response.PaginaActual = paginacion.Pagina;
+                response.ItemsPorPagina = paginacion.TamanioPagina;
+                response.TotalPaginas = totalPaginas;
+                response.Exito = true;
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                response.Exito = false;
+                response.Mensaje = $"Error al obtener gastos: {ex.Message}";
+                response.Items = new List<GastoDto>();
+                return response;
+            }
+        }
     }
 }

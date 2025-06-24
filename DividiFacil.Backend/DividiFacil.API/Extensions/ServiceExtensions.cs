@@ -38,6 +38,7 @@ namespace DividiFacil.API.Extensions
             services.AddScoped<IPagoService, PagoService>();
             services.AddScoped<ICajaComunService, CajaComunService>();
             services.AddScoped<INotificacionService, NotificacionService>();
+            services.AddScoped<IRecordatorioService, RecordatorioService>();
 
             // Registrar jobs
             services.AddHostedService<ProcesadorRecordatoriosJob>();

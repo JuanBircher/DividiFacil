@@ -13,7 +13,7 @@ namespace DividiFacil.Domain.Models
         public string Estado { get; set; } = "Pendiente"; // Pendiente, Completado, Rechazado
         public DateTime FechaCreacion { get; set; }
         public DateTime? FechaPago { get; set; }
-        public DateTime? FechaConfirmacion { get; set; } // Agregamos esta propiedad que faltaba
+        public DateTime? FechaConfirmacion { get; set; }
         public string? ComprobantePath { get; set; }
         public string? MotivoRechazo { get; set; }
 
