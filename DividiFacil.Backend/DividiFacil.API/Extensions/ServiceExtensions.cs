@@ -3,6 +3,7 @@ using DividiFacil.Data.Repositories.Implementations;
 using DividiFacil.Data.Repositories.Interfaces;
 using DividiFacil.Services.Implementations;
 using DividiFacil.Services.Interfaces;
+using FluentValidation;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 
@@ -93,6 +94,12 @@ namespace DividiFacil.API.Extensions
                     options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
                 });
 
+            return services;
+        }
+
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
+        {
+            services.AddValidatorsFromAssemblyContaining<UsuarioLoginDtoValidator>();
             return services;
         }
     }

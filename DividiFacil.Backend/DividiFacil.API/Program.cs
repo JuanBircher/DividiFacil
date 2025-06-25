@@ -32,6 +32,8 @@ builder.Services.AddControllers()
 // Alternativamente, en .NET 9:
 builder.Services.AddValidatorsFromAssemblyContaining<GastoCreacionDtoValidator>();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddApplicationServices();
+
 
 // Configurar Swagger usando método de extensión
 builder.Services.ConfigureSwagger();
