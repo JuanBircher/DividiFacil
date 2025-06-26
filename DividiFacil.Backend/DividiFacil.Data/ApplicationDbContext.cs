@@ -210,11 +210,14 @@ namespace DividiFacil.Data
                         .OnDelete(DeleteBehavior.Restrict);
             });
 
-            modelBuilder.Entity<ConfiguracionNotificaciones>()
-                .HasOne(c => c.Usuario)
-                .WithOne()
-                .HasForeignKey<ConfiguracionNotificaciones>(c => c.IdUsuario)
-                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<ConfiguracionNotificaciones>(entity =>
+            {
+                entity.HasKey(e => e.IdConfiguracion);
+                entity.HasOne(c => c.Usuario)
+                    .WithOne()
+                    .HasForeignKey<ConfiguracionNotificaciones>(c => c.IdUsuario)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
         }
     }
 }

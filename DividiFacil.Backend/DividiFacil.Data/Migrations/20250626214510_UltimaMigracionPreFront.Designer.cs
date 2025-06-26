@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DividiFacil.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250622232920_FixDbContextConfiguration")]
-    partial class FixDbContextConfiguration
+    [Migration("20250626214510_UltimaMigracionPreFront")]
+    partial class UltimaMigracionPreFront
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,6 +50,45 @@ namespace DividiFacil.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("CajasComunes", (string)null);
+                });
+
+            modelBuilder.Entity("DividiFacil.Domain.Models.ConfiguracionNotificaciones", b =>
+                {
+                    b.Property<Guid>("IdConfiguracion")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FrecuenciaRecordatorios")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("IdUsuario")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("NotificarCambiosEstadoPagos")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("NotificarInvitacionesGrupo")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("NotificarNuevosGastos")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("NotificarNuevosPagos")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("RecordatoriosDeudas")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("RecordatoriosPagos")
+                        .HasColumnType("bit");
+
+                    b.HasKey("IdConfiguracion");
+
+                    b.HasIndex("IdUsuario")
+                        .IsUnique();
+
+                    b.ToTable("ConfiguracionesNotificaciones");
                 });
 
             modelBuilder.Entity("DividiFacil.Domain.Models.DetalleGasto", b =>
@@ -359,6 +398,71 @@ namespace DividiFacil.Data.Migrations
                     b.ToTable("Pagos", (string)null);
                 });
 
+            modelBuilder.Entity("DividiFacil.Domain.Models.Recordatorio", b =>
+                {
+                    b.Property<Guid>("IdRecordatorio")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Completado")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasDefaultValue("Pendiente");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<DateTime>("FechaRecordatorio")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FrecuenciaRepeticion")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<Guid>("IdGrupo")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("IdReferencia")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("IdUsuario")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Mensaje")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<bool>("Repetir")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Tipo")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("IdRecordatorio");
+
+                    b.HasIndex("IdGrupo");
+
+                    b.HasIndex("IdUsuario");
+
+                    b.ToTable("Recordatorios", (string)null);
+                });
+
             modelBuilder.Entity("DividiFacil.Domain.Models.Usuario", b =>
                 {
                     b.Property<Guid>("IdUsuario")
@@ -423,6 +527,17 @@ namespace DividiFacil.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Grupo");
+                });
+
+            modelBuilder.Entity("DividiFacil.Domain.Models.ConfiguracionNotificaciones", b =>
+                {
+                    b.HasOne("DividiFacil.Domain.Models.Usuario", "Usuario")
+                        .WithOne()
+                        .HasForeignKey("DividiFacil.Domain.Models.ConfiguracionNotificaciones", "IdUsuario")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("DividiFacil.Domain.Models.DetalleGasto", b =>
@@ -560,6 +675,25 @@ namespace DividiFacil.Data.Migrations
                     b.Navigation("Pagador");
 
                     b.Navigation("Receptor");
+                });
+
+            modelBuilder.Entity("DividiFacil.Domain.Models.Recordatorio", b =>
+                {
+                    b.HasOne("DividiFacil.Domain.Models.Grupo", "Grupo")
+                        .WithMany()
+                        .HasForeignKey("IdGrupo")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DividiFacil.Domain.Models.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("IdUsuario")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Grupo");
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("DividiFacil.Domain.Models.CajaComun", b =>

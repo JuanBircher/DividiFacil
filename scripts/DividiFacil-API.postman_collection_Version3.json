@@ -1,0 +1,262 @@
+{
+  "info": {
+    "name": "DividiFacil API",
+    "_postman_id": "d1e6e3ea-9d8b-4d86-bd1c-1bc7a2b9e2a8",
+    "description": "Colección de pruebas para la API de DividiFacil. Recuerda setear la variable {{base_url}} y {{jwt_token}} tras loguearte.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000"
+    },
+    {
+      "key": "jwt_token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"nuevo@ejemplo.com\",\n  \"password\": \"Password123!\",\n  \"nombre\": \"Juan Test\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/Auth/register",
+              "host": [ "{{base_url}}" ],
+              "path": [ "api", "Auth", "register" ]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"nuevo@ejemplo.com\",\n  \"password\": \"Password123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/Auth/login",
+              "host": [ "{{base_url}}" ],
+              "path": [ "api", "Auth", "login" ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Usuarios",
+      "item": [
+        {
+          "name": "Obtener perfil usuario actual",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/Usuarios/me",
+              "host": [ "{{base_url}}" ],
+              "path": [ "api", "Usuarios", "me" ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Grupos",
+      "item": [
+        {
+          "name": "Crear grupo",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Grupo Test\",\n  \"descripcion\": \"Grupo de prueba\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/Grupos",
+              "host": [ "{{base_url}}" ],
+              "path": [ "api", "Grupos" ]
+            }
+          }
+        },
+        {
+          "name": "Listar mis grupos",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/Grupos",
+              "host": [ "{{base_url}}" ],
+              "path": [ "api", "Grupos" ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Gastos",
+      "item": [
+        {
+          "name": "Crear gasto",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idGrupo\": \"<GUID-GRUPO>\",\n  \"concepto\": \"Pizza\",\n  \"monto\": 1200,\n  \"detalles\": [\n     { \"idUsuario\": \"<GUID-USUARIO>\", \"monto\": 600 },\n     { \"idUsuario\": \"<GUID-USUARIO2>\", \"monto\": 600 }\n   ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/Gastos",
+              "host": [ "{{base_url}}" ],
+              "path": [ "api", "Gastos" ]
+            }
+          }
+        },
+        {
+          "name": "Listar gastos de grupo",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/Gastos/grupo/<GUID-GRUPO>",
+              "host": [ "{{base_url}}" ],
+              "path": [ "api", "Gastos", "grupo", "<GUID-GRUPO>" ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pagos",
+      "item": [
+        {
+          "name": "Crear pago",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idGrupo\": \"<GUID-GRUPO>\",\n  \"idReceptor\": \"<GUID-RECEPTOR>\",\n  \"monto\": 1200,\n  \"concepto\": \"Pago Pizza\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/Pagos",
+              "host": [ "{{base_url}}" ],
+              "path": [ "api", "Pagos" ]
+            }
+          }
+        },
+        {
+          "name": "Listar pagos de grupo",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/Pagos/grupo/<GUID-GRUPO>",
+              "host": [ "{{base_url}}" ],
+              "path": [ "api", "Pagos", "grupo", "<GUID-GRUPO>" ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Notificaciones",
+      "item": [
+        {
+          "name": "Obtener notificaciones usuario",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/Notificaciones",
+              "host": [ "{{base_url}}" ],
+              "path": [ "api", "Notificaciones" ]
+            }
+          }
+        },
+        {
+          "name": "Obtener configuración de notificaciones",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/Notificaciones/configuracion",
+              "host": [ "{{base_url}}" ],
+              "path": [ "api", "Notificaciones", "configuracion" ]
+            }
+          }
+        },
+        {
+          "name": "Actualizar configuración de notificaciones",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{jwt_token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idConfiguracion\": \"<GUID-CONFIG>\",\n  \"idUsuario\": \"<GUID-USUARIO>\",\n  \"notificarNuevosPagos\": true,\n  \"notificarNuevosGastos\": true,\n  \"notificarInvitacionesGrupo\": true,\n  \"notificarCambiosEstadoPagos\": true,\n  \"recordatoriosDeudas\": true,\n  \"recordatoriosPagos\": true,\n  \"frecuenciaRecordatorios\": \"Semanal\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/Notificaciones/configuracion",
+              "host": [ "{{base_url}}" ],
+              "path": [ "api", "Notificaciones", "configuracion" ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "HealthCheck",
+      "item": [
+        {
+          "name": "Ping API",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": [ "{{base_url}}" ],
+              "path": [ "health" ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
