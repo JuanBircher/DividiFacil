@@ -15,10 +15,31 @@ using DividiFacil.Data.Repositories.Decorators;
 using DividiFacil.Data.Repositories.Implementations;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
-
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Instrumentation.SqlClient;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configurar telemetría
+builder.Services.AddOpenTelemetry()
+    .WithTracing(tracing =>
+    {
+        tracing
+            .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(builder.Environment.ApplicationName))
+            .AddAspNetCoreInstrumentation()    // Registra cada request HTTP
+            .AddSqlClientInstrumentation()     // Registra cada consulta a SQL Server
+            .AddConsoleExporter();             // Muestra la telemetría en consola
+    })
+    .WithMetrics(metrics =>
+    {
+        metrics
+            .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(builder.Environment.ApplicationName))
+            .AddAspNetCoreInstrumentation()
+            .AddConsoleExporter();
+    });
 
 // Configurar Serilog
 Log.Logger = new LoggerConfiguration()

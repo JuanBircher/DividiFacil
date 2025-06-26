@@ -91,6 +91,22 @@
               "target": "Package",
               "version": "[9.0.6, )"
             },
+            "OpenTelemetry.Exporter.Console": {
+              "target": "Package",
+              "version": "[1.12.0, )"
+            },
+            "OpenTelemetry.Extensions.Hosting": {
+              "target": "Package",
+              "version": "[1.12.0, )"
+            },
+            "OpenTelemetry.Instrumentation.AspNetCore": {
+              "target": "Package",
+              "version": "[1.12.0, )"
+            },
+            "OpenTelemetry.Instrumentation.SqlClient": {
+              "target": "Package",
+              "version": "[1.12.0-beta.1, )"
+            },
             "Serilog.AspNetCore": {
               "target": "Package",
               "version": "[9.0.0, )"

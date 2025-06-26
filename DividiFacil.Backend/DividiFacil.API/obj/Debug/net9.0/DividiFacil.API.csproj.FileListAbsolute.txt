@@ -53,6 +53,13 @@ C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFac
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\bin\Debug\net9.0\Microsoft.SqlServer.Server.dll
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\bin\Debug\net9.0\Microsoft.Win32.SystemEvents.dll
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\bin\Debug\net9.0\Mono.TextTemplating.dll
+C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\bin\Debug\net9.0\OpenTelemetry.dll
+C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\bin\Debug\net9.0\OpenTelemetry.Api.dll
+C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\bin\Debug\net9.0\OpenTelemetry.Api.ProviderBuilderExtensions.dll
+C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\bin\Debug\net9.0\OpenTelemetry.Exporter.Console.dll
+C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\bin\Debug\net9.0\OpenTelemetry.Extensions.Hosting.dll
+C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\bin\Debug\net9.0\OpenTelemetry.Instrumentation.AspNetCore.dll
+C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\bin\Debug\net9.0\OpenTelemetry.Instrumentation.SqlClient.dll
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\bin\Debug\net9.0\Serilog.dll
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\bin\Debug\net9.0\Serilog.AspNetCore.dll
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\bin\Debug\net9.0\Serilog.Extensions.Hosting.dll
@@ -183,10 +190,10 @@ C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFac
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\obj\Debug\net9.0\staticwebassets\msbuild.buildMultiTargeting.DividiFacil.API.props
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\obj\Debug\net9.0\staticwebassets\msbuild.buildTransitive.DividiFacil.API.props
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\obj\Debug\net9.0\staticwebassets.pack.json
-C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\obj\Debug\net9.0\DividiFa.C3E3156C.Up2Date
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\obj\Debug\net9.0\DividiFacil.API.dll
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\obj\Debug\net9.0\refint\DividiFacil.API.dll
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\obj\Debug\net9.0\DividiFacil.API.pdb
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\obj\Debug\net9.0\DividiFacil.API.genruntimeconfig.cache
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\obj\Debug\net9.0\ref\DividiFacil.API.dll
+C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
