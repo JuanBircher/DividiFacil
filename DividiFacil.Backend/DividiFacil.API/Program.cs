@@ -171,6 +171,8 @@ builder.Services.AddRateLimiter(options =>
     options.RejectionStatusCode = 429;
 });
 
+builder.Services.AddHealthChecks();
+
 var app = builder.Build();
 
 // Configure HTTP request pipeline
@@ -198,5 +200,7 @@ app.UseResponseCaching();
 app.UseStaticFiles();
 
 app.MapControllers();
+
+app.MapHealthChecks("/health");
 
 app.Run();
