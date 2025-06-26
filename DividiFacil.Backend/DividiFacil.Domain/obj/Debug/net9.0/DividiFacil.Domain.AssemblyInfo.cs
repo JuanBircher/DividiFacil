@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DividiFacil.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6c2e71087c859861bbfe0fd0a1c677d143a3d05e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9abbd5a022ce88fdfa7ec2c1c6026c2e3090ba50")]
 [assembly: System.Reflection.AssemblyProductAttribute("DividiFacil.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DividiFacil.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

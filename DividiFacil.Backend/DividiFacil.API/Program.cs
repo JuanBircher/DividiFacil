@@ -13,6 +13,9 @@ using FluentValidation;
 using DividiFacil.Data.Repositories.Interfaces;
 using DividiFacil.Data.Repositories.Decorators;
 using DividiFacil.Data.Repositories.Implementations;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -155,6 +158,18 @@ builder.Services.AddScoped<IConfiguracionNotificacionesRepository>(sp =>
     new CachedConfiguracionNotificacionesRepository(
         sp.GetRequiredService<ConfiguracionNotificacionesRepository>(),
         sp.GetRequiredService<IMemoryCache>()));
+
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddFixedWindowLimiter("GlobalLimiter", config =>
+    {
+        config.PermitLimit = 10; // Máximo 10 requests
+        config.Window = TimeSpan.FromSeconds(1); // Por segundo
+        config.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        config.QueueLimit = 0; // Sin cola, rechaza con 429
+    });
+    options.RejectionStatusCode = 429;
+});
 
 var app = builder.Build();
 
