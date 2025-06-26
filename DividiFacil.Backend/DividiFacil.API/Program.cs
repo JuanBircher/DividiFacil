@@ -10,6 +10,10 @@ using System.Text;
 using Microsoft.Extensions.Caching.Memory;
 using FluentValidation.AspNetCore;
 using FluentValidation;
+using DividiFacil.Data.Repositories.Interfaces;
+using DividiFacil.Data.Repositories.Decorators;
+using DividiFacil.Data.Repositories.Implementations;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -113,6 +117,8 @@ builder.Services.AddCors(options =>
 // Agregar IMemoryCache al contenedor de servicios
 builder.Services.AddMemoryCache();
 
+
+
 // Configurar optimización de Entity Framework
 builder.Services.AddDbContext<ApplicationDbContext>(options => {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
@@ -134,6 +140,21 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => {
 // Registrar repositorios y servicios usando los métodos de extensión actualizados
 builder.Services.RegisterRepositories()
                 .RegisterServices();
+
+builder.Services.AddScoped<IUsuarioRepository>(sp =>
+    new CachedUsuarioRepository(
+        sp.GetRequiredService<UsuarioRepository>(),
+        sp.GetRequiredService<IMemoryCache>()));
+
+builder.Services.AddScoped<IGrupoRepository>(sp =>
+    new CachedGrupoRepository(
+        sp.GetRequiredService<GrupoRepository>(),
+        sp.GetRequiredService<IMemoryCache>()));
+
+builder.Services.AddScoped<IConfiguracionNotificacionesRepository>(sp =>
+    new CachedConfiguracionNotificacionesRepository(
+        sp.GetRequiredService<ConfiguracionNotificacionesRepository>(),
+        sp.GetRequiredService<IMemoryCache>()));
 
 var app = builder.Build();
 
