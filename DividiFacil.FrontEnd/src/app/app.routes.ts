@@ -6,8 +6,11 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./features/auth/login/login.component').then(m => m.LoginComponent),
   },
-  // ¡Redirige la ruta raíz si quieres!
+  {
+    path: 'auth/register',
+    loadComponent: () =>
+      import('./features/auth/register/register.component').then(m => m.RegisterComponent),
+  },
   { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
-  // Ruta wildcard opcional para errores 404
   { path: '**', redirectTo: 'auth/login' }
 ];

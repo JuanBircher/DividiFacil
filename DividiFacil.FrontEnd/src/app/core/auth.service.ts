@@ -4,12 +4,14 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { LoginRequest } from './models/login-request.model';
 import { LoginResponse } from './models/login-response.model';
+import { RegisterResponse } from './models/register-response.model';
+import { RegisterRequest } from './models/register-request.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private apiUrl = '/api/auth';
+  private apiUrl = 'http://localhost:62734/api/auth';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   login(loginRequest: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, loginRequest).pipe(
@@ -27,11 +29,20 @@ export class AuthService {
     // Puedes limpiar otros datos aquí
   }
 
+  register(registerRequest: RegisterRequest): Observable<RegisterResponse> {
+    return this.http.post<RegisterResponse>(`${this.apiUrl}/registro`, registerRequest).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   private handleError(error: HttpErrorResponse) {
-    // Ajusta según la estructura de error del back
     let mensaje = 'Error desconocido.';
-    if (error.error && error.error.Mensaje) {
-      mensaje = error.error.Mensaje;
+    if (error.error && typeof error.error === 'string') {
+      // Si el error es un string plano
+      mensaje = error.error;
+    } else if (error.error && error.error.mensaje) {
+      // Si tu backend responde { mensaje: "..." }
+      mensaje = error.error.mensaje;
     }
     return throwError(() => new Error(mensaje));
   }
