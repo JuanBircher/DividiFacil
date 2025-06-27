@@ -13,20 +13,27 @@ export class AuthService {
 
   constructor(private http: HttpClient) { }
 
-  login(loginRequest: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, loginRequest).pipe(
-      map(response => {
-        // Puedes guardar el token aquí si quieres
-        localStorage.setItem('token', response.token);
-        return response;
-      }),
-      catchError(this.handleError)
-    );
+  login(loginRequest: { email: string; password: string }): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/login`, loginRequest)
+      .pipe(
+        map(response => {
+          if (response.exito && response.token) {
+            localStorage.setItem('token', response.token);
+            localStorage.setItem('nombreUsuario', response.nombre || '');
+          }
+          return response;
+        }),
+        catchError(this.handleError)
+      );
   }
 
-  logout() {
+   logout() {
     localStorage.removeItem('token');
-    // Puedes limpiar otros datos aquí
+    localStorage.removeItem('nombreUsuario');
+  }
+
+  isAuthenticated(): boolean {
+    return !!localStorage.getItem('token');
   }
 
   register(registerRequest: RegisterRequest): Observable<RegisterResponse> {
@@ -35,13 +42,11 @@ export class AuthService {
     );
   }
 
-  private handleError(error: HttpErrorResponse) {
+   private handleError(error: HttpErrorResponse) {
     let mensaje = 'Error desconocido.';
     if (error.error && typeof error.error === 'string') {
-      // Si el error es un string plano
       mensaje = error.error;
     } else if (error.error && error.error.mensaje) {
-      // Si tu backend responde { mensaje: "..." }
       mensaje = error.error.mensaje;
     }
     return throwError(() => new Error(mensaje));

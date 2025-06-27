@@ -55,9 +55,13 @@ export class LoginComponent {
     };
 
     this.authService.login(loginRequest).subscribe({
-      next: () => {
+      next: (response) => {
         this.loading = false;
-        this.router.navigate(['/dashboard']);
+        if (response.exito) {
+          this.router.navigate(['/dashboard']);
+        } else {
+          this.error = response.mensaje || 'Error al iniciar sesión';
+        }
       },
       error: err => {
         this.loading = false;
