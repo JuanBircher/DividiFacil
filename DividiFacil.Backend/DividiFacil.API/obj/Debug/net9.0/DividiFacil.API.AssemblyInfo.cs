@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DividiFacil.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5cd30f0dec745ff06fd389ccc84a9f049b0fd24a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d557597c0a4b4dbf5b5d564b3ae72583b97d9a59")]
 [assembly: System.Reflection.AssemblyProductAttribute("DividiFacil.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DividiFacil.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

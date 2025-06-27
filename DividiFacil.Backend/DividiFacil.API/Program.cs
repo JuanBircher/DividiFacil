@@ -165,15 +165,24 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => {
 builder.Services.RegisterRepositories()
                 .RegisterServices();
 
+builder.Services.AddScoped<UsuarioRepository>();
+
+
 builder.Services.AddScoped<IUsuarioRepository>(sp =>
     new CachedUsuarioRepository(
         sp.GetRequiredService<UsuarioRepository>(),
         sp.GetRequiredService<IMemoryCache>()));
 
+builder.Services.AddScoped<GrupoRepository>();
+
+
 builder.Services.AddScoped<IGrupoRepository>(sp =>
     new CachedGrupoRepository(
         sp.GetRequiredService<GrupoRepository>(),
         sp.GetRequiredService<IMemoryCache>()));
+
+builder.Services.AddScoped<ConfiguracionNotificacionesRepository>();
+
 
 builder.Services.AddScoped<IConfiguracionNotificacionesRepository>(sp =>
     new CachedConfiguracionNotificacionesRepository(
