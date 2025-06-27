@@ -1,1 +1,29 @@
-<p>login works!</p>
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="login-form">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Iniciar Sesión</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" type="email" />
+        <mat-error *ngIf="form.controls['email'].hasError('required')">El email es obligatorio</mat-error>
+        <mat-error *ngIf="form.controls['email'].hasError('email')">Formato inválido</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Contraseña</mat-label>
+        <input matInput formControlName="password" type="password" />
+        <mat-error *ngIf="form.controls['password'].hasError('required')">La contraseña es obligatoria</mat-error>
+      </mat-form-field>
+
+      <div *ngIf="error" class="error">{{ error }}</div>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="primary" type="submit" [disabled]="loading || form.invalid">
+        Entrar
+      </button>
+      <mat-progress-spinner *ngIf="loading" diameter="20" mode="indeterminate"></mat-progress-spinner>
+    </mat-card-actions>
+  </mat-card>
+</form>
