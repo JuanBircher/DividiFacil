@@ -1,1 +1,24 @@
-<p>alta works!</p>
+<div class="alta-grupo-container">
+  <h2>Alta de Grupo</h2>
+  <form [formGroup]="grupoForm" (ngSubmit)="submit()">
+    <div>
+      <label for="nombre">Nombre del Grupo</label>
+      <input id="nombre" formControlName="nombre" type="text" maxlength="50" />
+      <div *ngIf="grupoForm.get('nombre')?.touched && grupoForm.get('nombre')?.invalid" class="error">
+        Nombre es requerido y debe tener máximo 50 caracteres.
+      </div>
+    </div>
+
+    <div>
+      <label for="descripcion">Descripción</label>
+      <textarea id="descripcion" formControlName="descripcion" maxlength="200"></textarea>
+      <div *ngIf="grupoForm.get('descripcion')?.touched && grupoForm.get('descripcion')?.invalid" class="error">
+        Máximo 200 caracteres.
+      </div>
+    </div>
+
+    <button type="submit" [disabled]="loading">Crear Grupo</button>
+    <div *ngIf="loading">Creando grupo...</div>
+    <div *ngIf="error" class="error">{{ error }}</div>
+  </form>
+</div>

@@ -33,11 +33,12 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent),
       },
-      // {
-      //   path: 'grupos',
-      //   loadComponent: () =>
-      //     import('./features/grupos/grupos.component').then(m => m.GruposComponent),
-      // },
+      {
+        path: 'grupos/alta',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/grupos/alta/alta.component').then(m => m.AltaComponent),
+      },
       // {
       //   path: 'gastos',
       //   loadComponent: () =>
