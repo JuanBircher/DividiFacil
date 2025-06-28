@@ -8,7 +8,7 @@ import { AuthService } from '../../core/auth.service';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  template: `dashboard.component.html`,
+  templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss'],
   imports: [CommonModule, MatCardModule, MatButtonModule],
 })

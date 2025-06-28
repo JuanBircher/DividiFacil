@@ -2,10 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { LoginRequest } from './models/login-request.model';
-import { LoginResponse } from './models/login-response.model';
-import { RegisterResponse } from './models/register-response.model';
-import { RegisterRequest } from './models/register-request.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -16,10 +12,10 @@ export class AuthService {
   login(loginRequest: { email: string; password: string }): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/login`, loginRequest)
       .pipe(
-        map(response => {
-          if (response.exito && response.token) {
-            localStorage.setItem('token', response.token);
-            localStorage.setItem('nombreUsuario', response.nombre || '');
+        map((response: any) => {
+          if (response.exito && response.data?.token) {
+            localStorage.setItem('token', response.data.token);
+            localStorage.setItem('nombreUsuario', response.data.usuario?.nombre || '');
           }
           return response;
         }),
@@ -27,7 +23,7 @@ export class AuthService {
       );
   }
 
-   logout() {
+  logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('nombreUsuario');
   }
@@ -36,13 +32,13 @@ export class AuthService {
     return !!localStorage.getItem('token');
   }
 
-  register(registerRequest: RegisterRequest): Observable<RegisterResponse> {
-    return this.http.post<RegisterResponse>(`${this.apiUrl}/registro`, registerRequest).pipe(
+  register(registerRequest: { email: string; password: string; nombre: string }): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/registro`, registerRequest).pipe(
       catchError(this.handleError)
     );
   }
 
-   private handleError(error: HttpErrorResponse) {
+  private handleError(error: HttpErrorResponse) {
     let mensaje = 'Error desconocido.';
     if (error.error && typeof error.error === 'string') {
       mensaje = error.error;

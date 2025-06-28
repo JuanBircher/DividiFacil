@@ -48,7 +48,6 @@ export class LoginComponent {
 
     this.loading = true;
 
-    // Creamos un objeto LoginRequest asegurando que los valores no sean null
     const loginRequest = {
       email: this.form.value.email || '',
       password: this.form.value.password || ''
@@ -65,7 +64,7 @@ export class LoginComponent {
       },
       error: err => {
         this.loading = false;
-        this.error = err.message;
+        this.error = err.message || 'Ha ocurrido un error inesperado';
       }
     });
   }
