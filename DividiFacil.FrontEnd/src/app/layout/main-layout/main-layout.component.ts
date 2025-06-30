@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { RouterOutlet, Router } from '@angular/router';
+import { RouterOutlet, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -21,15 +21,21 @@ import { AuthService } from '../../core/auth.service';
     MatIconModule,
     MatSidenavModule,
     MatListModule,
+    RouterModule
   ]
 })
 export class MainLayoutComponent {
   nombreUsuario = localStorage.getItem('nombreUsuario') || '';
+  gruposMenuAbierto = false;
 
   constructor(private authService: AuthService, private router: Router) {}
 
   logout() {
     this.authService.logout();
     this.router.navigate(['/auth/login']);
+  }
+
+  toggleGruposMenu() {
+    this.gruposMenuAbierto = !this.gruposMenuAbierto;
   }
 }

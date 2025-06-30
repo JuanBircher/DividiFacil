@@ -1,15 +1,16 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { GrupoService } from '../../../core/services/grupo.services';
+import { GrupoService, GrupoCreacionDto } from '../../../core/services/grupo.services';
 import { Router } from '@angular/router';
-import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-alta-grupo',
+  standalone: true,
   templateUrl: './alta.component.html',
   styleUrls: ['./alta.component.scss'],
   imports: [
-    BrowserModule,
+    CommonModule,
     ReactiveFormsModule,
   ]
 })
@@ -24,8 +25,9 @@ export class AltaComponent {
     private router: Router,
   ) {
     this.grupoForm = this.fb.group({
-      nombre: ['', [Validators.required, Validators.maxLength(50)]],
-      descripcion: ['', [Validators.maxLength(200)]],
+      NombreGrupo: ['', [Validators.required, Validators.maxLength(50)]],
+      Descripcion: ['', [Validators.maxLength(200)]],
+      ModoOperacion: ['Estandar']
     });
   }
 
@@ -37,10 +39,11 @@ export class AltaComponent {
     this.loading = true;
     this.error = null;
 
+    const grupo: GrupoCreacionDto = this.grupoForm.value;
     this.grupoService.crearGrupo(this.grupoForm.value).subscribe({
       next: () => {
         this.loading = false;
-        this.router.navigate(['/dashboard']); // Cambia destino si quieres otra ruta post-alta
+        this.router.navigate(['/grupos']);
       },
       error: (err) => {
         this.loading = false;

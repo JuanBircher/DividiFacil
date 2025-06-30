@@ -21,7 +21,7 @@ import { RouterModule } from '@angular/router';
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    RouterModule // <--- Importante para routerLink
+    RouterModule
   ]
 })
 export class ListadoComponent implements OnInit {

@@ -1,7 +1,5 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/auth.guard';
-
-// ⚠️ Importación directa para MainLayoutComponent, necesario para rutas hijas protegidas
 import { MainLayoutComponent } from '../../src/app/layout/main-layout/main-layout.component';
 
 export const routes: Routes = [
@@ -34,10 +32,14 @@ export const routes: Routes = [
           import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent),
       },
       {
+        path: 'grupos',
+        loadComponent: () =>
+          import('./features/grupos/listado/listado.component').then(m => m.ListadoComponent),
+      },
+      {
         path: 'grupos/alta',
         canActivate: [authGuard],
-        loadComponent: () =>
-          import('./features/grupos/alta/alta.component').then(m => m.AltaComponent),
+        loadComponent: () => import('./features/grupos/alta/alta.component').then(m => m.AltaComponent),
       },
       // {
       //   path: 'gastos',

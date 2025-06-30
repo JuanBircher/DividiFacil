@@ -9,6 +9,12 @@ interface ApiResponse<T> {
   // Puedes agregar más campos según tu API (mensaje, etc.)
 }
 
+export interface GrupoCreacionDto {
+  NombreGrupo: string;
+  Descripcion?: string;
+  ModoOperacion: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class GrupoService {
   private apiUrl = 'http://localhost:62734/api/grupos';
@@ -23,7 +29,7 @@ export class GrupoService {
     return this.http.get<ApiResponse<Grupo>>(`${this.apiUrl}/${idGrupo}`);
   }
 
-  crearGrupo(grupo: Partial<Grupo>): Observable<ApiResponse<Grupo>> {
+  crearGrupo(grupo: GrupoCreacionDto): Observable<ApiResponse<Grupo>> {
     return this.http.post<ApiResponse<Grupo>>(this.apiUrl, grupo);
   }
 

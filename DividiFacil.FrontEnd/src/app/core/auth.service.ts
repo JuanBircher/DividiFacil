@@ -15,7 +15,9 @@ export class AuthService {
         map((response: any) => {
           if (response.exito && response.data?.token) {
             localStorage.setItem('token', response.data.token);
+            console.log('[AuthService] Token:', response.data.token);
             localStorage.setItem('nombreUsuario', response.data.usuario?.nombre || '');
+            console.log('[AuthService] Nombre de usuario:', response.data.usuario?.nombre || '');
           }
           return response;
         }),
