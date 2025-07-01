@@ -77,6 +77,8 @@ namespace DividiFacil.Services.Implementations
                 FechaUnion = DateTime.UtcNow
             };
 
+            await _miembroGrupoRepository.CreateAsync(miembro);
+
             // Guardar los cambios
             await _grupoRepository.SaveAsync();
 

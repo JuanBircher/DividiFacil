@@ -1,39 +1,33 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\juanb\\OneDrive\\Escritorio\\Programar\\Desarrollando\\DividiFacil\\DividiFacil.Backend\\DividiFacil.Data\\DividiFacil.Data.csproj": {}
+    "/home/runner/work/DividiFacil/DividiFacil/DividiFacil.Backend/DividiFacil.Data/DividiFacil.Data.csproj": {}
   },
   "projects": {
-    "C:\\Users\\juanb\\OneDrive\\Escritorio\\Programar\\Desarrollando\\DividiFacil\\DividiFacil.Backend\\DividiFacil.Data\\DividiFacil.Data.csproj": {
+    "/home/runner/work/DividiFacil/DividiFacil/DividiFacil.Backend/DividiFacil.Data/DividiFacil.Data.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\juanb\\OneDrive\\Escritorio\\Programar\\Desarrollando\\DividiFacil\\DividiFacil.Backend\\DividiFacil.Data\\DividiFacil.Data.csproj",
+        "projectUniqueName": "/home/runner/work/DividiFacil/DividiFacil/DividiFacil.Backend/DividiFacil.Data/DividiFacil.Data.csproj",
         "projectName": "DividiFacil.Data",
-        "projectPath": "C:\\Users\\juanb\\OneDrive\\Escritorio\\Programar\\Desarrollando\\DividiFacil\\DividiFacil.Backend\\DividiFacil.Data\\DividiFacil.Data.csproj",
-        "packagesPath": "C:\\Users\\juanb\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\juanb\\OneDrive\\Escritorio\\Programar\\Desarrollando\\DividiFacil\\DividiFacil.Backend\\DividiFacil.Data\\obj\\",
+        "projectPath": "/home/runner/work/DividiFacil/DividiFacil/DividiFacil.Backend/DividiFacil.Data/DividiFacil.Data.csproj",
+        "packagesPath": "/home/runner/.nuget/packages/",
+        "outputPath": "/home/runner/work/DividiFacil/DividiFacil/DividiFacil.Backend/DividiFacil.Data/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\juanb\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/home/runner/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
-          "net9.0"
+          "net8.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net9.0": {
-            "targetAlias": "net9.0",
+          "net8.0": {
+            "targetAlias": "net8.0",
             "projectReferences": {
-              "C:\\Users\\juanb\\OneDrive\\Escritorio\\Programar\\Desarrollando\\DividiFacil\\DividiFacil.Backend\\DividiFacil.Domain\\DividiFacil.Domain.csproj": {
-                "projectPath": "C:\\Users\\juanb\\OneDrive\\Escritorio\\Programar\\Desarrollando\\DividiFacil\\DividiFacil.Backend\\DividiFacil.Domain\\DividiFacil.Domain.csproj"
+              "/home/runner/work/DividiFacil/DividiFacil/DividiFacil.Backend/DividiFacil.Domain/DividiFacil.Domain.csproj": {
+                "projectPath": "/home/runner/work/DividiFacil/DividiFacil/DividiFacil.Backend/DividiFacil.Domain/DividiFacil.Domain.csproj"
               }
             }
           }
@@ -42,17 +36,11 @@
           "warnAsError": [
             "NU1605"
           ]
-        },
-        "restoreAuditProperties": {
-          "enableAudit": "true",
-          "auditLevel": "low",
-          "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "9.0.200"
+        }
       },
       "frameworks": {
-        "net9.0": {
-          "targetAlias": "net9.0",
+        "net8.0": {
+          "targetAlias": "net8.0",
           "dependencies": {
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
@@ -95,37 +83,31 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.117/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\juanb\\OneDrive\\Escritorio\\Programar\\Desarrollando\\DividiFacil\\DividiFacil.Backend\\DividiFacil.Domain\\DividiFacil.Domain.csproj": {
+    "/home/runner/work/DividiFacil/DividiFacil/DividiFacil.Backend/DividiFacil.Domain/DividiFacil.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\juanb\\OneDrive\\Escritorio\\Programar\\Desarrollando\\DividiFacil\\DividiFacil.Backend\\DividiFacil.Domain\\DividiFacil.Domain.csproj",
+        "projectUniqueName": "/home/runner/work/DividiFacil/DividiFacil/DividiFacil.Backend/DividiFacil.Domain/DividiFacil.Domain.csproj",
         "projectName": "DividiFacil.Domain",
-        "projectPath": "C:\\Users\\juanb\\OneDrive\\Escritorio\\Programar\\Desarrollando\\DividiFacil\\DividiFacil.Backend\\DividiFacil.Domain\\DividiFacil.Domain.csproj",
-        "packagesPath": "C:\\Users\\juanb\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\juanb\\OneDrive\\Escritorio\\Programar\\Desarrollando\\DividiFacil\\DividiFacil.Backend\\DividiFacil.Domain\\obj\\",
+        "projectPath": "/home/runner/work/DividiFacil/DividiFacil/DividiFacil.Backend/DividiFacil.Domain/DividiFacil.Domain.csproj",
+        "packagesPath": "/home/runner/.nuget/packages/",
+        "outputPath": "/home/runner/work/DividiFacil/DividiFacil/DividiFacil.Backend/DividiFacil.Domain/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
-        ],
         "configFilePaths": [
-          "C:\\Users\\juanb\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/home/runner/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
-          "net9.0"
+          "net8.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net9.0": {
-            "targetAlias": "net9.0",
+          "net8.0": {
+            "targetAlias": "net8.0",
             "projectReferences": {}
           }
         },
@@ -133,17 +115,11 @@
           "warnAsError": [
             "NU1605"
           ]
-        },
-        "restoreAuditProperties": {
-          "enableAudit": "true",
-          "auditLevel": "low",
-          "auditMode": "direct"
-        },
-        "SdkAnalysisLevel": "9.0.200"
+        }
       },
       "frameworks": {
-        "net9.0": {
-          "targetAlias": "net9.0",
+        "net8.0": {
+          "targetAlias": "net8.0",
           "imports": [
             "net461",
             "net462",
@@ -160,7 +136,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.201/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/8.0.117/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

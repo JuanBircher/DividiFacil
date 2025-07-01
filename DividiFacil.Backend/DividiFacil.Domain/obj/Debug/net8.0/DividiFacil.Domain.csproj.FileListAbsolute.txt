@@ -1,0 +1,12 @@
+/home/runner/work/DividiFacil/DividiFacil/DividiFacil.Backend/DividiFacil.Domain/bin/Debug/net8.0/DividiFacil.Domain.deps.json
+/home/runner/work/DividiFacil/DividiFacil/DividiFacil.Backend/DividiFacil.Domain/bin/Debug/net8.0/DividiFacil.Domain.dll
+/home/runner/work/DividiFacil/DividiFacil/DividiFacil.Backend/DividiFacil.Domain/bin/Debug/net8.0/DividiFacil.Domain.pdb
+/home/runner/work/DividiFacil/DividiFacil/DividiFacil.Backend/DividiFacil.Domain/obj/Debug/net8.0/DividiFacil.Domain.GeneratedMSBuildEditorConfig.editorconfig
+/home/runner/work/DividiFacil/DividiFacil/DividiFacil.Backend/DividiFacil.Domain/obj/Debug/net8.0/DividiFacil.Domain.AssemblyInfoInputs.cache
+/home/runner/work/DividiFacil/DividiFacil/DividiFacil.Backend/DividiFacil.Domain/obj/Debug/net8.0/DividiFacil.Domain.AssemblyInfo.cs
+/home/runner/work/DividiFacil/DividiFacil/DividiFacil.Backend/DividiFacil.Domain/obj/Debug/net8.0/DividiFacil.Domain.csproj.CoreCompileInputs.cache
+/home/runner/work/DividiFacil/DividiFacil/DividiFacil.Backend/DividiFacil.Domain/obj/Debug/net8.0/DividiFacil.Domain.sourcelink.json
+/home/runner/work/DividiFacil/DividiFacil/DividiFacil.Backend/DividiFacil.Domain/obj/Debug/net8.0/DividiFacil.Domain.dll
+/home/runner/work/DividiFacil/DividiFacil/DividiFacil.Backend/DividiFacil.Domain/obj/Debug/net8.0/refint/DividiFacil.Domain.dll
+/home/runner/work/DividiFacil/DividiFacil/DividiFacil.Backend/DividiFacil.Domain/obj/Debug/net8.0/DividiFacil.Domain.pdb
+/home/runner/work/DividiFacil/DividiFacil/DividiFacil.Backend/DividiFacil.Domain/obj/Debug/net8.0/ref/DividiFacil.Domain.dll
