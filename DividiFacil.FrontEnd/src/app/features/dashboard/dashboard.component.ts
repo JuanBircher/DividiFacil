@@ -7,6 +7,7 @@ import { AuthService } from '../../core/auth.service';
 import { DashboardStatsComponent } from './components/dashboard-stats/dashboard-stats.component';
 import { RecentGroupsComponent } from './components/recent-groups/recent-groups.component';
 import { QuickActionsComponent } from './components/quick-actions/quick-actions.component';
+import { RecentActivityComponent } from './components/recent-activity/recent-activity.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -20,7 +21,8 @@ import { QuickActionsComponent } from './components/quick-actions/quick-actions.
     MatIconModule,
     DashboardStatsComponent,
     RecentGroupsComponent,
-    QuickActionsComponent
+    QuickActionsComponent,
+    RecentActivityComponent
   ]
 })
 export class DashboardComponent implements OnInit {

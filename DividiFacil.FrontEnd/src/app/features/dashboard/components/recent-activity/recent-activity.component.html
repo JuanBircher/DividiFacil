@@ -1,0 +1,134 @@
+<app-card 
+  title="Actividad Reciente"
+  subtitle="Últimos movimientos, gastos y pagos"
+  icon="history"
+  iconColor="primary"
+  [showAction]="true"
+  actionText="Ver todo"
+  (click)="verTodosLosGastos()">
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <app-loading-spinner 
+      [diameter]="30" 
+      message="Cargando actividad...">
+    </app-loading-spinner>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="error-message">
+    <mat-icon color="warn">error</mat-icon>
+    <span>{{ error }}</span>
+    <button mat-button color="primary" (click)="refrescar()">
+      Reintentar
+    </button>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && !error && actividadReciente.length === 0" class="empty-state">
+    <mat-icon>timeline</mat-icon>
+    <h4>No hay actividad reciente</h4>
+    <p>Comienza creando tu primer gasto o realizando un pago</p>
+    <button mat-raised-button color="primary" (click)="crearGasto()">
+      <mat-icon>add</mat-icon>
+      Crear Gasto
+    </button>
+  </div>
+
+  <!-- Activity Timeline -->
+  <div *ngIf="!loading && !error && actividadReciente.length > 0" class="activity-timeline">
+    
+    <!-- Filtros rápidos -->
+    <div class="timeline-filters">
+      <mat-chip-set>
+        <mat-chip (click)="filtrarPorTipo('todos')" selected>
+          Todos
+        </mat-chip>
+        <mat-chip (click)="filtrarPorTipo('gasto')">
+          <mat-icon>receipt</mat-icon>
+          Gastos
+        </mat-chip>
+        <mat-chip (click)="filtrarPorTipo('pago')">
+          <mat-icon>payment</mat-icon>
+          Pagos
+        </mat-chip>
+      </mat-chip-set>
+    </div>
+
+    <!-- Timeline Items -->
+    <div class="timeline-list">
+      <div 
+        *ngFor="let item of actividadReciente; trackBy: trackByItemId"
+        class="timeline-item"
+        [class]="'timeline-' + item.tipo"
+        (click)="item.accion && item.accion()">
+        
+        <!-- Timeline Connector -->
+        <div class="timeline-connector">
+          <div class="timeline-dot" [class]="'dot-' + item.color">
+            <mat-icon [class]="'icon-' + item.color">{{ item.icono }}</mat-icon>
+          </div>
+          <div class="timeline-line"></div>
+        </div>
+
+        <!-- Content -->
+        <div class="timeline-content">
+          <div class="content-header">
+            <h4 class="content-title">
+              {{ item.concepto | truncate:40 }}
+            </h4>
+            <div class="content-meta">
+              <span class="amount" [class]="'amount-' + item.color">
+                {{ item.monto | currencyFormat }}
+              </span>
+              <mat-chip 
+                *ngIf="item.estado" 
+                [color]="item.color"
+                class="status-chip">
+                {{ item.estado }}
+              </mat-chip>
+            </div>
+          </div>
+          
+          <div class="content-details">
+            <span class="date">
+              <mat-icon>schedule</mat-icon>
+              {{ item.fecha | dateFormat }}
+            </span>
+            
+            <span *ngIf="item.usuarioRelacionado" class="user">
+              <mat-icon>person</mat-icon>
+              {{ item.usuarioRelacionado }}
+            </span>
+            
+            <span *ngIf="item.grupoRelacionado" class="group">
+              <mat-icon>group</mat-icon>
+              {{ item.grupoRelacionado }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Action Arrow -->
+        <div class="timeline-action">
+          <mat-icon>chevron_right</mat-icon>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="timeline-actions">
+      <button 
+        mat-button 
+        color="primary"
+        (click)="verTodosLosGastos()">
+        Ver todos los gastos
+      </button>
+      <button 
+        mat-button 
+        color="primary"
+        (click)="verTodosLosPagos()">
+        Ver todos los pagos
+      </button>
+    </div>
+  </div>
+</app-card>
