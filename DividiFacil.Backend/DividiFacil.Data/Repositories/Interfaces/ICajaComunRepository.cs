@@ -9,5 +9,9 @@ namespace DividiFacil.Data.Repositories.Interfaces
     {
         Task<CajaComun?> GetByGrupoAsync(Guid idGrupo);
         Task<IEnumerable<MovimientoCaja>> GetMovimientosByCajaAsync(Guid idCaja);
+        Task<IEnumerable<MovimientoCaja>> GetMovimientosAsync(Guid idCaja);
+        Task<MovimientoCaja?> GetMovimientoByIdAsync(Guid idMovimiento);
+        Task RegistrarMovimientoAsync(MovimientoCaja movimiento);
+        Task EliminarMovimientoAsync(Guid idMovimiento);
     }
 }

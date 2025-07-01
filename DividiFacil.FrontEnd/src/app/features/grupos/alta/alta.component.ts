@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { GrupoService, GrupoCreacionDto } from '../../../core/services/grupo.services';
+import { GrupoCreacionDto } from '../../../core/models/grupo.model';
+import { GrupoService } from '../../../core/services/grupo.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
@@ -25,30 +26,30 @@ export class AltaComponent {
     private router: Router,
   ) {
     this.grupoForm = this.fb.group({
-      NombreGrupo: ['', [Validators.required, Validators.maxLength(50)]],
-      Descripcion: ['', [Validators.maxLength(200)]],
-      ModoOperacion: ['Estandar']
+      nombreGrupo: ['', [Validators.required, Validators.minLength(3)]],    // ✅ camelCase
+      descripcion: [''],                                                   // ✅ camelCase
+      modoOperacion: ['', Validators.required]                             // ✅ camelCase
     });
   }
 
-  submit() {
-    if (this.grupoForm.invalid) {
-      this.grupoForm.markAllAsTouched();
-      return;
+  crearGrupo() {
+    if (this.grupoForm.valid) {
+      const grupoData: GrupoCreacionDto = {
+        nombreGrupo: this.grupoForm.get('nombreGrupo')?.value,      // ✅ camelCase
+        descripcion: this.grupoForm.get('descripcion')?.value,      // ✅ camelCase
+        modoOperacion: this.grupoForm.get('modoOperacion')?.value   // ✅ camelCase
+      };
+      
+      this.grupoService.crearGrupo(grupoData).subscribe({
+        next: (response) => {
+          if (response.exito) {
+            this.router.navigate(['/grupos']);
+          }
+        },
+        error: (error) => {
+          console.error('Error al crear grupo:', error);
+        }
+      });
     }
-    this.loading = true;
-    this.error = null;
-
-    const grupo: GrupoCreacionDto = this.grupoForm.value;
-    this.grupoService.crearGrupo(this.grupoForm.value).subscribe({
-      next: () => {
-        this.loading = false;
-        this.router.navigate(['/grupos']);
-      },
-      error: (err) => {
-        this.loading = false;
-        this.error = err?.error?.message || 'Error al crear grupo';
-      }
-    });
   }
 }

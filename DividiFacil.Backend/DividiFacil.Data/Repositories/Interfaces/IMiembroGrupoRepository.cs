@@ -13,5 +13,10 @@ namespace DividiFacil.Data.Repositories.Interfaces
         Task<IEnumerable<MiembroGrupo>> GetGruposByUsuarioAsync(Guid idUsuario);
         Task<bool> EsMiembroAsync(Guid idUsuario, Guid idGrupo);
         Task<bool> EsAdminAsync(Guid idUsuario, Guid idGrupo);
+        // Agregar estos métodos si no existen:
+
+        Task<bool> TieneGastosPendientesAsync(Guid idUsuario, Guid idGrupo);
+        Task UpdateAsync(MiembroGrupo miembro);
+        Task DeleteAsync(Guid idMiembro);
     }
 }

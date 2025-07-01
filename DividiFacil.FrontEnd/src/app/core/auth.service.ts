@@ -1,52 +1,114 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { tap } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
+import { Usuario, UsuarioCreacionDto } from './models/usuario.model';
 
-@Injectable({ providedIn: 'root' })
+interface ApiResponse<T> {
+  exito: boolean;
+  data: T;
+  mensaje?: string;
+}
+
+interface LoginDto {
+  email: string;
+  password: string;
+}
+
+interface UsuarioLogueadoDto {
+  usuario: Usuario;
+  token: string;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
 export class AuthService {
-  private apiUrl = 'http://localhost:62734/api/auth';
+  private readonly apiUrl = `${environment.apiUrl}/api/auth`;
+  
+  private usuarioActualSubject = new BehaviorSubject<Usuario | null>(null);
+  public usuarioActual$ = this.usuarioActualSubject.asObservable();
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+    this.cargarUsuarioDesdeStorage();
+  }
 
-  login(loginRequest: { email: string; password: string }): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/login`, loginRequest)
+  login(loginData: LoginDto): Observable<ApiResponse<UsuarioLogueadoDto>> {
+    return this.http.post<ApiResponse<UsuarioLogueadoDto>>(`${this.apiUrl}/login`, loginData)
       .pipe(
-        map((response: any) => {
-          if (response.exito && response.data?.token) {
+        tap(response => {
+          if (response.exito && response.data) {
             localStorage.setItem('token', response.data.token);
-            console.log('[AuthService] Token:', response.data.token);
-            localStorage.setItem('nombreUsuario', response.data.usuario?.nombre || '');
-            console.log('[AuthService] Nombre de usuario:', response.data.usuario?.nombre || '');
+            localStorage.setItem('usuario', JSON.stringify(response.data.usuario));
+            this.usuarioActualSubject.next(response.data.usuario);
           }
-          return response;
-        }),
-        catchError(this.handleError)
+        })
       );
   }
 
-  logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('nombreUsuario');
+  register(registerData: UsuarioCreacionDto): Observable<ApiResponse<UsuarioLogueadoDto>> {
+    return this.http.post<ApiResponse<UsuarioLogueadoDto>>(`${this.apiUrl}/register`, registerData)
+      .pipe(
+        tap(response => {
+          if (response.exito && response.data) {
+            localStorage.setItem('token', response.data.token);
+            localStorage.setItem('usuario', JSON.stringify(response.data.usuario));
+            this.usuarioActualSubject.next(response.data.usuario);
+          }
+        })
+      );
   }
 
-  isAuthenticated(): boolean {
+  logout(): Observable<ApiResponse<boolean>> {
+    return this.http.post<ApiResponse<boolean>>(`${this.apiUrl}/logout`, {})
+      .pipe(
+        tap(() => {
+          this.limpiarSesion();
+        })
+      );
+  }
+
+  obtenerUsuarioActual(): Observable<ApiResponse<Usuario>> {
+    return this.http.get<ApiResponse<Usuario>>(`${this.apiUrl}/usuario-actual`)
+      .pipe(
+        tap(response => {
+          if (response.exito && response.data) {
+            localStorage.setItem('usuario', JSON.stringify(response.data));
+            this.usuarioActualSubject.next(response.data);
+          }
+        })
+      );
+  }
+
+  estaLogueado(): boolean {
     return !!localStorage.getItem('token');
   }
 
-  register(registerRequest: { email: string; password: string; nombre: string }): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/registro`, registerRequest).pipe(
-      catchError(this.handleError)
-    );
+  obtenerToken(): string | null {
+    return localStorage.getItem('token');
   }
 
-  private handleError(error: HttpErrorResponse) {
-    let mensaje = 'Error desconocido.';
-    if (error.error && typeof error.error === 'string') {
-      mensaje = error.error;
-    } else if (error.error && error.error.mensaje) {
-      mensaje = error.error.mensaje;
+  obtenerUsuario(): Usuario | null {
+    return this.usuarioActualSubject.value;
+  }
+
+  private cargarUsuarioDesdeStorage(): void {
+    const usuarioJson = localStorage.getItem('usuario');
+    if (usuarioJson) {
+      try {
+        const usuario = JSON.parse(usuarioJson);
+        this.usuarioActualSubject.next(usuario);
+      } catch (error) {
+        console.error('Error al parsear usuario desde localStorage:', error);
+        this.limpiarSesion();
+      }
     }
-    return throwError(() => new Error(mensaje));
+  }
+
+  private limpiarSesion(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('usuario');
+    this.usuarioActualSubject.next(null);
   }
 }

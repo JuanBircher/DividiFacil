@@ -20,13 +20,15 @@ namespace DividiFacil.Services.Implementations
         private readonly IDetalleGastoRepository _detalleGastoRepository;
         private readonly INotificacionService _notificacionService;
         private readonly IRecordatorioService _recordatorioService;
+        private readonly IDetalleGastoRepository _pagoUsuarioRepository;
+
 
         public PagoService(
             IPagoRepository pagoRepository,
             IMiembroGrupoRepository miembroGrupoRepository,
             IUsuarioRepository usuarioRepository,
             IGrupoRepository grupoRepository,
-            IDetalleGastoRepository detalleGastoRepository, 
+            IDetalleGastoRepository detalleGastoRepository,
             INotificacionService notificacionService,
             IRecordatorioService recordatorioService)
         {
@@ -37,6 +39,8 @@ namespace DividiFacil.Services.Implementations
             _detalleGastoRepository = detalleGastoRepository;
             _notificacionService = notificacionService;
             _recordatorioService = recordatorioService;
+            _pagoUsuarioRepository = detalleGastoRepository;
+
         }
 
         public async Task<ResponseDto<PagoDto>> CrearPagoAsync(PagoCreacionDto pagoCreacionDto, string idUsuarioCreador)
@@ -157,55 +161,62 @@ namespace DividiFacil.Services.Implementations
             }
         }
 
-        public async Task<ResponseDto> ConfirmarPagoAsync(Guid idPago, string idUsuarioReceptor)
+               public async Task<ResponseDto> ConfirmarPagoAsync(Guid idPago, string idUsuario)
         {
             var response = new ResponseDto();
-
+            
             try
             {
-                // Validar que el usuario receptor existe
-                if (!Guid.TryParse(idUsuarioReceptor, out var idReceptor))
+                // Validar ID de usuario
+                if (!Guid.TryParse(idUsuario, out var idUsuarioGuid))
                 {
                     response.Exito = false;
                     response.Mensaje = "ID de usuario inválido";
                     return response;
                 }
-
-                // Obtener el pago
+        
                 var pago = await _pagoRepository.GetByIdAsync(idPago);
                 if (pago == null)
                 {
                     response.Exito = false;
-                    response.Mensaje = "Pago no encontrado";
+                    response.Mensaje = "El pago no existe";
                     return response;
                 }
-
-                // Verificar que el usuario es el receptor del pago
-                if (pago.IdReceptor != idReceptor)
+        
+                // Verificar si el usuario es parte del pago (corrigiendo la variable)
+                var esParteDelPago = pago.IdPagador == idUsuarioGuid || pago.IdReceptor == idUsuarioGuid;
+                
+                // Variable para verificar si es admin del grupo
+                var esAdmin = false;
+                
+                if (!esParteDelPago)
                 {
-                    response.Exito = false;
-                    response.Mensaje = "Solo el receptor puede confirmar el pago";
-                    return response;
+                    // Si no es parte del pago, verificar si es admin del grupo
+                    var miembro = await _miembroGrupoRepository.GetByUsuarioYGrupoAsync(idUsuarioGuid, pago.IdGrupo);
+                    if (miembro != null)
+                    {
+                        esAdmin = miembro.Rol == "Admin";
+                    }
+                    
+                    if (!esAdmin)
+                    {
+                        response.Exito = false;
+                        response.Mensaje = "No tiene permisos para confirmar este pago";
+                        return response;
+                    }
                 }
-
-                // Verificar que el pago está pendiente
-                if (pago.Estado != "Pendiente")
-                {
-                    response.Exito = false;
-                    response.Mensaje = $"No se puede confirmar un pago en estado {pago.Estado}";
-                    return response;
-                }
-
-                // Actualizar el estado del pago
+        
+                // Lógica de confirmación del pago
                 pago.Estado = "Completado";
                 pago.FechaConfirmacion = DateTime.UtcNow;
-
-                // Actualizar en la base de datos
+                // pago.IdUsuarioConfirmacion = idUsuarioGuid;
+        
                 await _pagoRepository.UpdateAsync(pago);
                 await _pagoRepository.SaveAsync();
-                await _notificacionService.CrearNotificacionPagoAsync(idPago, "Confirmado");
-
-                response.Mensaje = "Pago confirmado correctamente";
+        
+                response.Exito = true;
+                response.Mensaje = "Pago confirmado exitosamente";
+                
                 return response;
             }
             catch (Exception ex)

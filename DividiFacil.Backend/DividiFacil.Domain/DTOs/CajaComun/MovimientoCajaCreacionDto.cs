@@ -6,7 +6,8 @@ namespace DividiFacil.Domain.DTOs.CajaComun
     {
         public Guid IdCaja { get; set; }
         public decimal Monto { get; set; }
-        public string TipoMovimiento { get; set; } = string.Empty;
+        public string TipoMovimiento { get; set; } = string.Empty; // "Ingreso" o "Egreso"
         public string Concepto { get; set; } = string.Empty;
+        public string? ComprobantePath { get; set; }
     }
 }

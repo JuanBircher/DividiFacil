@@ -11,5 +11,6 @@ namespace DividiFacil.Data.Repositories.Interfaces
         Task<Grupo?> GetByCodigoAccesoAsync(string codigoAcceso);
         Task<bool> EsMiembroAsync(Guid idUsuario, Guid idGrupo);
         Task<bool> EsAdminAsync(Guid idUsuario, Guid idGrupo);
+        Task<bool> TieneGastosPendientesAsync(Guid idGrupo);
     }
 }

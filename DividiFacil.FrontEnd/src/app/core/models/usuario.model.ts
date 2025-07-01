@@ -1,6 +1,24 @@
 export interface Usuario {
-  id: number;
+  idUsuario: string;
   nombre: string;
   email: string;
-  // Agrega otros campos según el UsuarioDto del backend si son necesarios
+  telefono?: string;
+  urlImagen?: string;
+  fechaCreacion: string;
+  estaActivo: boolean;
+}
+
+// DTO para creación de usuario
+export interface UsuarioCreacionDto {
+  nombre: string;
+  email: string;
+  password: string;
+  telefono?: string;
+}
+
+// DTO para actualización de usuario
+export interface UsuarioActualizacionDto {
+  nombre: string;
+  telefono?: string;
+  urlImagen?: string;
 }

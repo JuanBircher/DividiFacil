@@ -4,7 +4,7 @@
   <mat-list *ngIf="grupos && grupos.length > 0; else sinGrupos">
     <mat-list-item *ngFor="let grupo of grupos">
       <mat-icon matListIcon>groups</mat-icon>
-      <div matLine>{{ grupo.nombre }}</div>
+      <div matLine>{{ grupo.nombreGrupo }}</div>
       <div matLine class="desc">{{ grupo.descripcion }}</div>
       <button mat-icon-button color="primary" [routerLink]="['/grupos/detalle', grupo.idGrupo]">
         <mat-icon>visibility</mat-icon>
@@ -12,11 +12,11 @@
     </mat-list-item>
   </mat-list>
   <ng-template #sinGrupos>
-    <div *ngIf="!loading">
+    <div *ngIf="!cargando">
       <p>No tienes grupos aún.</p>
     </div>
   </ng-template>
-  <div *ngIf="loading" style="display:flex; justify-content:center;">
+  <div *ngIf="cargando" style="display:flex; justify-content:center;">
     <mat-progress-spinner diameter="40" mode="indeterminate"></mat-progress-spinner>
   </div>
 </mat-card>

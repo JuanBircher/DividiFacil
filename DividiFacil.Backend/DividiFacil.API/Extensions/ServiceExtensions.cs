@@ -33,7 +33,7 @@ namespace DividiFacil.API.Extensions
             // Eliminar registros duplicados y consolidar todos los servicios aquí
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUsuarioService, UsuarioService>();
-            services.AddScoped<IGrupoService, GrupoService>();
+            services.AddScoped<IGrupoService, GrupoService>(); // ✅ Ya debería incluir todas las dependencias
             services.AddScoped<IGastoService, GastoService>();
             services.AddScoped<IBalanceService, BalanceService>();
             services.AddScoped<IPagoService, PagoService>();

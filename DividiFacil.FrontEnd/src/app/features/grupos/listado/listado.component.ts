@@ -26,21 +26,28 @@ import { RouterModule } from '@angular/router';
 })
 export class ListadoComponent implements OnInit {
   grupos: Grupo[] = [];
-  loading = false;
+  cargando = true;
 
   constructor(private grupoService: GrupoService) {}
 
-  ngOnInit() {
-    this.loading = true;
-    this.grupoService.getGrupos().subscribe({
-      next: (resp) => {
-        this.grupos = resp?.data ?? [];
-        this.loading = false;
-      },
-      error: () => {
-        this.loading = false;
-        // Podrías mostrar un snackbar de error si lo prefieres
-      }
-    });
-  }
+  ngOnInit(): void {
+  this.grupoService.getGrupos().subscribe({
+    next: (resp) => {
+      console.log('Respuesta del backend:', resp);
+      this.cargando = false;
+      // El backend retorna un array de grupos directamente
+      const grupos = resp.data || [];
+      this.grupos = grupos.map((g: any) => ({
+        ...g,
+        nombre: g.nombreGrupo // adaptación por naming
+      }));
+      // Opcional: console.log para depurar
+      console.log('Grupos adaptados:', this.grupos);
+    },
+    error: () => {
+      this.cargando = false;
+      this.grupos = [];
+    }
+  });
+}
 }

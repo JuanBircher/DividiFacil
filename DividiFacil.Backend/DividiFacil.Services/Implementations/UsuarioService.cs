@@ -83,9 +83,18 @@ namespace DividiFacil.Services.Implementations
                 };
             }
 
-            usuario.Nombre = actualizacionDto.Nombre;
-            usuario.Telefono = actualizacionDto.Telefono;
-            usuario.UrlImagen = actualizacionDto.UrlImagen;
+            if (string.IsNullOrWhiteSpace(actualizacionDto.Nombre))
+            {
+                return new ResponseDto<UsuarioDto>
+                {
+                    Exito = false,
+                    Mensaje = "El nombre es requerido"
+                };
+            }
+
+            usuario.Nombre = actualizacionDto.Nombre.Trim();
+            usuario.Telefono = actualizacionDto.Telefono?.Trim();
+            usuario.UrlImagen = actualizacionDto.UrlImagen?.Trim();
 
             await _usuarioRepository.UpdateAsync(usuario);
             await _usuarioRepository.SaveAsync();

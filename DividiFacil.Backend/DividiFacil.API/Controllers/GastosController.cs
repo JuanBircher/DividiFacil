@@ -1,4 +1,5 @@
-﻿using DividiFacil.Domain.DTOs.Base;
+﻿using DividiFacil.API.Helpers;
+using DividiFacil.Domain.DTOs.Base;
 using DividiFacil.Domain.DTOs.Gasto;
 using DividiFacil.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -110,7 +111,17 @@ namespace DividiFacil.API.Controllers
         [HttpGet("grupo/{idGrupo}/paginado")]
         public async Task<IActionResult> GetByGrupoPaginado(Guid idGrupo, [FromQuery] PaginacionDto paginacion)
         {
-            var idUsuario = User.Identity?.Name ?? string.Empty;
+            var idUsuario = UsuarioHelper.ObtenerIdUsuario(User);
+            
+            if (!UsuarioHelper.ValidarIdUsuario(idUsuario, out var idUsuarioGuid))
+            {
+                return BadRequest(new ResponseDto
+                {
+                    Exito = false,
+                    Mensaje = "Usuario no autenticado o ID de usuario inválido"
+                });
+            }
+
             var resultado = await _gastoService.GetPaginatedByGrupoAsync(idGrupo, paginacion, idUsuario);
             return resultado.Exito ? Ok(resultado) : BadRequest(resultado);
         }

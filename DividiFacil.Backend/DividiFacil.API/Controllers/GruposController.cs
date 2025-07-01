@@ -1,4 +1,5 @@
-﻿using DividiFacil.Domain.DTOs.Base;
+﻿using DividiFacil.API.Helpers;
+using DividiFacil.Domain.DTOs.Base;
 using DividiFacil.Domain.DTOs.Grupo;
 using DividiFacil.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -88,15 +89,19 @@ namespace DividiFacil.API.Controllers
         [HttpPost("{id:guid}/miembros")]
         public async Task<IActionResult> AgregarMiembro(Guid id, [FromBody] InvitacionDto invitacionDto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            var idUsuario = UsuarioHelper.ObtenerIdUsuario(User);
+            
+            if (!UsuarioHelper.ValidarIdUsuario(idUsuario, out var idUsuarioGuid))
+            {
+                return BadRequest(new ResponseDto
+                {
+                    Exito = false,
+                    Mensaje = "Usuario no autenticado o ID de usuario inválido"
+                });
+            }
 
-            var resultado = await _grupoService.AgregarMiembroAsync(id, invitacionDto, GetUserId());
-
-            if (!resultado.Exito)
-                return BadRequest(resultado);
-
-            return Ok(resultado);
+            var resultado = await _grupoService.AgregarMiembroAsync(id, invitacionDto, idUsuario);
+            return resultado.Exito ? Ok(resultado) : BadRequest(resultado);
         }
 
         [HttpPut("{id:guid}")]
