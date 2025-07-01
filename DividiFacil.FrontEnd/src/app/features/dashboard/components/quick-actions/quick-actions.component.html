@@ -1,0 +1,62 @@
+<app-card 
+  title="Acciones Rápidas"
+  subtitle="Accede rápidamente a las funciones principales"
+  icon="flash_on"
+  iconColor="primary">
+
+  <div class="actions-grid">
+    <button
+      *ngFor="let action of actions"
+      mat-raised-button
+      class="action-button"
+      [class]="'action-' + action.color"
+      [disabled]="isActionDisabled(action)"
+      (click)="ejecutarAccion(action)">
+      
+      <div class="action-content">
+        <div class="action-icon">
+          <mat-icon [class]="'icon-' + action.color">{{ action.icon }}</mat-icon>
+        </div>
+        
+        <div class="action-text">
+          <h4 class="action-title">{{ action.title }}</h4>
+          <p class="action-description">{{ action.description }}</p>
+        </div>
+      </div>
+    </button>
+  </div>
+
+  <!-- Separador -->
+  <div class="divider"></div>
+
+  <!-- Acciones secundarias -->
+  <div class="secondary-actions">
+    <h5 class="secondary-title">Accesos directos</h5>
+    
+    <div class="secondary-buttons">
+      <button 
+        mat-button 
+        color="primary"
+        (click)="router.navigate(['/grupos'])">
+        <mat-icon>list</mat-icon>
+        Ver todos los grupos
+      </button>
+      
+      <button 
+        mat-button 
+        color="primary"
+        (click)="router.navigate(['/reportes'])">
+        <mat-icon>assessment</mat-icon>
+        Reportes
+      </button>
+      
+      <button 
+        mat-button 
+        color="primary"
+        (click)="router.navigate(['/ayuda'])">
+        <mat-icon>help</mat-icon>
+        Ayuda
+      </button>
+    </div>
+  </div>
+</app-card>

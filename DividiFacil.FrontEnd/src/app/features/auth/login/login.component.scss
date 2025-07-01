@@ -1,186 +1,137 @@
-.auth-container {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
+.login-container {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+}
 
-  .auth-wrapper {
-    width: 100%;
-    max-width: 400px;
-    margin: 0 auto;
-  }
+.login-card {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
 
-  .auth-header {
-    text-align: center;
-    margin-bottom: 2rem;
+  mat-card-header {
+    background: #f8f9fa;
+    padding: 24px;
 
-    .logo-container {
+    .header-content {
+      text-align: center;
+      width: 100%;
+
       .app-title {
-        color: white;
-        font-size: 2.5rem;
+        color: #333;
+        font-size: 2rem;
         font-weight: 700;
         margin: 0;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
       }
 
       .app-subtitle {
-        color: rgba(255, 255, 255, 0.9);
-        font-size: 1rem;
-        margin: 0.5rem 0 0 0;
-        font-weight: 300;
+        color: #666;
+        font-size: 0.875rem;
+        margin: 8px 0 0 0;
       }
     }
   }
 
-  .login-container {
+  mat-card-content {
+    padding: 24px;
+  }
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .full-width {
     width: 100%;
-    max-width: 400px;
-    margin: 0 auto;
+  }
+
+  .form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 8px 0;
+
+    .forgot-link {
+      color: #667eea;
+      text-decoration: none;
+      font-size: 0.875rem;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+.error-alert {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background-color: #ffebee;
+  color: #c62828;
+  border-radius: 8px;
+  font-size: 0.875rem;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.login-button {
+  height: 48px;
+  font-size: 1rem;
+  font-weight: 500;
+  margin-top: 8px;
+
+  mat-spinner {
+    margin-right: 8px;
+  }
+}
+
+mat-card-actions {
+  padding: 16px 24px;
+  background: #f8f9fa;
+
+  .register-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 0.875rem;
+
+    span {
+      color: #666;
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 480px) {
+  .login-container {
+    padding: 0 16px;
   }
 
   .login-card {
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    border-radius: 12px;
-    overflow: hidden;
-    background: white;
-
-    mat-card-header {
-      background: #f8f9fa;
-      padding: 24px;
-
-      .header-content {
-        text-align: center;
-        width: 100%;
-
-        .app-title {
-          color: #333;
-          font-size: 2rem;
-          font-weight: 700;
-          margin: 0;
-        }
-
-        .app-subtitle {
-          color: #666;
-          font-size: 0.875rem;
-          margin: 8px 0 0 0;
-        }
-      }
-    }
-
     mat-card-content {
-      padding: 24px;
+      padding: 20px;
     }
   }
+}
 
-  .login-form {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-
-    .full-width {
-      width: 100%;
-    }
-
-    .form-options {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 8px 0;
-
-      .forgot-link {
-        color: #667eea;
-        text-decoration: none;
-        font-size: 0.875rem;
-
-        &:hover {
-          text-decoration: underline;
-        }
-      }
-    }
-  }
-
-  .error-alert {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px;
-    background-color: #ffebee;
-    color: #c62828;
-    border-radius: 8px;
-    font-size: 0.875rem;
-
-    mat-icon {
-      font-size: 18px;
-      width: 18px;
-      height: 18px;
-    }
-  }
-
-  .login-button {
-    height: 48px;
-    font-size: 1rem;
-    font-weight: 500;
-    margin-top: 8px;
-
-    mat-spinner {
-      margin-right: 8px;
-    }
-  }
-
-  mat-card-actions {
-    padding: 16px 24px;
-    background: #f8f9fa;
-
-    .register-link {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      font-size: 0.875rem;
-
-      span {
-        color: #666;
-      }
-    }
-  }
-
-  // Responsive
-  @media (max-width: 480px) {
-    .auth-container {
-      padding: 16px;
-    }
-
-    .auth-header {
-      .logo-container {
-        .app-title {
-          font-size: 2rem;
-        }
-      }
-    }
-
-    .login-container {
-      padding: 0 16px;
-    }
-
-    .login-card {
-      mat-card-content {
-        padding: 20px;
-      }
-    }
-  }
-
-  // Form field customizations
-  ::ng-deep {
-    .mat-mdc-form-field {
-      .mat-mdc-text-field-wrapper {
-        .mat-mdc-form-field-flex {
-          .mat-mdc-form-field-infix {
-            .mat-mdc-input-element {
-              &.is-invalid {
-                caret-color: #f44336;
-              }
+// Form field customizations
+::ng-deep {
+  .mat-mdc-form-field {
+    .mat-mdc-text-field-wrapper {
+      .mat-mdc-form-field-flex {
+        .mat-mdc-form-field-infix {
+          .mat-mdc-input-element {
+            &.is-invalid {
+              caret-color: #f44336;
             }
           }
         }

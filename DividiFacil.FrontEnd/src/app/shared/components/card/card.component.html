@@ -1,1 +1,49 @@
-<p>card works!</p>
+<mat-card 
+  class="custom-card" 
+  [class.clickable]="clickable"
+  [class.loading]="loading">
+  
+  <!-- Header con icono y título -->
+  <mat-card-header class="card-header">
+    <div class="header-content">
+      <!-- Icono opcional -->
+      <div class="icon-container" *ngIf="icon">
+        <mat-icon [class]="'icon-' + iconColor">{{ icon }}</mat-icon>
+      </div>
+      
+      <!-- Títulos -->
+      <div class="title-container">
+        <mat-card-title class="card-title">{{ title }}</mat-card-title>
+        <mat-card-subtitle *ngIf="subtitle" class="card-subtitle">
+          {{ subtitle }}
+        </mat-card-subtitle>
+      </div>
+    </div>
+  </mat-card-header>
+
+  <!-- Contenido principal -->
+  <mat-card-content class="card-content">
+    <!-- Valor principal (para estadísticas) -->
+    <div class="value-display" *ngIf="value !== undefined && !loading">
+      <span class="main-value">{{ value }}</span>
+    </div>
+
+    <!-- Loading state -->
+    <div class="loading-container" *ngIf="loading">
+      <div class="skeleton-loader"></div>
+    </div>
+
+    <!-- Contenido personalizado -->
+    <div class="custom-content">
+      <ng-content></ng-content>
+    </div>
+  </mat-card-content>
+
+  <!-- Acciones opcionales -->
+  <mat-card-actions *ngIf="showAction" class="card-actions">
+    <button mat-button color="primary" class="action-button">
+      <span>{{ actionText }}</span>
+      <mat-icon>{{ actionIcon }}</mat-icon>
+    </button>
+  </mat-card-actions>
+</mat-card>

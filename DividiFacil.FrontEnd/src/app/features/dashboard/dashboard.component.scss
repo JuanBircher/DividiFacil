@@ -1,0 +1,200 @@
+.dashboard-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+  background-color: #f5f5f5;
+  min-height: calc(100vh - 64px); // Ajustar según altura del toolbar
+}
+
+// Sección de Bienvenida
+.welcome-section {
+  margin-bottom: 24px;
+  
+  .welcome-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+    
+    mat-card-content {
+      padding: 32px;
+    }
+  }
+  
+  .welcome-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+  }
+  
+  .welcome-text {
+    flex: 1;
+    
+    .welcome-title {
+      font-size: 2.25rem;
+      font-weight: 700;
+      margin: 0 0 8px 0;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    
+    .welcome-subtitle {
+      font-size: 1rem;
+      opacity: 0.9;
+      margin: 0 0 12px 0;
+      font-weight: 300;
+    }
+    
+    .welcome-description {
+      font-size: 1rem;
+      opacity: 0.8;
+      margin: 0;
+      line-height: 1.4;
+    }
+  }
+  
+  .welcome-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    
+    button {
+      min-width: 160px;
+      height: 44px;
+      font-weight: 500;
+      
+      &[color="primary"] {
+        background: white;
+        color: #667eea;
+        
+        &:hover {
+          background: rgba(255, 255, 255, 0.9);
+        }
+      }
+      
+      mat-icon {
+        margin-right: 8px;
+      }
+    }
+  }
+}
+
+// Sección de Estadísticas
+.stats-section {
+  margin-bottom: 24px;
+}
+
+// Contenido Principal
+.main-content {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.left-column {
+  // Columna para grupos recientes
+}
+
+.right-column {
+  // Columna para acciones rápidas
+}
+
+// Sección de Actividad (futuro)
+.activity-section {
+  margin-bottom: 24px;
+  
+  mat-card {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+// Responsive Design
+@media (max-width: 1200px) {
+  .main-content {
+    grid-template-columns: 1fr 350px;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 968px) {
+  .main-content {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .dashboard-container {
+    padding: 16px;
+  }
+  
+  .welcome-section {
+    .welcome-card mat-card-content {
+      padding: 24px;
+    }
+    
+    .welcome-content {
+      flex-direction: column;
+      text-align: center;
+    }
+    
+    .welcome-actions {
+      flex-direction: row;
+      justify-content: center;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-container {
+    padding: 12px;
+  }
+  
+  .welcome-section {
+    .welcome-card mat-card-content {
+      padding: 20px;
+    }
+    
+    .welcome-text {
+      .welcome-title {
+        font-size: 1.75rem;
+      }
+      
+      .welcome-subtitle {
+        font-size: 0.875rem;
+      }
+    }
+    
+    .welcome-actions {
+      flex-direction: column;
+      width: 100%;
+      
+      button {
+        width: 100%;
+      }
+    }
+  }
+}
+
+// Animaciones
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dashboard-container > * {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+// Dark mode preparation (futuro)
+@media (prefers-color-scheme: dark) {
+  .dashboard-container {
+    background-color: #121212;
+  }
+}
