@@ -93,6 +93,46 @@ export class AuthService {
     return this.usuarioActualSubject.value;
   }
 
+  /**
+   * Verifica si el token ha expirado
+   * 🎓 EXPLICACIÓN: Los JWT tienen fecha de expiración por seguridad
+   */
+  tokenExpirado(): boolean {
+    const token = localStorage.getItem('token');
+    if (!token) return true;
+    
+    try {
+      // Decodificar la parte del payload del JWT
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const expiration = payload.exp * 1000; // Convertir a millisegundos
+      return Date.now() > expiration;
+    } catch (error) {
+      // Si no se puede decodificar, considerar expirado por seguridad
+      return true;
+    }
+  }
+
+  /**
+   * Obtiene información del usuario desde el token
+   * 🎓 EXPLICACIÓN: Los JWT contienen información del usuario
+   */
+  obtenerInfoToken(): any {
+    const token = localStorage.getItem('token');
+    if (!token) return null;
+    
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return {
+        id: payload.sub || payload.userId,
+        nombre: payload.nombre || payload.name,
+        email: payload.email,
+        exp: payload.exp
+      };
+    } catch (error) {
+      return null;
+    }
+  }
+
   private cargarUsuarioDesdeStorage(): void {
     const usuarioJson = localStorage.getItem('usuario');
     if (usuarioJson) {

@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../core/auth.service';
 
 // Angular Material modules
@@ -10,6 +10,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-login',
@@ -19,17 +21,21 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    RouterModule,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatIconModule,
+    MatCheckboxModule
   ]
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   error: string | null = null;
   loading = false;
   form: FormGroup;
+  hidePassword = true;
 
   constructor(
     private fb: FormBuilder,
@@ -38,13 +44,32 @@ export class LoginComponent {
   ) {
     this.form = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required]
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      rememberMe: [false]
     });
   }
 
-  onSubmit() {
+  ngOnInit(): void {
+    // Si ya está logueado, redirigir al dashboard
+    if (this.authService.estaLogueado()) {
+      this.router.navigate(['/dashboard']);
+    }
+
+    // Cargar email recordado si existe
+    const rememberedEmail = localStorage.getItem('rememberedEmail');
+    if (rememberedEmail) {
+      this.form.get('email')?.setValue(rememberedEmail);
+      this.form.get('rememberMe')?.setValue(true);
+    }
+  }
+
+  onSubmit(): void {
     this.error = null;
-    if (this.form.invalid) return;
+    
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
 
     this.loading = true;
 
@@ -53,19 +78,35 @@ export class LoginComponent {
       password: this.form.value.password || ''
     };
 
+    // Manejar "Recordarme"
+    if (this.form.value.rememberMe) {
+      localStorage.setItem('rememberedEmail', loginRequest.email);
+    } else {
+      localStorage.removeItem('rememberedEmail');
+    }
+
     this.authService.login(loginRequest).subscribe({
       next: (response) => {
         this.loading = false;
         if (response.exito) {
+          // ✅ Redirigir al dashboard como ya tienes configurado
           this.router.navigate(['/dashboard']);
         } else {
           this.error = response.mensaje || 'Error al iniciar sesión';
         }
       },
-      error: err => {
+      error: (err) => {
         this.loading = false;
         this.error = err.message || 'Ha ocurrido un error inesperado';
+        console.error('Error en login:', err);
       }
     });
+  }
+
+  // Método para manejar Enter en el formulario
+  onKeyDown(event: KeyboardEvent): void {
+    if (event.key === 'Enter' && this.form.valid && !this.loading) {
+      this.onSubmit();
+    }
   }
 }

@@ -1,14 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ReactiveFormsModule, FormBuilder, Validators, FormGroup, AbstractControl } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../core/auth.service';
-import { RegisterRequest } from '../../../core/models/register-request.model';
+
+// Angular Material modules
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-register',
@@ -18,66 +20,94 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    RouterModule,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatIconModule
   ]
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
   error: string | null = null;
   loading = false;
-  form: FormGroup;
+  registerForm: FormGroup;
+  hidePassword = true;
+  hideConfirmPassword = true;
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router
   ) {
-    this.form = this.fb.group({
-      nombre: ['', [Validators.required, Validators.maxLength(100)]],
+    this.registerForm = this.fb.group({
+      nombre: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(50)]],
-      confirmarPassword: ['', [Validators.required]],
-      telefono: ['']
-    }, { validators: this.passwordsMatchValidator });
+      telefono: [''], // Opcional
+      password: ['', [Validators.required, Validators.minLength(6)]],
+      confirmarPassword: ['', Validators.required]
+    }, { 
+      validators: this.passwordsMatchValidator 
+    });
   }
 
+  ngOnInit(): void {
+    // Si ya está logueado, redirigir al dashboard
+    if (this.authService.estaLogueado()) {
+      this.router.navigate(['/dashboard']);
+    }
+  }
+
+  /**
+   * 🎓 EXPLICACIÓN: Validador personalizado para verificar que las contraseñas coincidan
+   * Este validador se ejecuta cada vez que cambias cualquier campo del formulario
+   */
   passwordsMatchValidator(form: FormGroup) {
     const password = form.get('password')?.value;
-    const confirm = form.get('confirmarPassword')?.value;
-    return password === confirm ? null : { passwordsMismatch: true };
+    const confirmPassword = form.get('confirmarPassword')?.value;
+    
+    // Si las contraseñas no coinciden, devolvemos un error
+    return password === confirmPassword ? null : { passwordsMismatch: true };
   }
 
-  onSubmit() {
+  onSubmit(): void {
     this.error = null;
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
+    
+    // Si el formulario no es válido, marcar todos los campos como tocados para mostrar errores
+    if (this.registerForm.invalid) {
+      this.registerForm.markAllAsTouched();
       return;
     }
 
     this.loading = true;
-    const registerRequest: RegisterRequest = {
-      nombre: this.form.value.nombre,
-      email: this.form.value.email,
-      password: this.form.value.password,
-      confirmarPassword: this.form.value.confirmarPassword,
-      telefono: this.form.value.telefono
+
+    // Preparar los datos para el backend (según tu AuthService)
+    const registerRequest = {
+      nombre: this.registerForm.value.nombre,
+      email: this.registerForm.value.email,
+      password: this.registerForm.value.password,
+      telefono: this.registerForm.value.telefono || undefined // Solo enviar si tiene valor
     };
 
+    /**
+     * 🎓 EXPLICACIÓN: Llamamos al método register de tu AuthService
+     * Tu AuthService ya maneja el token y redirección automáticamente
+     */
     this.authService.register(registerRequest).subscribe({
       next: (response) => {
         this.loading = false;
         if (response.exito) {
-          this.router.navigate(['/auth/login'], { queryParams: { registered: true } });
+          // ✅ Tu AuthService ya guarda el token y usuario automáticamente
+          this.router.navigate(['/dashboard']);
         } else {
-          this.error = response.mensaje || 'Error en el registro. Intenta de nuevo.';
+          this.error = response.mensaje || 'Error al crear la cuenta';
         }
       },
-      error: (err: any) => {
+      error: (err) => {
         this.loading = false;
-        this.error = err.message || 'Error en el registro. Intenta de nuevo.';
+        this.error = err.message || 'Ha ocurrido un error inesperado';
+        console.error('Error en registro:', err);
       }
     });
   }
