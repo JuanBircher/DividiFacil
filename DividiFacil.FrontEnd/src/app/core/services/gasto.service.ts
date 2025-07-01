@@ -39,54 +39,42 @@ export class GastoService {
   }
 
   /**
-   * Eliminar un gasto
-   */
-  eliminarGasto(idGasto: string): Observable<ApiResponse<boolean>> {
-    return this.http.delete<ApiResponse<boolean>>(`${this.apiUrl}/${idGasto}`);
-  }
-
-  /**
-   * Obtener gastos de un grupo con filtros opcionales
-   */
-  obtenerGastosPorGrupo(
-    idGrupo: string, 
-    filtros?: {
-      fechaDesde?: string;
-      fechaHasta?: string;
-      montoMinimo?: number;
-      montoMaximo?: number;
-    }
-  ): Observable<ApiResponse<GastoDto[]>> {
-    let params = new HttpParams();
-    
-    if (filtros) {
-      if (filtros.fechaDesde) params = params.set('fechaDesde', filtros.fechaDesde);
-      if (filtros.fechaHasta) params = params.set('fechaHasta', filtros.fechaHasta);
-      if (filtros.montoMinimo) params = params.set('montoMinimo', filtros.montoMinimo.toString());
-      if (filtros.montoMaximo) params = params.set('montoMaximo', filtros.montoMaximo.toString());
-    }
-
-    return this.http.get<ApiResponse<GastoDto[]>>(`${this.apiUrl}/grupo/${idGrupo}`, { params });
-  }
-
-  /**
-   * Obtener gastos del usuario actual
+   * 🔧 MÉTODO FALTANTE: Obtener gastos recientes del usuario
+   * Backend: GET /api/gastos/recientes?cantidad=10
    */
   obtenerMisGastos(): Observable<ApiResponse<GastoDto[]>> {
-    return this.http.get<ApiResponse<GastoDto[]>>(`${this.apiUrl}/usuario`);
+    return this.http.get<ApiResponse<GastoDto[]>>(`${this.apiUrl}/recientes?cantidad=10`);
   }
 
   /**
-   * Marcar detalle de gasto como pagado
+   * 🔧 MÉTODO FALTANTE: Obtener gastos por grupo
+   * Backend: GET /api/gastos/grupo/{idGrupo}
    */
-  marcarComoPagado(idDetalleGasto: string): Observable<ApiResponse<boolean>> {
-    return this.http.put<ApiResponse<boolean>>(`${this.apiUrl}/detalle/${idDetalleGasto}/pagar`, {});
+  obtenerGastosPorGrupo(idGrupo: string): Observable<ApiResponse<GastoDto[]>> {
+    return this.http.get<ApiResponse<GastoDto[]>>(`${this.apiUrl}/grupo/${idGrupo}`);
   }
 
   /**
-   * Obtener gastos pendientes de pago para el usuario
+   * 🔧 MÉTODO FALTANTE: Aprobar gasto
+   * Backend: POST /api/gastos/{id}/aprobar
    */
-  obtenerGastosPendientes(): Observable<ApiResponse<GastoDto[]>> {
-    return this.http.get<ApiResponse<GastoDto[]>>(`${this.apiUrl}/pendientes`);
+  aprobarGasto(idGasto: string): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/${idGasto}/aprobar`, {});
+  }
+
+  /**
+   * 🔧 MÉTODO FALTANTE: Rechazar gasto
+   * Backend: POST /api/gastos/{id}/rechazar
+   */
+  rechazarGasto(idGasto: string, motivo?: string): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/${idGasto}/rechazar`, { motivo });
+  }
+
+  /**
+   * 🔧 MÉTODO FALTANTE: Eliminar gasto
+   * Backend: DELETE /api/gastos/{id}
+   */
+  eliminarGasto(idGasto: string): Observable<ApiResponse<any>> {
+    return this.http.delete<ApiResponse<any>>(`${this.apiUrl}/${idGasto}`);
   }
 }

@@ -11,21 +11,29 @@ export interface Pago {
 }
 
 export interface PagoCreacionDto {
-  idGrupo: string;
   idReceptor: string;
+  idGrupo?: string;
   monto: number;
   concepto: string;
+  comprobantePath?: string;
 }
 
+/**
+ * 🔧 CORREGIDO: Estructura que coincide EXACTAMENTE con el backend
+ */
 export interface PagoDto {
   idPago: string;
-  idGrupo: string;
-  nombreGrupo: string;
+  idPagador: string;
   nombrePagador: string;
+  idReceptor: string;
   nombreReceptor: string;
   monto: number;
   concepto: string;
-  estado: string;
   fechaCreacion: string;
   fechaConfirmacion?: string;
+  estado: string;
+  idGrupo: string;
+  nombreGrupo?: string;
+  comprobantePath?: string;
+  motivoRechazo?: string;
 }

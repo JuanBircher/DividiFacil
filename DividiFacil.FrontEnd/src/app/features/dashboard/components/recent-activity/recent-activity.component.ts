@@ -88,25 +88,33 @@ export class RecentActivityComponent implements OnInit {
     this.loading = true;
     this.error = null;
 
-    // Ejecutar todas las llamadas en paralelo
+    // Solo llamar a métodos que EXISTEN
     forkJoin({
       gastos: this.gastoService.obtenerMisGastos(),
-      gastosPendientes: this.gastoService.obtenerGastosPendientes(),
-      pagos: this.pagoService.obtenerMisPagos(),
-      pagosPendientes: this.pagoService.obtenerPagosPendientes()
+      pagosRealizados: this.pagoService.obtenerPagosRealizados(),
+      pagosRecibidos: this.pagoService.obtenerPagosRecibidos()
     }).subscribe({
       next: (responses) => {
         this.loading = false;
         
         // Procesar gastos
         if (responses.gastos.exito && responses.gastos.data) {
-          this.gastos = responses.gastos.data.slice(0, 5); // Solo los 5 más recientes
+          this.gastos = responses.gastos.data.slice(0, 5);
         }
         
-        // Procesar pagos
-        if (responses.pagos.exito && responses.pagos.data) {
-          this.pagos = responses.pagos.data.slice(0, 5);
+        // Combinar pagos realizados y recibidos
+        const todosPagos: any[] = [];
+        if (responses.pagosRealizados.exito && responses.pagosRealizados.data) {
+          todosPagos.push(...responses.pagosRealizados.data);
         }
+        if (responses.pagosRecibidos.exito && responses.pagosRecibidos.data) {
+          todosPagos.push(...responses.pagosRecibidos.data);
+        }
+        
+        // Ordenar y tomar solo los 5 más recientes
+        this.pagos = todosPagos
+          .sort((a, b) => new Date(b.fechaCreacion).getTime() - new Date(a.fechaCreacion).getTime())
+          .slice(0, 5);
 
         // Unificar y ordenar toda la actividad
         this.unificarActividad();
