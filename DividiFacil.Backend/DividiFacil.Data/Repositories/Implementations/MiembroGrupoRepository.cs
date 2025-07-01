@@ -58,5 +58,11 @@ namespace DividiFacil.Data.Repositories.Implementations
 
             return miembro != null && miembro.Rol == "Admin";
         }
+
+        public Task<bool> TieneGastosPendientesAsync(Guid idGrupo, Guid idUsuario)
+        {
+            // TODO: Implementar lógica real
+            return Task.FromResult(false);
+        }
     }
 }

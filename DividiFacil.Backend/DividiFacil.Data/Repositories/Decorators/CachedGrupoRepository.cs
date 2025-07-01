@@ -1,4 +1,5 @@
-﻿using DividiFacil.Data.Repositories.Interfaces;
+﻿using DividiFacil.Data.Repositories.Implementations;
+using DividiFacil.Data.Repositories.Interfaces;
 using DividiFacil.Domain.Models;
 using Microsoft.Extensions.Caching.Memory;
 using System;
@@ -11,6 +12,7 @@ namespace DividiFacil.Data.Repositories.Decorators
     {
         private readonly IGrupoRepository _inner;
         private readonly IMemoryCache _cache;
+        private readonly IGrupoRepository _grupoRepository;
 
         public CachedGrupoRepository(IGrupoRepository inner, IMemoryCache cache)
         {
@@ -63,6 +65,12 @@ namespace DividiFacil.Data.Repositories.Decorators
             _cache.Remove($"Grupo_Id_{id}");
         }
 
+        public Task<bool> TieneGastosPendientesAsync(Guid idGrupo)
+        {
+            // TODO: Implementar lógica real o caché
+            return _grupoRepository.TieneGastosPendientesAsync(idGrupo);
+        }
+
         public async Task SaveAsync()
             => await _inner.SaveAsync();
 
@@ -75,4 +83,5 @@ namespace DividiFacil.Data.Repositories.Decorators
         public async Task<bool> EsAdminAsync(Guid idUsuario, Guid idGrupo)
             => await _inner.EsAdminAsync(idUsuario, idGrupo);
     }
+
 }

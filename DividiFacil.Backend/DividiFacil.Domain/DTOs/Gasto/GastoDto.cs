@@ -6,7 +6,7 @@
         public Guid IdGrupo { get; set; }
         public string NombreGrupo { get; set; } = string.Empty;
         public string Descripcion { get; set; } = string.Empty;
-        public Guid IdUsuarioPago { get; set; }
+        public Guid IdMiembroPagador { get; set; }
         public string NombreMiembroPagador { get; set; } = string.Empty;
         public decimal Monto { get; set; }
         public string? Categoria { get; set; } = string.Empty;
