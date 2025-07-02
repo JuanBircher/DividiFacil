@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { tap, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { NotificacionDto } from '../models/notificacion.model';
 
@@ -9,6 +9,18 @@ interface ApiResponse<T> {
   exito: boolean;
   data: T;
   mensaje?: string;
+}
+
+export interface ConfiguracionNotificacionesDto {
+  idConfiguracion: string;
+  idUsuario: string;
+  notificarNuevosPagos: boolean;
+  notificarNuevosGastos: boolean;
+  notificarInvitacionesGrupo: boolean;
+  notificarCambiosEstadoPagos: boolean;
+  recordatoriosDeudas: boolean;
+  recordatoriosPagos: boolean;
+  frecuenciaRecordatorios: string; // "Diario", "Semanal", "Mensual"
 }
 
 @Injectable({
@@ -31,7 +43,8 @@ export class NotificacionService {
       .pipe(
         tap(response => {
           if (response.exito && response.data) {
-            const noLeidas = response.data.filter(n => !n.leida).length;
+            // 🔧 USAR: Propiedades que existen en tu NotificacionDto
+            const noLeidas = response.data.filter(n => n.estado !== 'LEIDA').length;
             this.contadorNoLeidasSubject.next(noLeidas);
           }
         })
@@ -42,7 +55,21 @@ export class NotificacionService {
    * Marcar notificación como enviada/leída
    */
   marcarComoLeida(idNotificacion: string): Observable<ApiResponse<boolean>> {
-    return this.http.put<ApiResponse<boolean>>(`${this.apiUrl}/${idNotificacion}/enviada`, {});
+    return this.http.put<ApiResponse<boolean>>(`${this.apiUrl}/${idNotificacion}/marcar-enviada`, {});
+  }
+
+  /**
+   * 🔧 NUEVO: Obtener configuración de notificaciones del usuario
+   */
+  obtenerConfiguracion(): Observable<ApiResponse<ConfiguracionNotificacionesDto>> {
+    return this.http.get<ApiResponse<ConfiguracionNotificacionesDto>>(`${this.apiUrl}/configuracion`);
+  }
+
+  /**
+   * 🔧 NUEVO: Actualizar configuración de notificaciones
+   */
+  actualizarConfiguracion(configuracion: ConfiguracionNotificacionesDto): Observable<ApiResponse<any>> {
+    return this.http.put<ApiResponse<any>>(`${this.apiUrl}/configuracion`, configuracion);
   }
 
   /**

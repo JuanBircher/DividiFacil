@@ -50,8 +50,9 @@
               <div class="grupo-meta">
                 <span class="meta-item">
                   <mat-icon>group</mat-icon>
-                  {{ estadisticas.totalMiembros }} miembros
+                  {{ grupo.miembros.length || 0 }} miembros
                 </span>
+
                 <span class="meta-item">
                   <mat-icon>calendar_today</mat-icon>
                   Creado {{ grupo.fechaCreacion | dateFormat }}
@@ -394,35 +395,12 @@
         </mat-tab>
 
         <!-- ⚙️ TAB CONFIGURACIÓN -->
-        <mat-tab label="Configuración" *ngIf="esAdministrador">
+        <mat-tab label="Configuración">
           <ng-template matTabContent>
-            <div class="tab-content">
-              
-              <div class="tab-header">
-                <h2>
-                  <mat-icon>settings</mat-icon>
-                  Configuración del Grupo
-                </h2>
-              </div>
-
-              <div class="configuracion-grid">
-                <mat-card class="config-card" (click)="editarGrupo()">
-                  <mat-card-content>
-                    <mat-icon>edit</mat-icon>
-                    <h3>Editar Información</h3>
-                    <p>Modificar nombre, descripción y configuraciones básicas</p>
-                  </mat-card-content>
-                </mat-card>
-
-                <mat-card class="config-card" (click)="invitarMiembro()">
-                  <mat-card-content>
-                    <mat-icon>qr_code</mat-icon>
-                    <h3>Código de Acceso</h3>
-                    <p>Generar código para invitar miembros fácilmente</p>
-                  </mat-card-content>
-                </mat-card>
-              </div>
-            </div>
+            <app-configuraciones
+              [grupo]="grupo"
+              [esAdministrador]="esAdministrador">
+            </app-configuraciones>
           </ng-template>
         </mat-tab>
       </mat-tab-group>

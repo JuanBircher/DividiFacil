@@ -105,4 +105,11 @@ export class GastoService {
   eliminarGasto(idGasto: string): Observable<ApiResponse<any>> {
     return this.http.delete<ApiResponse<any>>(`${this.apiUrl}/${idGasto}`);
   }
+
+  /**
+   * 🔧 MÉTODO FALTANTE: Obtener gastos por grupo
+   */
+  obtenerGastosPorGrupo(idGrupo: string): Observable<ApiResponse<GastoDto[]>> {
+    return this.http.get<ApiResponse<GastoDto[]>>(`${this.apiUrl}/grupo/${idGrupo}`);
+  }
 }

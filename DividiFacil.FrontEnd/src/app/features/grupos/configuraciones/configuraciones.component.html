@@ -1,0 +1,259 @@
+<div class="configuraciones-container" *ngIf="!loading; else loadingTemplate">
+
+  <!-- ⚙️ CONFIGURACIÓN DEL GRUPO -->
+  <mat-card class="config-section" *ngIf="esAdministrador">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>settings</mat-icon>
+        Configuración del Grupo
+      </mat-card-title>
+      <mat-card-subtitle>
+        Personaliza la información y modo de operación del grupo
+      </mat-card-subtitle>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <form [formGroup]="grupoForm" class="config-form">
+        
+        <!-- Nombre del Grupo -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nombre del Grupo</mat-label>
+          <input matInput formControlName="nombreGrupo" maxlength="50">
+          <mat-icon matSuffix>group</mat-icon>
+          <mat-hint>{{ grupoForm.get('nombreGrupo')?.value?.length || 0 }}/50</mat-hint>
+          <mat-error>{{ getErrorMessage('nombreGrupo') }}</mat-error>
+        </mat-form-field>
+
+        <!-- Descripción -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Descripción (opcional)</mat-label>
+          <textarea 
+            matInput 
+            formControlName="descripcion" 
+            rows="3" 
+            maxlength="200"
+            placeholder="Describe el propósito de este grupo..."></textarea>
+          <mat-icon matSuffix>description</mat-icon>
+          <mat-hint>{{ grupoForm.get('descripcion')?.value?.length || 0 }}/200</mat-hint>
+          <mat-error>{{ getErrorMessage('descripcion') }}</mat-error>
+        </mat-form-field>
+
+        <!-- Modo de Operación -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Modo de Operación</mat-label>
+          <mat-select formControlName="modoOperacion">
+            <mat-option 
+              *ngFor="let modo of modosOperacion" 
+              [value]="modo.valor">
+              <div class="modo-option">
+                <div class="modo-icon">
+                  <mat-icon>{{ modo.icono }}</mat-icon>
+                </div>
+                <div class="modo-info">
+                  <div class="modo-nombre">{{ modo.nombre }}</div>
+                  <div class="modo-descripcion">{{ modo.descripcion }}</div>
+                </div>
+              </div>
+            </mat-option>
+          </mat-select>
+          <mat-icon matSuffix>tune</mat-icon>
+        </mat-form-field>
+
+        <!-- Información del Modo Seleccionado -->
+        <div class="modo-info-card">
+          <div class="modo-selected">
+            <mat-icon color="primary">{{ getModoOperacionInfo(grupoForm.get('modoOperacion')?.value).icono }}</mat-icon>
+            <div class="modo-details">
+              <h4>{{ getModoOperacionInfo(grupoForm.get('modoOperacion')?.value).nombre }}</h4>
+              <p>{{ getModoOperacionInfo(grupoForm.get('modoOperacion')?.value).descripcion }}</p>
+            </div>
+          </div>
+        </div>
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button 
+        mat-button 
+        type="button"
+        [disabled]="!haycambiosGrupo() || guardandoGrupo"
+        (click)="resetearFormularioGrupo()">
+        Descartar
+      </button>
+      <button 
+        mat-raised-button 
+        color="primary"
+        [disabled]="grupoForm.invalid || !haycambiosGrupo() || guardandoGrupo"
+        (click)="guardarConfiguracionGrupo()">
+        <mat-icon *ngIf="!guardandoGrupo">save</mat-icon>
+        <mat-icon *ngIf="guardandoGrupo" class="spinning">hourglass_empty</mat-icon>
+        {{ guardandoGrupo ? 'Guardando...' : 'Guardar Cambios' }}
+      </button>
+    </mat-card-actions>
+  </mat-card>
+
+  <!-- 🔔 CONFIGURACIÓN DE NOTIFICACIONES -->
+  <mat-card class="config-section">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>notifications</mat-icon>
+        Configuración de Notificaciones
+      </mat-card-title>
+      <mat-card-subtitle>
+        Personaliza qué notificaciones quieres recibir
+      </mat-card-subtitle>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <form [formGroup]="notificacionesForm" class="config-form">
+        
+        <!-- Notificaciones de Actividad -->
+        <div class="config-group">
+          <h3 class="group-title">
+            <mat-icon>activity</mat-icon>
+            Actividad del Grupo
+          </h3>
+          
+          <div class="toggle-list">
+            <div class="toggle-item">
+              <mat-slide-toggle formControlName="notificarNuevosGastos">
+                <div class="toggle-content">
+                  <div class="toggle-title">Nuevos Gastos</div>
+                  <div class="toggle-description">Cuando se agregue un nuevo gasto al grupo</div>
+                </div>
+              </mat-slide-toggle>
+            </div>
+
+            <div class="toggle-item">
+              <mat-slide-toggle formControlName="notificarNuevosPagos">
+                <div class="toggle-content">
+                  <div class="toggle-title">Nuevos Pagos</div>
+                  <div class="toggle-description">Cuando alguien registre un pago</div>
+                </div>
+              </mat-slide-toggle>
+            </div>
+
+            <div class="toggle-item">
+              <mat-slide-toggle formControlName="notificarCambiosEstadoPagos">
+                <div class="toggle-content">
+                  <div class="toggle-title">Cambios en Pagos</div>
+                  <div class="toggle-description">Cuando se confirme o rechace un pago</div>
+                </div>
+              </mat-slide-toggle>
+            </div>
+
+            <div class="toggle-item">
+              <mat-slide-toggle formControlName="notificarInvitacionesGrupo">
+                <div class="toggle-content">
+                  <div class="toggle-title">Invitaciones</div>
+                  <div class="toggle-description">Cuando se invite a nuevos miembros</div>
+                </div>
+              </mat-slide-toggle>
+            </div>
+          </div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <!-- Recordatorios -->
+        <div class="config-group">
+          <h3 class="group-title">
+            <mat-icon>schedule</mat-icon>
+            Recordatorios
+          </h3>
+          
+          <div class="toggle-list">
+            <div class="toggle-item">
+              <mat-slide-toggle formControlName="recordatoriosDeudas">
+                <div class="toggle-content">
+                  <div class="toggle-title">Recordatorios de Deudas</div>
+                  <div class="toggle-description">Te avisaremos cuando tengas deudas pendientes</div>
+                </div>
+              </mat-slide-toggle>
+            </div>
+
+            <div class="toggle-item">
+              <mat-slide-toggle formControlName="recordatoriosPagos">
+                <div class="toggle-content">
+                  <div class="toggle-title">Recordatorios de Pagos</div>
+                  <div class="toggle-description">Te avisaremos cuando te deban dinero</div>
+                </div>
+              </mat-slide-toggle>
+            </div>
+          </div>
+
+          <!-- Frecuencia de Recordatorios -->
+          <mat-form-field appearance="outline" class="frequency-field">
+            <mat-label>Frecuencia de Recordatorios</mat-label>
+            <mat-select formControlName="frecuenciaRecordatorios">
+              <mat-option 
+                *ngFor="let frecuencia of frecuenciasRecordatorio" 
+                [value]="frecuencia.valor">
+                {{ frecuencia.nombre }}
+              </mat-option>
+            </mat-select>
+            <mat-icon matSuffix>repeat</mat-icon>
+          </mat-form-field>
+        </div>
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button 
+        mat-button 
+        type="button"
+        [disabled]="!hayChangiosNotificaciones() || guardandoNotificaciones"
+        (click)="resetearFormularioNotificaciones()">
+        Descartar
+      </button>
+      <button 
+        mat-raised-button 
+        color="primary"
+        [disabled]="notificacionesForm.invalid || !hayChangiosNotificaciones() || guardandoNotificaciones"
+        (click)="guardarConfiguracionNotificaciones()">
+        <mat-icon *ngIf="!guardandoNotificaciones">save</mat-icon>
+        <mat-icon *ngIf="guardandoNotificaciones" class="spinning">hourglass_empty</mat-icon>
+        {{ guardandoNotificaciones ? 'Guardando...' : 'Guardar Configuración' }}
+      </button>
+    </mat-card-actions>
+  </mat-card>
+
+  <!-- 🗑️ ZONA PELIGROSA -->
+  <mat-card class="config-section danger-zone" *ngIf="esAdministrador">
+    <mat-card-header>
+      <mat-card-title class="danger-title">
+        <mat-icon>warning</mat-icon>
+        Zona Peligrosa
+      </mat-card-title>
+      <mat-card-subtitle>
+        Acciones irreversibles del grupo
+      </mat-card-subtitle>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <div class="danger-actions">
+        <div class="danger-item">
+          <div class="danger-info">
+            <h4>Eliminar Grupo</h4>
+            <p>Elimina permanentemente el grupo y todos sus datos. Esta acción no se puede deshacer.</p>
+          </div>
+          <button 
+            mat-stroked-button 
+            color="warn"
+            (click)="confirmarEliminarGrupo()">
+            <mat-icon>delete_forever</mat-icon>
+            Eliminar Grupo
+          </button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+</div>
+
+<!-- 🔄 LOADING TEMPLATE -->
+<ng-template #loadingTemplate>
+  <div class="loading-container">
+    <app-loading-spinner message="Cargando configuraciones..."></app-loading-spinner>
+  </div>
+</ng-template>

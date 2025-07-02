@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Grupo } from '../../../core/models/grupo.model';
-import { GrupoService } from '../../../core/services/grupo.services';
+import { GrupoService } from '../../../core/services/grupo.service'; // ✅ NO grupo.services
 import { MatCardModule } from '@angular/material/card';
 import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
@@ -13,7 +13,7 @@ import { RouterModule } from '@angular/router';
   selector: 'app-grupos-listado',
   standalone: true,
   templateUrl: './listado.component.html',
-  styleUrls: ['./listado.component.scss'],
+  styleUrl: './listado.component.scss',
   imports: [
     CommonModule,
     MatCardModule,

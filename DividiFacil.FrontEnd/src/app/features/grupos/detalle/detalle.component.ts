@@ -33,6 +33,7 @@ import { BalanceGrupoDto, MovimientoDto } from '../../../core/models/balance.mod
 
 import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
 import { CurrencyFormatPipe } from '../../../shared/pipes/currency-format.pipe';
+import { ConfiguracionesComponent } from '../configuraciones/configuraciones.component';
 
 interface EstadisticasGrupo {
   totalGastos: number;
@@ -60,7 +61,7 @@ interface ActividadReciente {
   styleUrls: ['./detalle.component.scss'],
   imports: [
     CommonModule,
-    FormsModule, // ➕ AGREGADO
+    FormsModule,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
@@ -70,11 +71,12 @@ interface ActividadReciente {
     MatBadgeModule,
     MatDividerModule,
     MatTooltipModule,
-    MatFormFieldModule, // ➕ AGREGADO
-    MatInputModule, // ➕ AGREGADO
+    MatFormFieldModule,
+    MatInputModule,
     LoadingSpinnerComponent,
     DateFormatPipe,
-    CurrencyFormatPipe
+    CurrencyFormatPipe,
+    ConfiguracionesComponent // ✅ AGREGAR: Import del componente
   ]
 })
 export class DetalleComponent implements OnInit, OnDestroy {

@@ -89,8 +89,24 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
-  obtenerUsuario(): Usuario | null {
-    return this.usuarioActualSubject.value;
+  /**
+   * 🔧 MÉTODO NECESARIO: Obtener usuario actual
+   */
+  obtenerUsuario(): any {
+    const token = localStorage.getItem('token');
+    if (!token) return null;
+    
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return {
+        idUsuario: payload.sub || payload.userId || payload.nameid,
+        nombre: payload.nombre || payload.name || payload.unique_name,
+        email: payload.email
+      };
+    } catch (error) {
+      console.error('Error decodificando token:', error);
+      return null;
+    }
   }
 
   /**
