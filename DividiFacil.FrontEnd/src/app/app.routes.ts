@@ -87,6 +87,21 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/notificaciones/listado/listado.component').then(m => m.ListadoComponent),
       },
+      {
+        path: 'caja',
+        loadComponent: () =>
+          import('./features/caja/caja/caja.component').then(m => m.CajaComponent),
+      },
+      {
+        path: 'perfil',
+        loadComponent: () =>
+          import('./features/perfil/perfil/perfil.component').then(m => m.PerfilComponent),
+      },
+      {
+        path: 'perfil/editar',
+        loadComponent: () =>
+          import('./features/perfil/editar/editar.component').then(m => m.EditarComponent),
+      },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },
