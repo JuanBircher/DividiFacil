@@ -1,0 +1,226 @@
+<div class="detalle-gasto-container">
+  
+  <!-- LOADING STATE -->
+  <div class="loading-container" *ngIf="loading">
+    <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
+    <p>Cargando detalle del gasto...</p>
+  </div>
+
+  <!-- ERROR STATE -->
+  <mat-card class="error-card" *ngIf="error && !loading">
+    <mat-card-content>
+      <div class="error-content">
+        <mat-icon class="error-icon">error</mat-icon>
+        <h3>{{ error }}</h3>
+        <button mat-raised-button color="primary" (click)="cargarDetalleGasto()">
+          <mat-icon>refresh</mat-icon>
+          Reintentar
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <div class="detalle-content" *ngIf="gasto && !loading && !error">
+    
+    <!-- HEADER -->
+    <div class="detalle-header">
+      <div class="header-info">
+        <button mat-icon-button (click)="volverAlListado()" class="back-button">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div class="titulo-section">
+          <h1>
+            <mat-icon>{{ obtenerIconoCategoria(gasto.categoria) }}</mat-icon>
+            {{ gasto.descripcion }}
+          </h1>
+          <div class="gasto-meta">
+            <span class="grupo-nombre">
+              <mat-icon>group</mat-icon>
+              {{ gasto.nombreGrupo }}
+            </span>
+            <span class="fecha-gasto">
+              <mat-icon>calendar_today</mat-icon>
+              {{ gasto.fechaGasto | date:'dd/MM/yyyy' }}
+            </span>
+            <mat-chip *ngIf="gasto.categoria" class="categoria-chip">
+              {{ gasto.categoria }}
+            </mat-chip>
+          </div>
+        </div>
+      </div>
+
+      <div class="header-actions" *ngIf="esPagador()">
+        <button mat-icon-button [matMenuTriggerFor]="menuAcciones">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menuAcciones="matMenu">
+          <button mat-menu-item (click)="editarGasto()">
+            <mat-icon>edit</mat-icon>
+            Editar Gasto
+          </button>
+          <mat-divider></mat-divider>
+          <button mat-menu-item (click)="eliminarGasto()" class="delete-action">
+            <mat-icon>delete</mat-icon>
+            Eliminar Gasto
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+
+    <!-- RESUMEN PRINCIPAL -->
+    <mat-card class="resumen-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>account_balance_wallet</mat-icon>
+          Resumen del Gasto
+        </mat-card-title>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <div class="resumen-grid">
+          <!-- Monto Total -->
+          <div class="resumen-item monto-total">
+            <div class="item-label">Monto Total</div>
+            <div class="item-valor grande">${{ gasto.monto | number:'1.2-2' }}</div>
+          </div>
+
+          <!-- Pagador -->
+          <div class="resumen-item pagador">
+            <div class="item-label">Pagado por</div>
+            <div class="item-valor">{{ gasto.nombreMiembroPagador }}</div>
+          </div>
+
+          <!-- Progreso de Pagos -->
+          <div class="resumen-item progreso">
+            <div class="item-label">Progreso de Pagos</div>
+            <div class="progreso-contenido">
+              <div class="progreso-bar">
+                <div class="progreso-fill" [style.width.%]="obtenerPorcentajePagado()"></div>
+              </div>
+              <span class="progreso-texto">{{ obtenerPorcentajePagado() }}%</span>
+            </div>
+          </div>
+
+          <!-- Estadísticas -->
+          <div class="resumen-item estadisticas">
+            <div class="estadisticas-grid">
+              <div class="stat-item pagado">
+                <mat-icon>check_circle</mat-icon>
+                <div class="stat-info">
+                  <div class="stat-valor">${{ totalPagado | number:'1.2-2' }}</div>
+                  <div class="stat-label">Pagado ({{ participantesPagados }})</div>
+                </div>
+              </div>
+              <div class="stat-item pendiente">
+                <mat-icon>pending</mat-icon>
+                <div class="stat-info">
+                  <div class="stat-valor">${{ totalPendiente | number:'1.2-2' }}</div>
+                  <div class="stat-label">Pendiente ({{ participantesPendientes }})</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- PARTICIPANTES Y ESTADOS -->
+    <mat-card class="participantes-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>people</mat-icon>
+          Participantes y Estados de Pago
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="participantes-lista">
+          <div 
+            *ngFor="let participante of participantes; trackBy: trackByParticipante"
+            class="participante-item"
+            [class.usuario-actual]="participante.detalle.nombreMiembroDeudor === usuarioActual">
+            
+            <div class="participante-info">
+              <div class="participante-avatar">
+                <mat-icon>person</mat-icon>
+              </div>
+              
+              <div class="participante-datos">
+                <div class="participante-nombre">
+                  {{ participante.detalle.nombreMiembroDeudor }}
+                  <mat-chip *ngIf="participante.detalle.nombreMiembroDeudor === usuarioActual" 
+                           size="small" class="usuario-chip">
+                    Tú
+                  </mat-chip>
+                </div>
+                <div class="participante-monto">
+                  ${{ participante.detalle.monto | number:'1.2-2' }}
+                </div>
+              </div>
+            </div>
+
+            <div class="participante-estado">
+              <mat-chip 
+                [color]="participante.colorEstado"
+                class="estado-chip">
+                <mat-icon>{{ participante.iconoEstado }}</mat-icon>
+                {{ participante.estadoTexto }}
+              </mat-chip>
+            </div>
+
+            <div class="participante-acciones">
+              <!-- Botón marcar como pagado -->
+              <button 
+                *ngIf="participante.puedeMarcarPagado"
+                mat-raised-button 
+                color="primary"
+                (click)="marcarComoPagado(participante)"
+                [disabled]="procesandoPago">
+                <mat-icon *ngIf="!procesandoPago">payment</mat-icon>
+                <mat-icon *ngIf="procesandoPago" class="spinning">hourglass_empty</mat-icon>
+                {{ procesandoPago ? 'Procesando...' : 'Marcar como Pagado' }}
+              </button>
+
+              <!-- Estado pagado -->
+              <div *ngIf="participante.detalle.pagado && !participante.puedeMarcarPagado" 
+                   class="estado-pagado">
+                <mat-icon>check_circle</mat-icon>
+                <span>Pago confirmado</span>
+              </div>
+
+              <!-- Pendiente (otros usuarios) -->
+              <div *ngIf="!participante.detalle.pagado && !participante.puedeMarcarPagado" 
+                   class="estado-pendiente">
+                <mat-icon>schedule</mat-icon>
+                <span>Pendiente de pago</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- INFORMACIÓN ADICIONAL -->
+    <mat-card class="info-adicional-card" *ngIf="gasto.comprobantePath">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>attachment</mat-icon>
+          Comprobante
+        </mat-card-title>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <div class="comprobante-info">
+          <mat-icon>receipt</mat-icon>
+          <span>Comprobante disponible</span>
+          <button mat-button color="primary">
+            <mat-icon>download</mat-icon>
+            Descargar
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+</div>

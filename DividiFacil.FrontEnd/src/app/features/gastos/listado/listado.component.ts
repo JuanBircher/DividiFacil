@@ -224,8 +224,9 @@ export class ListadoComponent implements OnInit, OnDestroy {
    * 👁️ VER DETALLE DEL GASTO
    */
   verDetalle(gasto: GastoDto): void {
-    // TODO: Implementar en Fase 5 - Paso 2
-    this.snackBar.open('Funcionalidad de detalle próximamente', 'Cerrar', { duration: 2000 });
+    this.router.navigate(['/gastos/detalle', gasto.idGasto], {
+      queryParams: { grupo: this.idGrupo }
+    });
   }
 
   /**
