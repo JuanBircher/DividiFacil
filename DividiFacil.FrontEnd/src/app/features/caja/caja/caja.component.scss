@@ -1,0 +1,283 @@
+.caja-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.header-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  
+  .back-button {
+    color: #666;
+  }
+  
+  h1 {
+    margin: 0;
+    color: #333;
+  }
+  
+  .grupo-nombre {
+    color: #666;
+    font-size: 0.9rem;
+    background: #f5f5f5;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem;
+  
+  p {
+    color: #666;
+    margin: 0;
+  }
+}
+
+.no-caja-card {
+  max-width: 600px;
+  margin: 2rem auto;
+  
+  mat-card-header {
+    margin-bottom: 1rem;
+  }
+  
+  ul {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+    
+    li {
+      margin-bottom: 0.5rem;
+      color: #666;
+    }
+  }
+}
+
+.caja-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+// CARD DE SALDO
+.saldo-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  
+  .saldo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    
+    .saldo-info {
+      h2 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.2rem;
+        opacity: 0.9;
+      }
+      
+      .saldo-amount {
+        font-size: 2.5rem;
+        font-weight: bold;
+        margin: 0;
+        
+        &.negativo {
+          color: #ff6b6b;
+        }
+      }
+    }
+    
+    .saldo-icon {
+      font-size: 3rem;
+      width: 3rem;
+      height: 3rem;
+      opacity: 0.8;
+      
+      &.negativo {
+        color: #ff6b6b;
+      }
+    }
+  }
+  
+  .saldo-actions {
+    button {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+      
+      &:disabled {
+        opacity: 0.5;
+      }
+    }
+  }
+}
+
+// FORMULARIO DE MOVIMIENTO
+.movimiento-form-card {
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .full-width {
+    width: 100%;
+  }
+  
+  .form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1rem;
+  }
+}
+
+// FILTROS
+.filtros-card {
+  .filtros-form {
+    .filtros-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .filtros-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+    }
+  }
+}
+
+// TABLA DE MOVIMIENTOS
+.movimientos-card {
+  .table-container {
+    overflow-x: auto;
+    
+    .movimientos-table {
+      width: 100%;
+      min-width: 800px;
+      
+      .concepto-cell {
+        .concepto-texto {
+          display: block;
+          font-weight: 500;
+        }
+        
+        .concepto-usuario {
+          display: block;
+          color: #666;
+          font-size: 0.8rem;
+        }
+      }
+      
+      .monto {
+        font-weight: bold;
+        
+        &.ingreso {
+          color: #4caf50;
+        }
+        
+        &.egreso {
+          color: #f44336;
+        }
+      }
+    }
+    
+    .no-movimientos {
+      text-align: center;
+      padding: 3rem;
+      color: #666;
+      
+      mat-icon {
+        font-size: 3rem;
+        width: 3rem;
+        height: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+      }
+      
+      p {
+        font-size: 1.1rem;
+        margin: 0.5rem 0;
+      }
+      
+      small {
+        opacity: 0.7;
+      }
+    }
+  }
+}
+
+// ANIMACIONES
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// RESPONSIVE
+@media (max-width: 768px) {
+  .caja-container {
+    padding: 0.5rem;
+  }
+  
+  .header-section {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    
+    h1 {
+      font-size: 1.5rem;
+    }
+  }
+  
+  .saldo-card .saldo-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+    
+    .saldo-amount {
+      font-size: 2rem;
+    }
+  }
+  
+  .movimiento-form-card .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .filtros-card .filtros-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .movimientos-table {
+    min-width: 600px;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-actions,
+  .filtros-actions {
+    flex-direction: column;
+    
+    button {
+      width: 100%;
+    }
+  }
+}

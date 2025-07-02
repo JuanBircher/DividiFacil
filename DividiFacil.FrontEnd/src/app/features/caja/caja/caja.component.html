@@ -1,1 +1,273 @@
-<p>caja works!</p>
+<div class="caja-container">
+  <!-- HEADER -->
+  <div class="header-section">
+    <button mat-icon-button (click)="volver()" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>Caja Común</h1>
+    <span class="grupo-nombre" *ngIf="grupo">{{ grupo.nombreGrupo }}</span>
+  </div>
+
+  <!-- LOADING -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Cargando caja común...</p>
+  </div>
+
+  <!-- SIN CAJA COMÚN -->
+  <mat-card *ngIf="!loading && !caja" class="no-caja-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>account_balance_wallet</mat-icon>
+      <mat-card-title>No hay caja común</mat-card-title>
+      <mat-card-subtitle>Este grupo aún no tiene una caja común configurada</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <p>La caja común permite a los miembros del grupo:</p>
+      <ul>
+        <li>Depositar dinero para gastos compartidos</li>
+        <li>Realizar pagos desde fondos comunes</li>
+        <li>Llevar un registro transparente de movimientos</li>
+      </ul>
+    </mat-card-content>
+    <mat-card-actions>
+      <button 
+        mat-raised-button 
+        color="primary" 
+        (click)="crearCajaComun()"
+        [disabled]="guardando">
+        <mat-icon *ngIf="!guardando">add</mat-icon>
+        <mat-icon *ngIf="guardando" class="spinning">hourglass_empty</mat-icon>
+        {{ guardando ? 'Creando...' : 'Crear Caja Común' }}
+      </button>
+    </mat-card-actions>
+  </mat-card>
+
+  <!-- CON CAJA COMÚN -->
+  <div *ngIf="!loading && caja" class="caja-content">
+    
+    <!-- RESUMEN DE SALDO -->
+    <mat-card class="saldo-card">
+      <mat-card-content>
+        <div class="saldo-header">
+          <div class="saldo-info">
+            <h2>Saldo Actual</h2>
+            <div class="saldo-amount" [class.negativo]="caja.saldo < 0">
+              {{ caja.saldo | currencyFormat }}
+            </div>
+          </div>
+          <mat-icon class="saldo-icon" [class.negativo]="caja.saldo < 0">
+            {{ caja.saldo >= 0 ? 'account_balance_wallet' : 'warning' }}
+          </mat-icon>
+        </div>
+        
+        <div class="saldo-actions">
+          <button 
+            mat-raised-button 
+            color="primary" 
+            (click)="mostrarFormulario = !mostrarFormulario"
+            [disabled]="!permisos.puedeIngresar && !permisos.puedeRetirar">
+            <mat-icon>{{ mostrarFormulario ? 'close' : 'add' }}</mat-icon>
+            {{ mostrarFormulario ? 'Cancelar' : 'Nuevo Movimiento' }}
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- FORMULARIO DE MOVIMIENTO -->
+    <mat-card *ngIf="mostrarFormulario" class="movimiento-form-card">
+      <mat-card-header>
+        <mat-card-title>Registrar Movimiento</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="movimientoForm" (ngSubmit)="registrarMovimiento()">
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Tipo de Movimiento</mat-label>
+              <mat-select formControlName="tipoMovimiento">
+                <mat-option value="INGRESO" *ngIf="permisos.puedeIngresar">
+                  <mat-icon>add_circle</mat-icon> Ingreso
+                </mat-option>
+                <mat-option value="EGRESO" *ngIf="permisos.puedeRetirar">
+                  <mat-icon>remove_circle</mat-icon> Egreso
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Monto</mat-label>
+              <input matInput type="number" formControlName="monto" min="0" step="0.01">
+              <span matPrefix>$</span>
+              <mat-error *ngIf="movimientoForm.get('monto')?.hasError('required')">
+                El monto es requerido
+              </mat-error>
+              <mat-error *ngIf="movimientoForm.get('monto')?.hasError('min')">
+                El monto debe ser mayor a 0
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Concepto</mat-label>
+            <input matInput formControlName="concepto" placeholder="Ej: Compra de comida para asado">
+            <mat-error *ngIf="movimientoForm.get('concepto')?.hasError('required')">
+              El concepto es requerido
+            </mat-error>
+            <mat-error *ngIf="movimientoForm.get('concepto')?.hasError('minlength')">
+              Mínimo 3 caracteres
+            </mat-error>
+          </mat-form-field>
+
+          <div class="form-actions">
+            <button type="button" mat-button (click)="mostrarFormulario = false">
+              Cancelar
+            </button>
+            <button 
+              type="submit" 
+              mat-raised-button 
+              color="primary" 
+              [disabled]="!movimientoForm.valid || guardando">
+              <mat-icon *ngIf="!guardando">save</mat-icon>
+              <mat-icon *ngIf="guardando" class="spinning">hourglass_empty</mat-icon>
+              {{ guardando ? 'Guardando...' : 'Registrar' }}
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- FILTROS -->
+    <mat-card class="filtros-card">
+      <mat-card-content>
+        <form [formGroup]="filtrosForm" class="filtros-form">
+          <div class="filtros-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Tipo</mat-label>
+              <mat-select formControlName="tipoMovimiento">
+                <mat-option value="">Todos</mat-option>
+                <mat-option value="INGRESO">Ingresos</mat-option>
+                <mat-option value="EGRESO">Egresos</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Desde</mat-label>
+              <input matInput [matDatepicker]="pickerDesde" formControlName="fechaDesde">
+              <mat-datepicker-toggle matSuffix [for]="pickerDesde"></mat-datepicker-toggle>
+              <mat-datepicker #pickerDesde></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Hasta</mat-label>
+              <input matInput [matDatepicker]="pickerHasta" formControlName="fechaHasta">
+              <mat-datepicker-toggle matSuffix [for]="pickerHasta"></mat-datepicker-toggle>
+              <mat-datepicker #pickerHasta></mat-datepicker>
+            </mat-form-field>
+          </div>
+          
+          <div class="filtros-actions">
+            <button type="button" mat-button (click)="limpiarFiltros()">
+              <mat-icon>clear</mat-icon> Limpiar
+            </button>
+            <button type="button" mat-raised-button color="primary" (click)="aplicarFiltros()">
+              <mat-icon>search</mat-icon> Filtrar
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- TABLA DE MOVIMIENTOS -->
+    <mat-card class="movimientos-card">
+      <mat-card-header>
+        <mat-card-title>Historial de Movimientos</mat-card-title>
+        <mat-card-subtitle>{{ movimientos.length }} movimientos registrados</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="table-container">
+          <table mat-table [dataSource]="movimientos" class="movimientos-table">
+            
+            <!-- Fecha -->
+            <ng-container matColumnDef="fecha">
+              <th mat-header-cell *matHeaderCellDef>Fecha</th>
+              <td mat-cell *matCellDef="let movimiento">
+                {{ movimiento.fecha | dateFormat }}
+              </td>
+            </ng-container>
+
+            <!-- Concepto -->
+            <ng-container matColumnDef="concepto">
+              <th mat-header-cell *matHeaderCellDef>Concepto</th>
+              <td mat-cell *matCellDef="let movimiento">
+                <div class="concepto-cell">
+                  <span class="concepto-texto">{{ movimiento.concepto }}</span>
+                  <small class="concepto-usuario">por {{ movimiento.nombreUsuario }}</small>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Tipo -->
+            <ng-container matColumnDef="tipo">
+              <th mat-header-cell *matHeaderCellDef>Tipo</th>
+              <td mat-cell *matCellDef="let movimiento">
+                <mat-chip [color]="obtenerColorTipo(movimiento.tipoMovimiento)">
+                  <mat-icon>{{ obtenerIconoTipo(movimiento.tipoMovimiento) }}</mat-icon>
+                  {{ movimiento.tipoMovimiento }}
+                </mat-chip>
+              </td>
+            </ng-container>
+
+            <!-- Monto -->
+            <ng-container matColumnDef="monto">
+              <th mat-header-cell *matHeaderCellDef>Monto</th>
+              <td mat-cell *matCellDef="let movimiento">
+                <span class="monto" [class]="movimiento.tipoMovimiento.toLowerCase()">
+                  {{ movimiento.tipoMovimiento === 'INGRESO' ? '+' : '-' }}{{ movimiento.monto | currencyFormat }}
+                </span>
+              </td>
+            </ng-container>
+
+            <!-- Usuario -->
+            <ng-container matColumnDef="usuario">
+              <th mat-header-cell *matHeaderCellDef>Usuario</th>
+              <td mat-cell *matCellDef="let movimiento">{{ movimiento.nombreUsuario }}</td>
+            </ng-container>
+
+            <!-- Saldo -->
+            <ng-container matColumnDef="saldo">
+              <th mat-header-cell *matHeaderCellDef>Saldo</th>
+              <td mat-cell *matCellDef="let movimiento">
+                <span *ngIf="movimiento.saldoNuevo !== undefined">
+                  {{ movimiento.saldoNuevo | currencyFormat }}
+                </span>
+              </td>
+            </ng-container>
+
+            <!-- Acciones -->
+            <ng-container matColumnDef="acciones">
+              <th mat-header-cell *matHeaderCellDef>Acciones</th>
+              <td mat-cell *matCellDef="let movimiento">
+                <button 
+                  mat-icon-button 
+                  color="warn" 
+                  (click)="eliminarMovimiento(movimiento)"
+                  title="Eliminar movimiento">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+
+          <!-- Sin movimientos -->
+          <div *ngIf="movimientos.length === 0" class="no-movimientos">
+            <mat-icon>receipt_long</mat-icon>
+            <p>No hay movimientos registrados</p>
+            <small>Los movimientos aparecerán aquí cuando se registren</small>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
