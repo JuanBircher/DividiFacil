@@ -19,7 +19,15 @@
       <a mat-list-item routerLink="/gastos" routerLinkActive="active-link">Gastos</a>
       <a mat-list-item routerLink="/pagos" routerLinkActive="active-link">Pagos</a>
       <a mat-list-item routerLink="/caja" routerLinkActive="active-link">Caja Común</a>
-      <a mat-list-item routerLink="/notificaciones" routerLinkActive="active-link">Notificaciones</a>
+      <a mat-list-item 
+         routerLink="/notificaciones" 
+         routerLinkActive="active-link"
+         [matBadge]="contadorNotificaciones$ | async"
+         [matBadgeHidden]="(contadorNotificaciones$ | async) === 0"
+         matBadgeColor="warn"
+         matBadgeSize="small">
+        Notificaciones
+      </a>
       <a mat-list-item routerLink="/perfil" routerLinkActive="active-link">Mi Perfil</a>
     </mat-nav-list>
   </mat-sidenav>

@@ -75,7 +75,7 @@ export const routes: Routes = [
       {
         path: 'gastos/detalle/:id',
         loadComponent: () => 
-          import('./features/gastos/detalle-gasto/detalle-gasto.component').then(m => m.DetalleGastoComponent),
+          import('./features/gastos/detalle/detalle.component').then(m => m.DetalleGastoComponent),
       },
       {
         path: 'pagos',
