@@ -148,7 +148,7 @@
     <mat-card class="main-content-card">
       <mat-tab-group animationDuration="300ms">
         
-        <!-- 👥 TAB MIEMBROS -->
+        <!-- 👥 TAB MIEMBROS MEJORADO -->
         <mat-tab label="Miembros">
           <ng-template matTabContent>
             <div class="tab-content">
@@ -156,18 +156,68 @@
               <div class="tab-header">
                 <h2>
                   <mat-icon>group</mat-icon>
-                  Miembros del Grupo
+                  Miembros del Grupo ({{ grupo.miembros?.length || 0 }})
                 </h2>
-                <button 
-                  *ngIf="puedeInvitarMiembros"
-                  mat-raised-button 
-                  color="primary" 
-                  (click)="invitarMiembro()">
-                  <mat-icon>person_add</mat-icon>
-                  Generar Código
-                </button>
+                
+                <div class="acciones-miembros" *ngIf="esAdministrador">
+                  <button 
+                    mat-raised-button 
+                    color="primary" 
+                    (click)="invitarMiembro()">
+                    <mat-icon>qr_code</mat-icon>
+                    Generar Código
+                  </button>
+                  
+                  <button 
+                    mat-stroked-button 
+                    color="accent" 
+                    (click)="toggleFormularioAgregar()">
+                    <mat-icon>person_add</mat-icon>
+                    Agregar por Email
+                  </button>
+                </div>
               </div>
 
+              <!-- 📧 FORMULARIO AGREGAR MIEMBRO -->
+              <mat-card 
+                *ngIf="mostrarFormularioAgregar && esAdministrador" 
+                class="formulario-agregar">
+                <mat-card-content>
+                  <div class="form-row">
+                    <mat-form-field appearance="outline" class="full-width">
+                      <mat-label>Email del usuario</mat-label>
+                      <input 
+                        matInput 
+                        type="email"
+                        [(ngModel)]="emailNuevoMiembro"
+                        placeholder="usuario@ejemplo.com"
+                        [disabled]="procesandoAccion">
+                      <mat-icon matSuffix>email</mat-icon>
+                    </mat-form-field>
+                  </div>
+                  
+                  <div class="form-actions">
+                    <button 
+                      mat-raised-button 
+                      color="primary"
+                      [disabled]="!emailNuevoMiembro.trim() || procesandoAccion"
+                      (click)="agregarMiembroPorEmail()">
+                      <mat-icon *ngIf="!procesandoAccion">person_add</mat-icon>
+                      <mat-icon *ngIf="procesandoAccion" class="spinning">hourglass_empty</mat-icon>
+                      {{ procesandoAccion ? 'Agregando...' : 'Agregar Miembro' }}
+                    </button>
+                    
+                    <button 
+                      mat-button 
+                      (click)="toggleFormularioAgregar()"
+                      [disabled]="procesandoAccion">
+                      Cancelar
+                    </button>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+              <!-- 👥 LISTA DE MIEMBROS -->
               <div class="miembros-grid">
                 <mat-card 
                   *ngFor="let miembro of grupo.miembros; trackBy: trackByMiembroId" 
@@ -175,18 +225,22 @@
                   <mat-card-content>
                     <div class="miembro-content">
                       
+                      <!-- Avatar -->
                       <div class="miembro-avatar">
                         <mat-icon class="avatar-icon">person</mat-icon>
                       </div>
 
+                      <!-- Información del miembro -->
                       <div class="miembro-info">
                         <h4>{{ miembro.nombreUsuario }}</h4>
                         <p class="email">{{ miembro.emailUsuario }}</p>
                         <p class="fecha-union">
+                          <mat-icon class="small-icon">schedule</mat-icon>
                           Unido {{ miembro.fechaUnion | dateFormat }}
                         </p>
                       </div>
 
+                      <!-- Rol -->
                       <div class="miembro-rol">
                         <mat-chip 
                           [color]="getRolColor(miembro.rol)" 
@@ -196,7 +250,8 @@
                         </mat-chip>
                       </div>
 
-                      <div class="miembro-acciones" *ngIf="esAdministrador && miembro.rol !== 'Administrador'">
+                      <!-- Acciones (solo para administradores) -->
+                      <div class="miembro-acciones" *ngIf="esAdministrador && miembro.rol !== 'Admin'">
                         <button 
                           mat-icon-button 
                           [matMenuTriggerFor]="menuMiembro"
@@ -205,18 +260,77 @@
                         </button>
                         
                         <mat-menu #menuMiembro="matMenu">
-                          <button mat-menu-item (click)="cambiarRol(miembro.idMiembro, 'Administrador')">
+                          <button 
+                            mat-menu-item 
+                            (click)="cambiarRol(miembro.idMiembro, 'Admin')">
                             <mat-icon>admin_panel_settings</mat-icon>
                             Hacer Administrador
                           </button>
+                          <mat-divider></mat-divider>
                           <button 
                             mat-menu-item 
                             (click)="eliminarMiembro(miembro.idMiembro)"
                             class="danger-item">
                             <mat-icon>remove_circle</mat-icon>
-                            Eliminar
+                            Eliminar del Grupo
                           </button>
                         </mat-menu>
+                      </div>
+
+                      <!-- Indicador de usuario actual -->
+                      <div class="usuario-actual" *ngIf="miembro.idUsuario === usuarioActual?.idUsuario">
+                        <mat-chip color="accent" selected>
+                          <mat-icon matChipAvatar>star</mat-icon>
+                          Tú
+                        </mat-chip>
+                      </div>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+              <!-- 📊 ESTADÍSTICAS DE MIEMBROS -->
+              <div class="estadisticas-miembros" *ngIf="grupo.miembros?.length">
+                <mat-card>
+                  <mat-card-header>
+                    <mat-card-title>
+                      <mat-icon>analytics</mat-icon>
+                      Estadísticas de Miembros
+                    </mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <div class="stats-grid">
+                      <div class="stat-item">
+                        <div class="stat-number">{{ grupo.miembros.length }}</div>
+                        <div class="stat-label">Total Miembros</div>
+                      </div>
+                      <div class="stat-item">
+                        <div class="stat-number">
+                          {{ contarMiembrosPorRol('Admin') }}
+                        </div>
+                        <div class="stat-label">Administradores</div>
+                      </div>
+                      <div class="stat-item">
+                        <div class="stat-number">
+                          {{ contarMiembrosPorRol('Miembro') }}
+                        </div>
+                        <div class="stat-label">Miembros</div>
+                      </div>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+              <!-- 💡 AYUDA PARA CÓDIGO DE ACCESO -->
+              <div class="ayuda-codigo" *ngIf="esAdministrador">
+                <mat-card>
+                  <mat-card-content>
+                    <div class="ayuda-content">
+                      <mat-icon color="primary">info</mat-icon>
+                      <div class="ayuda-texto">
+                        <h4>¿Cómo agregar miembros?</h4>
+                        <p><strong>Opción 1:</strong> Genera un código de acceso y compártelo</p>
+                        <p><strong>Opción 2:</strong> Agrega directamente por email si ya tienen cuenta</p>
                       </div>
                     </div>
                   </mat-card-content>

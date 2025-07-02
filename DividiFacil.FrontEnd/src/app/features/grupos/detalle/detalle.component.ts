@@ -12,6 +12,9 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subject, takeUntil, forkJoin } from 'rxjs';
+import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 
@@ -57,6 +60,7 @@ interface ActividadReciente {
   styleUrls: ['./detalle.component.scss'],
   imports: [
     CommonModule,
+    FormsModule, // ➕ AGREGADO
     MatCardModule,
     MatButtonModule,
     MatIconModule,
@@ -66,6 +70,8 @@ interface ActividadReciente {
     MatBadgeModule,
     MatDividerModule,
     MatTooltipModule,
+    MatFormFieldModule, // ➕ AGREGADO
+    MatInputModule, // ➕ AGREGADO
     LoadingSpinnerComponent,
     DateFormatPipe,
     CurrencyFormatPipe
@@ -102,6 +108,11 @@ export class DetalleComponent implements OnInit, OnDestroy {
   esAdministrador = false;
   puedeEditarGrupo = false;
   puedeInvitarMiembros = false;
+
+  // ➕ AGREGAR: Variables para gestión de miembros
+  mostrarFormularioAgregar = false;
+  emailNuevoMiembro = '';
+  procesandoAccion = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -353,6 +364,45 @@ export class DetalleComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * 👥 GESTIÓN SIMPLIFICADA DE MIEMBROS
+   */
+  toggleFormularioAgregar(): void {
+    this.mostrarFormularioAgregar = !this.mostrarFormularioAgregar;
+    this.emailNuevoMiembro = '';
+  }
+
+  agregarMiembroPorEmail(): void {
+    if (!this.emailNuevoMiembro.trim()) {
+      this.snackBar.open('Ingrese un email válido', 'Cerrar', { duration: 3000 });
+      return;
+    }
+
+    this.procesandoAccion = true;
+
+    this.grupoService.agregarMiembro(this.idGrupo, { 
+      emailUsuario: this.emailNuevoMiembro.trim() 
+    })
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (response) => {
+        this.procesandoAccion = false;
+        if (response.exito) {
+          this.snackBar.open('Miembro agregado correctamente', 'Cerrar', { duration: 3000 });
+          this.emailNuevoMiembro = '';
+          this.mostrarFormularioAgregar = false;
+          this.cargarDatosCompletos(); // Recargar datos
+        } else {
+          this.snackBar.open(response.mensaje || 'Error al agregar miembro', 'Cerrar', { duration: 3000 });
+        }
+      },
+      error: (err) => {
+        this.procesandoAccion = false;
+        this.snackBar.open('Error al agregar miembro', 'Cerrar', { duration: 3000 });
+      }
+    });
+  }
+
+  /**
    * ⚙️ ACCIONES DE CONFIGURACIÓN
    */
   editarGrupo(): void {
@@ -404,4 +454,11 @@ export class DetalleComponent implements OnInit, OnDestroy {
   trackByActividadId(index: number, actividad: ActividadReciente): string {
     return actividad.id;
   }
+
+  contarMiembrosPorRol(rol: string): number {
+  if (!this.grupo || !this.grupo.miembros) {
+    return 0;
+  }
+  return this.grupo.miembros.filter((miembro: any) => miembro.rol === rol).length;
+}
 }
