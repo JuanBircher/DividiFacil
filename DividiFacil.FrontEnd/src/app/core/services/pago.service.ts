@@ -14,7 +14,7 @@ export class PagoService {
   constructor(private http: HttpClient) {}
 
   /**
-   * 🔧 MÉTODO FALTANTE: Obtener pagos realizados por el usuario
+   * 🚨 MÉTODO CRÍTICO FALTANTE para dashboard
    * Backend: GET /api/pagos/realizados
    */
   obtenerPagosRealizados(): Observable<ApiResponse<PagoDto[]>> {
@@ -22,7 +22,7 @@ export class PagoService {
   }
 
   /**
-   * 🔧 MÉTODO FALTANTE: Obtener pagos recibidos por el usuario
+   * 🚨 MÉTODO CRÍTICO FALTANTE para dashboard
    * Backend: GET /api/pagos/recibidos
    */
   obtenerPagosRecibidos(): Observable<ApiResponse<PagoDto[]>> {
@@ -30,8 +30,8 @@ export class PagoService {
   }
 
   /**
-   * 🔧 MÉTODO FALTANTE: Obtener todos los pagos del usuario (combinado)
-   * Combina pagos realizados y recibidos para el dashboard
+   * 🚨 MÉTODO CRÍTICO FALTANTE para recent-activity
+   * Combina pagos realizados y recibidos
    */
   obtenerMisPagos(): Observable<ApiResponse<PagoDto[]>> {
     return forkJoin({
@@ -49,29 +49,17 @@ export class PagoService {
           todosPagos.push(...responses.recibidos.data);
         }
 
-        // Ordenar por fecha más reciente
-        const pagosOrdenados = todosPagos
-          .sort((a, b) => new Date(b.fechaCreacion).getTime() - new Date(a.fechaCreacion).getTime());
-
         return {
           exito: true,
           mensaje: 'Pagos obtenidos correctamente',
-          data: pagosOrdenados
+          data: todosPagos
         };
       })
     );
   }
 
   /**
-   * 🔧 MÉTODO FALTANTE: Crear nuevo pago
-   * Backend: POST /api/pagos
-   */
-  crearPago(pago: PagoCreacionDto): Observable<ApiResponse<PagoDto>> {
-    return this.http.post<ApiResponse<PagoDto>>(this.apiUrl, pago);
-  }
-
-  /**
-   * 🔧 MÉTODO FALTANTE: Obtener pago por ID
+   * 🔧 NUEVO: Obtener pago por ID
    * Backend: GET /api/pagos/{id}
    */
   obtenerPagoPorId(idPago: string): Observable<ApiResponse<PagoDto>> {
@@ -79,7 +67,15 @@ export class PagoService {
   }
 
   /**
-   * 🔧 MÉTODO FALTANTE: Confirmar pago
+   * 🔧 NUEVO: Crear pago
+   * Backend: POST /api/pagos
+   */
+  crearPago(pago: PagoCreacionDto): Observable<ApiResponse<PagoDto>> {
+    return this.http.post<ApiResponse<PagoDto>>(this.apiUrl, pago);
+  }
+
+  /**
+   * 🔧 NUEVO: Confirmar pago
    * Backend: POST /api/pagos/{id}/confirmar
    */
   confirmarPago(idPago: string): Observable<ApiResponse<any>> {
@@ -87,7 +83,7 @@ export class PagoService {
   }
 
   /**
-   * 🔧 MÉTODO FALTANTE: Rechazar pago
+   * 🔧 NUEVO: Rechazar pago
    * Backend: POST /api/pagos/{id}/rechazar
    */
   rechazarPago(idPago: string, motivo?: string): Observable<ApiResponse<any>> {
@@ -95,10 +91,18 @@ export class PagoService {
   }
 
   /**
-   * 🔧 MÉTODO FALTANTE: Eliminar pago
+   * 🔧 NUEVO: Eliminar pago
    * Backend: DELETE /api/pagos/{id}
    */
   eliminarPago(idPago: string): Observable<ApiResponse<any>> {
     return this.http.delete<ApiResponse<any>>(`${this.apiUrl}/${idPago}`);
+  }
+
+  /**
+   * 🔧 NUEVO: Obtener pagos por grupo
+   * Backend: GET /api/pagos/grupo/{idGrupo}
+   */
+  obtenerPagosPorGrupo(idGrupo: string): Observable<ApiResponse<PagoDto[]>> {
+    return this.http.get<ApiResponse<PagoDto[]>>(`${this.apiUrl}/grupo/${idGrupo}`);
   }
 }

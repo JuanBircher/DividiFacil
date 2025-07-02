@@ -65,4 +65,12 @@ export class GrupoService {
       rol: nuevoRol 
     });
   }
+
+  /**
+   * Genera un código de acceso para un grupo específico.
+   * Backend: POST /api/grupos/{id}/codigo-acceso
+   */
+  generarCodigoAcceso(idGrupo: string): Observable<ApiResponse<{ codigo: string }>> {
+    return this.http.post<ApiResponse<{ codigo: string }>>(`${this.apiUrl}/${idGrupo}/codigo-acceso`, {});
+  }
 }

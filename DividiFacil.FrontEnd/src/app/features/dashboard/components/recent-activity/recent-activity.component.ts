@@ -144,7 +144,7 @@ export class RecentActivityComponent implements OnInit {
         fecha: gasto.fechaCreacion,
         icono: 'receipt',
         color: 'warn',
-        usuarioRelacionado: gasto.nombrePagador,
+        usuarioRelacionado: gasto.idMiembroPagador,
         accion: () => this.verDetalleGasto(gasto.idGasto)
       });
     });

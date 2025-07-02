@@ -1,28 +1,29 @@
 export interface CajaComunDto {
-  idCajaComun: string;
+  idCaja: string;              // 🔧 CORREGIDO: era idCajaComun
   idGrupo: string;
-  nombreCaja: string;
-  descripcion: string;
-  saldoActual: number;
+  nombreCaja: string;          // 🔧 NOTA: Esta propiedad puede venir de join con Grupo
+  descripcion: string;         // 🔧 NOTA: Esta propiedad puede venir de join con Grupo
+  saldo: number;               // 🔧 CORREGIDO: era saldoActual
   fechaCreacion: string;
-  nombreGrupo: string;
+  nombreGrupo: string;         // 🔧 NOTA: Esta propiedad viene de join
 }
 
 export interface MovimientoCajaDto {
   idMovimiento: string;
-  idCajaComun: string;
+  idCaja: string;              // 🔧 CORREGIDO: era idCajaComun
   tipoMovimiento: 'INGRESO' | 'EGRESO';
   concepto: string;
   monto: number;
-  fechaMovimiento: string;
-  idUsuarioCreador: string;
-  nombreUsuarioCreador: string;
-  saldoAnterior: number;
-  saldoNuevo: number;
+  fecha: string;               // 🔧 CORREGIDO: era fechaMovimiento
+  idUsuario: string;           // 🔧 CORREGIDO: era idUsuarioCreador
+  nombreUsuario: string;       // 🔧 CORREGIDO: era nombreUsuarioCreador
+  comprobantePath?: string;    // 🔧 AGREGADO: existe en backend
+  saldoAnterior?: number;      // 🔧 OPCIONAL: calculado
+  saldoNuevo?: number;         // 🔧 OPCIONAL: calculado
 }
 
 export interface MovimientoCajaCreacionDto {
-  idCajaComun: string;
+  idCaja: string;              // 🔧 CORREGIDO: era idCajaComun
   tipoMovimiento: 'INGRESO' | 'EGRESO';
   concepto: string;
   monto: number;

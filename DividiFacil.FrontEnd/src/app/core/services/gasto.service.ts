@@ -39,7 +39,7 @@ export class GastoService {
   }
 
   /**
-   * 🔧 MÉTODO FALTANTE: Obtener gastos recientes del usuario
+   * 🚨 MÉTODO CRÍTICO FALTANTE para el dashboard
    * Backend: GET /api/gastos/recientes?cantidad=10
    */
   obtenerMisGastos(): Observable<ApiResponse<GastoDto[]>> {
@@ -47,11 +47,39 @@ export class GastoService {
   }
 
   /**
-   * 🔧 MÉTODO FALTANTE: Obtener gastos por grupo
-   * Backend: GET /api/gastos/grupo/{idGrupo}
+   * 🔧 NUEVO: Obtener saldos del usuario
+   * Backend: GET /api/gastos/mis-saldos
    */
-  obtenerGastosPorGrupo(idGrupo: string): Observable<ApiResponse<GastoDto[]>> {
-    return this.http.get<ApiResponse<GastoDto[]>>(`${this.apiUrl}/grupo/${idGrupo}`);
+  obtenerMisSaldos(): Observable<ApiResponse<any[]>> {
+    return this.http.get<ApiResponse<any[]>>(`${this.apiUrl}/mis-saldos`);
+  }
+
+  /**
+   * 🔧 NUEVO: Obtener saldos de grupo
+   * Backend: GET /api/gastos/grupo/{idGrupo}/saldos
+   */
+  obtenerSaldosGrupo(idGrupo: string): Observable<ApiResponse<any[]>> {
+    return this.http.get<ApiResponse<any[]>>(`${this.apiUrl}/grupo/${idGrupo}/saldos`);
+  }
+
+  /**
+   * 🔧 NUEVO: Marcar detalle como pagado
+   * Backend: POST /api/gastos/{idGasto}/detalle/{idDetalle}/marcar-pagado
+   */
+  marcarComoPagado(idGasto: string, idDetalle: string): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/${idGasto}/detalle/${idDetalle}/marcar-pagado`, {});
+  }
+
+  /**
+   * 🔧 NUEVO: Obtener gastos paginados por grupo
+   * Backend: GET /api/gastos/grupo/{idGrupo}/paginado
+   */
+  obtenerGastosPaginados(idGrupo: string, paginacion: any): Observable<ApiResponse<any>> {
+    const params = new HttpParams()
+      .set('pagina', paginacion.pagina?.toString() || '1')
+      .set('tamano', paginacion.tamano?.toString() || '10');
+      
+    return this.http.get<ApiResponse<any>>(`${this.apiUrl}/grupo/${idGrupo}/paginado`, { params });
   }
 
   /**
