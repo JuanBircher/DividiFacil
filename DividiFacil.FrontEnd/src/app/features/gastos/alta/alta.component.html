@@ -1,1 +1,358 @@
-<p>alta works!</p>
+<div class="alta-gasto-container" *ngIf="!loading; else loadingTemplate">
+  <div class="gasto-header">
+    <button mat-icon-button (click)="cancelar()" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>
+      <mat-icon>receipt_long</mat-icon>
+      Nuevo Gasto
+    </h1>
+    <div class="grupo-info" *ngIf="grupo">
+      <mat-icon>group</mat-icon>
+      {{ grupo.nombreGrupo }}
+    </div>
+  </div>
+
+  <mat-card class="stepper-card">
+    <mat-stepper #stepper orientation="horizontal" linear>
+      
+      <!-- 🔸 PASO 1: DETALLES DEL GASTO -->
+      <mat-step [stepControl]="detallesForm" label="Detalles del Gasto" icon="receipt">
+        <form [formGroup]="detallesForm">
+          <div class="step-content detalles-step">
+            <h2>
+              <mat-icon>edit</mat-icon>
+              Información del Gasto
+            </h2>
+            
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Descripción</mat-label>
+                <input 
+                  matInput 
+                  formControlName="descripcion"
+                  placeholder="Ej: Cena en restaurante, Gasolina, Supermercado..."
+                  maxlength="100">
+                <mat-hint>Describe brevemente en qué se gastó</mat-hint>
+                <mat-error *ngIf="detallesForm.get('descripcion')?.hasError('required')">
+                  La descripción es obligatoria
+                </mat-error>
+                <mat-error *ngIf="detallesForm.get('descripcion')?.hasError('minlength')">
+                  Mínimo 3 caracteres
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="monto-field">
+                <mat-label>Monto Total</mat-label>
+                <input 
+                  matInput 
+                  type="number"
+                  formControlName="monto"
+                  (change)="onMontoChange()"
+                  placeholder="0.00"
+                  min="0.01"
+                  step="0.01">
+                <span matPrefix>$&nbsp;</span>
+                <mat-hint>Monto total del gasto</mat-hint>
+                <mat-error *ngIf="detallesForm.get('monto')?.hasError('required')">
+                  El monto es obligatorio
+                </mat-error>
+                <mat-error *ngIf="detallesForm.get('monto')?.hasError('min')">
+                  El monto debe ser mayor a $0.01
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="categoria-field">
+                <mat-label>Categoría</mat-label>
+                <mat-select formControlName="categoria">
+                  <mat-option value="">Sin categoría</mat-option>
+                  <mat-option *ngFor="let categoria of categorias" [value]="categoria">
+                    <mat-icon [ngSwitch]="categoria">
+                      <ng-container *ngSwitchCase="'Alimentación'">restaurant</ng-container>
+                      <ng-container *ngSwitchCase="'Transporte'">directions_car</ng-container>
+                      <ng-container *ngSwitchCase="'Entretenimiento'">local_activity</ng-container>
+                      <ng-container *ngSwitchCase="'Servicios'">build</ng-container>
+                      <ng-container *ngSwitchCase="'Compras'">shopping_cart</ng-container>
+                      <ng-container *ngSwitchCase="'Salud'">local_hospital</ng-container>
+                      <ng-container *ngSwitchCase="'Viajes'">flight</ng-container>
+                      <ng-container *ngSwitchDefault>category</ng-container>
+                    </mat-icon>
+                    {{ categoria }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="fecha-field">
+                <mat-label>Fecha del Gasto</mat-label>
+                <input 
+                  matInput 
+                  type="date"
+                  formControlName="fechaGasto">
+                <mat-hint>¿Cuándo se realizó el gasto?</mat-hint>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="step-actions">
+            <button mat-button (click)="cancelar()">
+              Cancelar
+            </button>
+            <button 
+              mat-raised-button 
+              color="primary" 
+              matStepperNext
+              [disabled]="!validarDetalles()">
+              Siguiente
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </div>
+        </form>
+      </mat-step>
+
+      <!-- 🔸 PASO 2: PARTICIPANTES Y DIVISIÓN -->
+      <mat-step [stepControl]="participantesForm" label="División del Gasto" icon="group">
+        <form [formGroup]="participantesForm">
+          <div class="step-content participantes-step">
+            <div class="division-header">
+              <h2>
+                <mat-icon>calculate</mat-icon>
+                División del Gasto
+              </h2>
+              <div class="monto-total">
+                <strong>Total: ${{ detallesForm.get('monto')?.value | number:'1.2-2' }}</strong>
+              </div>
+            </div>
+
+            <!-- TIPO DE DIVISIÓN -->
+            <div class="tipo-division">
+              <h3>¿Cómo quieres dividir el gasto?</h3>
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Tipo de División</mat-label>
+                <mat-select formControlName="tipoDivision" (selectionChange)="onTipoDivisionChange()">
+                  <mat-option *ngFor="let tipo of tiposDivision" [value]="tipo.valor">
+                    <div class="tipo-option">
+                      <div class="tipo-nombre">{{ tipo.nombre }}</div>
+                      <div class="tipo-descripcion">{{ tipo.descripcion }}</div>
+                    </div>
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- LISTA DE PARTICIPANTES -->
+            <div class="participantes-lista">
+              <h3>Selecciona los participantes:</h3>
+              
+              <div class="participantes-grid">
+                <div 
+                  *ngFor="let participante of participantes; trackBy: trackByParticipante"
+                  class="participante-card"
+                  [class.participante-seleccionado]="participante.seleccionado">
+                  
+                  <div class="participante-header">
+                    <mat-checkbox 
+                      [(ngModel)]="participante.seleccionado"
+                      (change)="onParticipanteToggle()"
+                      [disabled]="guardando">
+                    </mat-checkbox>
+                    
+                    <div class="participante-info">
+                      <div class="participante-nombre">
+                        {{ participante.miembro.nombreUsuario }}
+                      </div>
+                      <div class="participante-email">
+                        {{ participante.miembro.emailUsuario }}
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- DIVISIÓN MANUAL -->
+                  <div class="participante-monto" *ngIf="participante.seleccionado && participantesForm.get('tipoDivision')?.value === 'manual'">
+                    <mat-form-field appearance="outline" class="monto-participante">
+                      <mat-label>Monto</mat-label>
+                      <input 
+                        matInput 
+                        type="number"
+                        [(ngModel)]="participante.monto"
+                        (change)="onMontoParticipanteChange(participante)"
+                        placeholder="0.00"
+                        min="0"
+                        step="0.01">
+                      <span matPrefix>$</span>
+                    </mat-form-field>
+                  </div>
+
+                  <!-- DIVISIÓN POR PORCENTAJES -->
+                  <div class="participante-porcentaje" *ngIf="participante.seleccionado && participantesForm.get('tipoDivision')?.value === 'porcentajes'">
+                    <mat-form-field appearance="outline" class="porcentaje-participante">
+                      <mat-label>Porcentaje</mat-label>
+                      <input 
+                        matInput 
+                        type="number"
+                        [(ngModel)]="participante.porcentaje"
+                        (change)="onPorcentajeChange(participante)"
+                        placeholder="0"
+                        min="0"
+                        max="100"
+                        step="1">
+                      <span matSuffix>%</span>
+                    </mat-form-field>
+                  </div>
+
+                  <!-- MONTO CALCULADO -->
+                  <div class="participante-resultado" *ngIf="participante.seleccionado">
+                    <div class="resultado-monto">
+                      <strong>${{ participante.monto | number:'1.2-2' }}</strong>
+                    </div>
+                    <div class="resultado-porcentaje" *ngIf="participantesForm.get('tipoDivision')?.value !== 'porcentajes'">
+                      ({{ participante.porcentaje }}%)
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- RESUMEN DE DIVISIÓN -->
+            <div class="division-resumen" *ngIf="obtenerParticipantesSeleccionados().length > 0">
+              <mat-card class="resumen-card">
+                <div class="resumen-header">
+                  <h4>
+                    <mat-icon>calculate</mat-icon>
+                    Resumen de la División
+                  </h4>
+                </div>
+                <div class="resumen-content">
+                  <div class="resumen-fila">
+                    <span>Monto Total:</span>
+                    <strong>${{ detallesForm.get('monto')?.value | number:'1.2-2' }}</strong>
+                  </div>
+                  <div class="resumen-fila">
+                    <span>Total Calculado:</span>
+                    <strong [class.error]="Math.abs(getTotalCalculado() - (detallesForm.get('monto')?.value || 0)) > 0.01">
+                      ${{ getTotalCalculado() | number:'1.2-2' }}
+                    </strong>
+                  </div>
+                  <div class="resumen-fila">
+                    <span>Participantes:</span>
+                    <strong>{{ obtenerParticipantesSeleccionados().length }}</strong>
+                  </div>
+                  
+                  <!-- ALERTA SI NO COINCIDEN -->
+                  <div class="resumen-alerta" *ngIf="Math.abs(getTotalCalculado() - (detallesForm.get('monto')?.value || 0)) > 0.01">
+                    <mat-icon>warning</mat-icon>
+                    <span>Los montos no coinciden. Ajusta la división.</span>
+                  </div>
+                </div>
+              </mat-card>
+            </div>
+          </div>
+
+          <div class="step-actions">
+            <button mat-button matStepperPrevious>
+              <mat-icon>arrow_back</mat-icon>
+              Anterior
+            </button>
+            <button 
+              mat-raised-button 
+              color="primary" 
+              matStepperNext
+              [disabled]="!validarParticipantes()">
+              Siguiente
+              <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </div>
+        </form>
+      </mat-step>
+
+      <!-- 🔸 PASO 3: CONFIRMACIÓN -->
+      <mat-step label="Confirmar Gasto" icon="check">
+        <div class="step-content confirmacion-step">
+          <h2>
+            <mat-icon>preview</mat-icon>
+            Confirmar Gasto
+          </h2>
+
+          <mat-card class="confirmacion-card">
+            <mat-card-header>
+              <mat-card-title>{{ detallesForm.get('descripcion')?.value }}</mat-card-title>
+              <mat-card-subtitle>
+                <div class="gasto-meta">
+                  <span>
+                    <mat-icon>calendar_today</mat-icon>
+                    {{ detallesForm.get('fechaGasto')?.value | date:'dd/MM/yyyy' }}
+                  </span>
+                  <span *ngIf="detallesForm.get('categoria')?.value">
+                    <mat-icon>category</mat-icon>
+                    {{ detallesForm.get('categoria')?.value }}
+                  </span>
+                  <span>
+                    <mat-icon>group</mat-icon>
+                    {{ grupo?.nombreGrupo }}
+                  </span>
+                </div>
+              </mat-card-subtitle>
+            </mat-card-header>
+
+            <mat-card-content>
+              <div class="confirmacion-monto">
+                <div class="monto-principal">
+                  <span class="monto-label">Monto Total</span>
+                  <span class="monto-valor">${{ detallesForm.get('monto')?.value | number:'1.2-2' }}</span>
+                </div>
+              </div>
+
+              <div class="confirmacion-participantes">
+                <h4>División entre participantes:</h4>
+                <div class="participantes-confirmacion">
+                  <div 
+                    *ngFor="let participante of obtenerParticipantesSeleccionados()"
+                    class="participante-confirmacion">
+                    <div class="participante-nombre">
+                      {{ participante.miembro.nombreUsuario || participante.miembro.idMiembro }}
+                    </div>
+                    <div class="participante-monto-final">
+                      ${{ participante.monto | number:'1.2-2' }}
+                      <span class="participante-porcentaje-final">({{ participante.porcentaje }}%)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <div class="step-actions">
+          <button mat-button matStepperPrevious>
+            <mat-icon>arrow_back</mat-icon>
+            Anterior
+          </button>
+          <button 
+            mat-raised-button 
+            color="primary"
+            (click)="crearGasto()"
+            [disabled]="guardando">
+            <mat-icon *ngIf="!guardando">save</mat-icon>
+            <mat-icon *ngIf="guardando" class="spinning">hourglass_empty</mat-icon>
+            {{ guardando ? 'Creando Gasto...' : 'Crear Gasto' }}
+          </button>
+        </div>
+      </mat-step>
+    </mat-stepper>
+  </mat-card>
+</div>
+
+<!-- 🔄 LOADING TEMPLATE -->
+<ng-template #loadingTemplate>
+  <div class="loading-container">
+    <mat-card class="loading-card">
+      <div class="loading-content">
+        <mat-icon class="loading-icon spinning">hourglass_empty</mat-icon>
+        <h3>Cargando información del grupo...</h3>
+      </div>
+    </mat-card>
+  </div>
+</ng-template>

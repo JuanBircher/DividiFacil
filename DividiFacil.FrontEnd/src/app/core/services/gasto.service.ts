@@ -6,7 +6,8 @@ import { ApiResponse } from '../models/response.model';
 import { 
   Gasto, 
   GastoCreacionDto, 
-  GastoDto 
+  GastoDto,
+  DetalleGastoCreacionDto
 } from '../models/gasto.model';
 
 @Injectable({
@@ -74,16 +75,24 @@ export class GastoService {
    * 🔧 NUEVO: Obtener gastos paginados por grupo
    * Backend: GET /api/gastos/grupo/{idGrupo}/paginado
    */
-  obtenerGastosPaginados(idGrupo: string, paginacion: any): Observable<ApiResponse<any>> {
-    const params = new HttpParams()
-      .set('pagina', paginacion.pagina?.toString() || '1')
-      .set('tamano', paginacion.tamano?.toString() || '10');
+  obtenerGastosPaginados(idGrupo: string, filtros: any = {}): Observable<ApiResponse<any>> {
+    let params = new HttpParams()
+      .set('pagina', filtros.pagina?.toString() || '1')
+      .set('tamanioPagina', filtros.tamanioPagina?.toString() || '10');
+      
+    if (filtros.busqueda) {
+      params = params.set('searchTerm', filtros.busqueda);
+    }
+    
+    if (filtros.ordenamiento) {
+      params = params.set('sortOrder', filtros.ordenamiento);
+    }
       
     return this.http.get<ApiResponse<any>>(`${this.apiUrl}/grupo/${idGrupo}/paginado`, { params });
   }
 
   /**
-   * 🔧 MÉTODO FALTANTE: Aprobar gasto
+   * 🔧 NUEVO: Aprobar gasto
    * Backend: POST /api/gastos/{id}/aprobar
    */
   aprobarGasto(idGasto: string): Observable<ApiResponse<any>> {
@@ -91,7 +100,7 @@ export class GastoService {
   }
 
   /**
-   * 🔧 MÉTODO FALTANTE: Rechazar gasto
+   * 🔧 NUEVO: Rechazar gasto
    * Backend: POST /api/gastos/{id}/rechazar
    */
   rechazarGasto(idGasto: string, motivo?: string): Observable<ApiResponse<any>> {
@@ -99,7 +108,7 @@ export class GastoService {
   }
 
   /**
-   * 🔧 MÉTODO FALTANTE: Eliminar gasto
+   * 🔧 NUEVO: Eliminar gasto
    * Backend: DELETE /api/gastos/{id}
    */
   eliminarGasto(idGasto: string): Observable<ApiResponse<any>> {
@@ -107,9 +116,41 @@ export class GastoService {
   }
 
   /**
-   * 🔧 MÉTODO FALTANTE: Obtener gastos por grupo
+   * 🔧 NUEVO: Obtener gastos por grupo
    */
   obtenerGastosPorGrupo(idGrupo: string): Observable<ApiResponse<GastoDto[]>> {
     return this.http.get<ApiResponse<GastoDto[]>>(`${this.apiUrl}/grupo/${idGrupo}`);
+  }
+
+  /**
+   * 🔧 NUEVO: Calcular división equitativa
+   */
+  calcularDivisionEquitativa(montoTotal: number, participantes: string[]): DetalleGastoCreacionDto[] {
+    const montoPorPersona = Math.round((montoTotal / participantes.length) * 100) / 100;
+    const detalles: DetalleGastoCreacionDto[] = [];
+    
+    participantes.forEach((idMiembro, index) => {
+      // Ajustar el último para que la suma sea exacta
+      const monto = index === participantes.length - 1 
+        ? montoTotal - (montoPorPersona * (participantes.length - 1))
+        : montoPorPersona;
+        
+      detalles.push({
+        idMiembroDeudor: idMiembro,
+        monto: monto
+      });
+    });
+    
+    return detalles;
+  }
+
+  /**
+   * 🔧 NUEVO: Calcular división por porcentajes
+   */
+  calcularDivisionPorcentajes(montoTotal: number, participantes: {idMiembro: string, porcentaje: number}[]): DetalleGastoCreacionDto[] {
+    return participantes.map(p => ({
+      idMiembroDeudor: p.idMiembro,
+      monto: Math.round((montoTotal * p.porcentaje / 100) * 100) / 100
+    }));
   }
 }
