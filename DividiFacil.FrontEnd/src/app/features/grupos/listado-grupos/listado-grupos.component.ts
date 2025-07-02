@@ -10,10 +10,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { RouterModule } from '@angular/router';
 
 @Component({
-  selector: 'app-grupos-listado',
+  selector: 'app-listado-grupos',
   standalone: true,
-  templateUrl: './listado.component.html',
-  styleUrl: './listado.component.scss',
+  templateUrl: './listado-grupos.component.html',
+  styleUrls: ['./listado-grupos.component.scss'],
   imports: [
     CommonModule,
     MatCardModule,

@@ -55,10 +55,10 @@ interface ActividadReciente {
 }
 
 @Component({
-  selector: 'app-detalle',
+  selector: 'app-detalle-grupos',
   standalone: true,
-  templateUrl: './detalle.component.html',
-  styleUrls: ['./detalle.component.scss'],
+  templateUrl: './detalle-grupos.component.html',
+  styleUrls: ['./detalle-grupos.component.scss'],
   imports: [
     CommonModule,
     FormsModule,
@@ -79,7 +79,7 @@ interface ActividadReciente {
     ConfiguracionesComponent // ✅ AGREGAR: Import del componente
   ]
 })
-export class DetalleComponent implements OnInit, OnDestroy {
+export class DetalleGruposComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   
   // Estados de carga

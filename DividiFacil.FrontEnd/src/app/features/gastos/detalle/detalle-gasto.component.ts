@@ -29,8 +29,8 @@ interface EstadoParticipante {
 @Component({
     selector: 'app-detalle-gasto',
     standalone: true,
-    templateUrl: './detalle.component.html',
-    styleUrls: ['./detalle.component.scss'],
+    templateUrl: './detalle-gasto.component.html',
+    styleUrls: ['./detalle-gasto.component.scss'],
     imports: [
         CommonModule,
         MatCardModule,

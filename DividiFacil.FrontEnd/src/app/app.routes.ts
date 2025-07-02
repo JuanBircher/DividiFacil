@@ -45,17 +45,17 @@ export const routes: Routes = [
       {
         path: 'grupos',
         loadComponent: () =>
-          import('./features/grupos/listado/listado.component').then(m => m.ListadoComponent),
+          import('./features/grupos/listado-grupos/listado-grupos.component').then(m => m.ListadoComponent),
       },
       {
         path: 'grupos/alta',
         loadComponent: () => 
-          import('./features/grupos/alta/alta.component').then(m => m.AltaComponent),
+          import('./features/grupos/alta-grupos/alta-grupos.component').then(m => m.AltaGruposComponent),
       },
       {
         path: 'grupos/detalle/:id',
         loadComponent: () => 
-          import('./features/grupos/detalle/detalle.component').then(m => m.DetalleComponent),
+          import('./features/grupos/detalle-grupos/detalle-grupos.component').then(m => m.DetalleGruposComponent),
       },
       {
         path: 'gastos',
@@ -75,12 +75,12 @@ export const routes: Routes = [
       {
         path: 'gastos/detalle/:id',
         loadComponent: () => 
-          import('./features/gastos/detalle/detalle.component').then(m => m.DetalleGastoComponent),
+          import('./features/gastos/detalle/detalle-gasto.component').then(m => m.DetalleGastoComponent),
       },
       {
         path: 'pagos',
         loadComponent: () =>
-          import('./features/pagos/listado/listado.component').then(m => m.ListadoComponent),
+          import('./features/pagos/listado-pagos/listado-pagos.component').then(m => m.ListadoPagosComponent),
       },
       {
         path: 'notificaciones',

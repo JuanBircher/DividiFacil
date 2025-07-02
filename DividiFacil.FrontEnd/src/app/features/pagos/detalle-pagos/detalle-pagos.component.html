@@ -1,0 +1,176 @@
+<div class="detalle-container">
+  
+  <!-- HEADER -->
+  <div class="header-section">
+    <button mat-icon-button (click)="volver()" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>
+      <mat-icon>payment</mat-icon>
+      Detalle del Pago
+    </h1>
+  </div>
+
+  <!-- LOADING -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Cargando detalle del pago...</p>
+  </div>
+
+  <!-- CONTENIDO -->
+  <div *ngIf="!loading && pago" class="detalle-content">
+    
+    <!-- INFORMACIÓN PRINCIPAL -->
+    <mat-card class="info-principal-card">
+      <mat-card-content>
+        <div class="info-header">
+          <div class="estado-section">
+            <mat-chip [color]="obtenerColorEstado(pago.estado)" class="estado-chip">
+              <mat-icon>{{ obtenerIconoEstado(pago.estado) }}</mat-icon>
+              {{ pago.estado }}
+            </mat-chip>
+          </div>
+          
+          <div class="monto-section">
+            <span class="monto-label">Monto</span>
+            <span class="monto-valor">{{ pago.monto | currencyFormat }}</span>
+          </div>
+        </div>
+        
+        <mat-divider></mat-divider>
+        
+        <div class="concepto-section">
+          <h2>{{ pago.concepto }}</h2>
+          <p class="fecha-creacion">
+            <mat-icon>schedule</mat-icon>
+            Creado el {{ pago.fechaCreacion | dateFormat }}
+          </p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- DETALLES -->
+    <div class="detalle-grid">
+      
+      <!-- INFORMACIÓN DEL GRUPO -->
+      <mat-card class="detalle-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>group</mat-icon>
+            Información del Grupo
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="info-item">
+            <span class="label">Grupo:</span>
+            <span class="value">{{ pago.nombreGrupo }}</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- PARTICIPANTES -->
+      <mat-card class="detalle-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>people</mat-icon>
+            Participantes
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="participantes-grid">
+            <div class="participante-item pagador">
+              <div class="participante-info">
+                <mat-icon>person</mat-icon>
+                <div class="participante-details">
+                  <span class="nombre">{{ pago.nombrePagador }}</span>
+                  <span class="rol">Pagador</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="arrow-container">
+              <mat-icon>arrow_forward</mat-icon>
+            </div>
+            
+            <div class="participante-item receptor">
+              <div class="participante-info">
+                <mat-icon>person</mat-icon>
+                <div class="participante-details">
+                  <span class="nombre">{{ pago.nombreReceptor }}</span>
+                  <span class="rol">Receptor</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- FECHAS -->
+    <mat-card class="fechas-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>event</mat-icon>
+          Historial de Fechas
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="fechas-timeline">
+          <div class="fecha-item">
+            <mat-icon class="fecha-icon">add_circle</mat-icon>
+            <div class="fecha-content">
+              <span class="fecha-label">Pago creado</span>
+              <span class="fecha-valor">{{ pago.fechaCreacion | dateFormat }}</span>
+            </div>
+          </div>
+          
+          <div class="fecha-item" *ngIf="pago.fechaConfirmacion">
+            <mat-icon class="fecha-icon confirmado">check_circle</mat-icon>
+            <div class="fecha-content">
+              <span class="fecha-label">Pago confirmado</span>
+              <span class="fecha-valor">{{ pago.fechaConfirmacion | dateFormat }}</span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- ACCIONES -->
+    <mat-card class="acciones-card" *ngIf="pago.estado === 'Pendiente'">
+      <mat-card-content>
+        <div class="acciones-info">
+          <mat-icon>info</mat-icon>
+          <span>Este pago está pendiente de confirmación</span>
+        </div>
+        
+        <div class="acciones-buttons" *ngIf="puedeConfirmar() || puedeRechazar()">
+          <button 
+            mat-button 
+            color="warn"
+            (click)="rechazarPago()"
+            [disabled]="procesando">
+            <mat-icon>cancel</mat-icon>
+            Rechazar
+          </button>
+          
+          <button 
+            mat-raised-button 
+            color="primary"
+            (click)="confirmarPago()"
+            [disabled]="procesando">
+            <mat-icon>check_circle</mat-icon>
+            Confirmar Pago
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- INDICADOR DE PROCESANDO -->
+  <div *ngIf="procesando" class="processing-overlay">
+    <div class="processing-content">
+      <mat-spinner [diameter]="40"></mat-spinner>
+      <span>Procesando...</span>
+    </div>
+  </div>
+</div>

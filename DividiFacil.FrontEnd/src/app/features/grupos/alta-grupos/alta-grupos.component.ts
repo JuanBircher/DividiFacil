@@ -6,16 +6,16 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-alta-grupo',
+  selector: 'app-alta-grupos',
   standalone: true,
-  templateUrl: './alta.component.html',
-  styleUrls: ['./alta.component.scss'],
+  templateUrl: './alta-grupos.component.html',
+  styleUrls: ['./alta-grupos.component.scss'],
   imports: [
     CommonModule,
     ReactiveFormsModule,
   ]
 })
-export class AltaComponent {
+export class AltaGruposComponent {
   grupoForm: FormGroup;
   loading = false;
   error: string | null = null;

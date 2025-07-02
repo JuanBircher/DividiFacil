@@ -66,12 +66,12 @@ export interface MiembroGrupoDto {
   idMiembro: string;
   idUsuario: string;
   idGrupo: string;
-  nombreUsuario: string;  // ✅ CORREGIDO
-  emailUsuario: string;   // ✅ CORREGIDO  
+  nombreUsuario: string;  
+  emailUsuario: string;     
   imagenUsuario?: string;
   rol: 'Administrador' | 'Miembro';
   fechaUnion: string;
-  estadoMiembro?: 'Activo' | 'Inactivo';  // ✅ OPCIONAL
+  estadoMiembro?: 'Activo' | 'Inactivo';
 }
 
 export interface AgregarMiembroDto {
