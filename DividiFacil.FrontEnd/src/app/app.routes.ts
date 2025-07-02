@@ -68,6 +68,11 @@ export const routes: Routes = [
           import('./features/gastos/alta/alta.component').then(m => m.AltaComponent),
       },
       {
+        path: 'gastos/editar/:id',
+        loadComponent: () =>
+          import('./features/gastos/alta/alta.component').then(m => m.AltaComponent),
+      },
+      {
         path: 'gastos/detalle/:id',
         loadComponent: () => 
           import('./features/gastos/detalle/detalle-gasto.component').then(m => m.DetalleGastoComponent),

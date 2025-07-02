@@ -120,7 +120,7 @@ export class ListadoComponent implements OnInit, OnDestroy {
         this.cargarGastos();
       });
 
-    // Configurar ordenamiento reactivo
+    // Configurar ordenamiento reactiva
     this.filtrosForm.get('ordenamiento')?.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
@@ -233,8 +233,9 @@ export class ListadoComponent implements OnInit, OnDestroy {
    * ✏️ EDITAR GASTO
    */
   editarGasto(gasto: GastoDto): void {
-    // TODO: Implementar en Fase 5 - Paso 3
-    this.snackBar.open('Funcionalidad de edición próximamente', 'Cerrar', { duration: 2000 });
+    this.router.navigate(['/gastos/editar', gasto.idGasto], {
+      queryParams: { grupo: this.idGrupo }
+    });
   }
 
   /**

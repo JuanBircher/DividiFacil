@@ -17,7 +17,7 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { GastoService } from '../../../core/services/gasto.service';
 import { GrupoService } from '../../../core/services/grupo.service';
-import { GastoCreacionDto, DetalleGastoCreacionDto } from '../../../core/models/gasto.model';
+import { GastoCreacionDto, DetalleGastoCreacionDto, GastoDto } from '../../../core/models/gasto.model';
 import { GrupoConMiembrosDto, MiembroGrupoDto, MiembroGrupoSimpleDto } from '../../../core/models/grupo.model';
 
 interface ParticipanteGasto {
@@ -75,6 +75,11 @@ export class AltaComponent implements OnInit, OnDestroy {
     'Compras', 'Salud', 'Viajes', 'Otros'
   ];
 
+  // ✅ AGREGAR: Variables para modo edición
+  modoEdicion: boolean = false;
+  gastoOriginal: GastoDto | null = null;
+  idGastoEditar: string = '';
+
   constructor(
     private fb: FormBuilder,
     private gastoService: GastoService,
@@ -100,10 +105,20 @@ export class AltaComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(params => {
         this.idGrupo = params['grupo'];
-        if (this.idGrupo) {
-          this.cargarGrupo();
+        
+        // ✅ DETECTAR MODO EDICIÓN
+        const urlSegments = this.route.snapshot.url;
+        if (urlSegments.length > 1 && urlSegments[1]?.path === 'editar') {
+          this.modoEdicion = true;
+          this.idGastoEditar = this.route.snapshot.params['id'];
+          this.cargarGastoParaEdicion(params);
         } else {
-          this.router.navigate(['/grupos']);
+          this.modoEdicion = false;
+          if (this.idGrupo) {
+            this.cargarGrupo();
+          } else {
+            this.router.navigate(['/grupos']);
+          }
         }
       });
   }
@@ -290,6 +305,112 @@ export class AltaComponent implements OnInit, OnDestroy {
       .reduce((total, p) => total + (p.monto || 0), 0);
   }
 
+  /**
+   * 📝 CARGAR GASTO PARA EDICIÓN
+   */
+  private cargarGastoParaEdicion(params: any): void {
+    this.loading = true;
+    
+    this.gastoService.obtenerGasto(this.idGastoEditar)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.exito && response.data) {
+            this.gastoOriginal = response.data;
+            // Extraer idGrupo del gasto si no viene en query params
+            if (!this.idGrupo) {
+              // Si el backend incluye idGrupo en el response
+              this.idGrupo = params['grupo'] || ''; // Usar el de query params por ahora
+            }
+            this.cargarGrupoYDatos();
+          } else {
+            this.snackBar.open('Error al cargar el gasto', 'Cerrar', { duration: 3000 });
+            this.router.navigate(['/gastos']);
+          }
+        },
+        error: (err) => {
+          this.loading = false;
+          this.snackBar.open('Error al cargar el gasto', 'Cerrar', { duration: 3000 });
+          console.error('Error:', err);
+          this.router.navigate(['/gastos']);
+        }
+      });
+  }
+
+  /**
+   * 🔄 CARGAR GRUPO Y LLENAR FORMULARIOS CON DATOS EXISTENTES
+   */
+  private cargarGrupoYDatos(): void {
+    this.grupoService.obtenerMiembros(this.idGrupo)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.loading = false;
+          if (response.exito && response.data) {
+            this.grupo = response.data;
+            this.inicializarParticipantes();
+            this.llenarFormulariosConDatos();
+          } else {
+            this.snackBar.open('Error al cargar grupo', 'Cerrar', { duration: 3000 });
+            this.router.navigate(['/gastos']);
+          }
+        },
+        error: (err) => {
+          this.loading = false;
+          this.snackBar.open('Error al cargar grupo', 'Cerrar', { duration: 3000 });
+          console.error('Error:', err);
+          this.router.navigate(['/gastos']);
+        }
+      });
+  }
+
+  /**
+   * 📋 LLENAR FORMULARIOS CON DATOS DEL GASTO EXISTENTE
+   */
+  private llenarFormulariosConDatos(): void {
+    if (!this.gastoOriginal) return;
+
+    // Llenar formulario de detalles
+    this.detallesForm.patchValue({
+      descripcion: this.gastoOriginal.descripcion,
+      monto: this.gastoOriginal.monto,
+      categoria: this.gastoOriginal.categoria || '',
+      fechaGasto: this.gastoOriginal.fechaGasto ? 
+        new Date(this.gastoOriginal.fechaGasto).toISOString().split('T')[0] : 
+        new Date().toISOString().split('T')[0]
+    });
+
+    // Configurar participantes basado en detalles existentes
+    if (this.gastoOriginal.detalles && this.gastoOriginal.detalles.length > 0) {
+      this.participantes.forEach(participante => {
+        const detalleExistente = this.gastoOriginal!.detalles!.find(
+          d => d.nombreMiembroDeudor === participante.miembro.nombreUsuario
+        );
+        
+        if (detalleExistente) {
+          participante.seleccionado = true;
+          participante.monto = detalleExistente.monto;
+          participante.porcentaje = Math.round((detalleExistente.monto / this.gastoOriginal!.monto) * 100);
+        } else {
+          participante.seleccionado = false;
+          participante.monto = 0;
+          participante.porcentaje = 0;
+        }
+      });
+
+      // Detectar tipo de división
+      const participantesSeleccionados = this.participantes.filter(p => p.seleccionado);
+      if (participantesSeleccionados.length > 0) {
+        const primerMonto = participantesSeleccionados[0].monto;
+        const todosIguales = participantesSeleccionados.every(p => Math.abs(p.monto - primerMonto) <= 0.01);
+        
+        this.participantesForm.patchValue({
+          tipoDivision: todosIguales ? 'equitativa' : 'manual'
+        });
+      }
+    }
+  }
+
   async crearGasto(): Promise<void> {
     if (!this.validarParticipantes()) {
       this.snackBar.open('Por favor verifica que la división sea correcta', 'Cerrar', {
@@ -317,24 +438,62 @@ export class AltaComponent implements OnInit, OnDestroy {
         detalles: detalles 
       };
 
-      await this.gastoService.crearGasto(gastoCreacion).toPromise();
-
-      this.snackBar.open('¡Gasto creado exitosamente!', 'Cerrar', {
-        duration: 3000
-      });
+      // ✅ BIFURCAR: Crear vs Actualizar
+      if (this.modoEdicion) {
+        await this.gastoService.actualizarGasto(this.idGastoEditar, gastoCreacion).toPromise();
+        this.snackBar.open('¡Gasto actualizado exitosamente!', 'Cerrar', { duration: 3000 });
+      } else {
+        await this.gastoService.crearGasto(gastoCreacion).toPromise();
+        this.snackBar.open('¡Gasto creado exitosamente!', 'Cerrar', { duration: 3000 });
+      }
 
       this.router.navigate(['/gastos'], { 
         queryParams: { grupo: this.idGrupo } 
       });
 
     } catch (error) {
-      console.error('Error al crear gasto:', error);
-      this.snackBar.open('Error al crear el gasto. Inténtalo de nuevo.', 'Cerrar', {
-        duration: 5000
-      });
+      console.error('Error al procesar gasto:', error);
+      this.snackBar.open(
+        this.modoEdicion ? 'Error al actualizar el gasto' : 'Error al crear el gasto', 
+        'Cerrar', 
+        { duration: 5000 }
+      );
     } finally {
       this.guardando = false;
     }
+  }
+
+  /**
+   * ✅ MÉTODO PARA TEMPLATE: Verificar si hay pagos registrados
+   */
+  tieneGastoConPagos(): boolean {
+    if (!this.modoEdicion || !this.gastoOriginal?.detalles) return false;
+    return this.gastoOriginal.detalles.some(d => d.pagado);
+  }
+
+  /**
+   * ✅ MÉTODO PARA TEMPLATE: Obtener título del formulario
+   */
+  obtenerTituloFormulario(): string {
+    return this.modoEdicion ? 'Editar Gasto' : 'Crear Nuevo Gasto';
+  }
+
+  /**
+   * ✅ MÉTODO PARA TEMPLATE: Obtener texto del botón guardar
+   */
+  obtenerTextoBotonGuardar(): string {
+    if (this.guardando) {
+      return this.modoEdicion ? 'Actualizando...' : 'Creando...';
+    }
+    return this.modoEdicion ? 'Actualizar Gasto' : 'Crear Gasto';
+  }
+
+  /**
+   * ✅ MÉTODO PARA TEMPLATE: Verificar si puede editar
+   */
+  puedeEditarGasto(): boolean {
+    if (!this.modoEdicion || !this.gastoOriginal) return true;
+    return true; // Por ahora permitimos edición
   }
 
   // Exponer Math para el template

@@ -1,17 +1,35 @@
-<div class="alta-gasto-container" *ngIf="!loading; else loadingTemplate">
+<div class="alta-gasto-container">
+  <!-- HEADER -->
   <div class="gasto-header">
-    <button mat-icon-button (click)="cancelar()" class="back-button">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-    <h1>
-      <mat-icon>receipt_long</mat-icon>
-      Nuevo Gasto
-    </h1>
-    <div class="grupo-info" *ngIf="grupo">
-      <mat-icon>group</mat-icon>
-      {{ grupo.nombreGrupo }}
+    <div class="header-info">
+      <button mat-icon-button (click)="cancelar()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="titulo-section">
+        <h1>
+          <mat-icon>{{ modoEdicion ? 'edit' : 'add' }}</mat-icon>
+          {{ obtenerTituloFormulario() }}
+        </h1>
+        <div class="grupo-info" *ngIf="grupo">
+          <mat-icon>group</mat-icon>
+          {{ grupo.nombreGrupo }}
+        </div>
+      </div>
     </div>
   </div>
+
+  <!-- ADVERTENCIA DE EDICIÓN (solo si hay pagos) -->
+  <mat-card class="advertencia-card" *ngIf="modoEdicion && tieneGastoConPagos()">
+    <mat-card-content>
+      <div class="advertencia-content">
+        <mat-icon class="advertencia-icon">warning</mat-icon>
+        <div class="advertencia-texto">
+          <h3>Atención: Gasto con pagos registrados</h3>
+          <p>Este gasto tiene pagos confirmados. Los cambios podrían afectar los balances del grupo.</p>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
 
   <mat-card class="stepper-card">
     <mat-stepper #stepper orientation="horizontal" linear>
@@ -343,6 +361,22 @@
       </mat-step>
     </mat-stepper>
   </mat-card>
+
+  <!-- BOTÓN PRINCIPAL - REEMPLAZAR SECCIÓN COMPLETA -->
+  <div class="actions-section">
+    <button mat-button (click)="cancelar()" [disabled]="guardando">
+      Cancelar
+    </button>
+    <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="crearGasto()"
+      [disabled]="!validarDetalles() || !validarParticipantes() || guardando">
+      <mat-icon *ngIf="!guardando">{{ modoEdicion ? 'save' : 'add' }}</mat-icon>
+      <mat-icon *ngIf="guardando" class="spinning">hourglass_empty</mat-icon>
+      {{ obtenerTextoBotonGuardar() }}
+    </button>
+  </div>
 </div>
 
 <!-- 🔄 LOADING TEMPLATE -->

@@ -456,3 +456,42 @@
     }
   }
 }
+
+// ===== ADVERTENCIA DE EDICIÓN =====
+.advertencia-card {
+  margin-bottom: 24px;
+  border-left: 4px solid #ff9800;
+  background-color: #fff8e1;
+
+  .advertencia-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+
+    .advertencia-icon {
+      color: #ff9800;
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+      margin-top: 4px;
+    }
+
+    .advertencia-texto {
+      flex: 1;
+
+      h3 {
+        margin: 0 0 8px 0;
+        color: #e65100;
+        font-size: 18px;
+        font-weight: 500;
+      }
+
+      p {
+        margin: 0;
+        color: #bf360c;
+        font-size: 14px;
+        line-height: 1.4;
+      }
+    }
+  }
+}

@@ -206,8 +206,9 @@ export class DetalleGastoComponent implements OnInit, OnDestroy {
      * ✏️ EDITAR GASTO
      */
     editarGasto(): void {
-        // TODO: Implementar en Fase 5 - Paso 3
-        this.snackBar.open('Funcionalidad de edición próximamente', 'Cerrar', { duration: 2000 });
+        this.router.navigate(['/gastos/editar', this.idGasto], {
+            queryParams: { grupo: this.obtenerIdGrupo() }
+        });
     }
 
     /**
