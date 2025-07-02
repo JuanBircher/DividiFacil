@@ -91,7 +91,7 @@
                   <td mat-cell *matCellDef="let pago">
                     <div class="fecha-cell">
                       <mat-icon>schedule</mat-icon>
-                      {{ pago.fechaCreacion | dateFormat }}
+                      {{ pago.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}
                     </div>
                   </td>
                 </ng-container>
@@ -102,8 +102,8 @@
                   <td mat-cell *matCellDef="let pago">
                     <div class="concepto-cell">
                       <span class="concepto-texto">{{ pago.concepto }}</span>
-                      <span class="grupo-info" *ngIf="!idGrupoFiltro && pago.nombreGrupo">
-                        {{ pago.nombreGrupo }}
+                      <span class="grupo-info" *ngIf="!idGrupoFiltro">
+                        {{ obtenerNombreGrupo(pago.idGrupo) }}
                       </span>
                     </div>
                   </td>
@@ -115,7 +115,7 @@
                   <td mat-cell *matCellDef="let pago">
                     <div class="usuario-cell">
                       <mat-icon>person</mat-icon>
-                      {{ pago.nombreReceptor }}
+                      {{ obtenerNombreUsuario(pago.idReceptor) }}
                     </div>
                   </td>
                 </ng-container>
@@ -198,7 +198,7 @@
                   <td mat-cell *matCellDef="let pago">
                     <div class="fecha-cell">
                       <mat-icon>schedule</mat-icon>
-                      {{ pago.fechaCreacion | dateFormat }}
+                      {{ pago.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}
                     </div>
                   </td>
                 </ng-container>
@@ -209,8 +209,8 @@
                   <td mat-cell *matCellDef="let pago">
                     <div class="concepto-cell">
                       <span class="concepto-texto">{{ pago.concepto }}</span>
-                      <span class="grupo-info" *ngIf="!idGrupoFiltro && pago.nombreGrupo">
-                        {{ pago.nombreGrupo }}
+                      <span class="grupo-info" *ngIf="!idGrupoFiltro">
+                        {{ obtenerNombreGrupo(pago.idGrupo) }}
                       </span>
                     </div>
                   </td>
@@ -222,7 +222,7 @@
                   <td mat-cell *matCellDef="let pago">
                     <div class="usuario-cell">
                       <mat-icon>person</mat-icon>
-                      {{ pago.nombrePagador }}
+                      {{ obtenerNombreUsuario(pago.idPagador) }}
                     </div>
                   </td>
                 </ng-container>
@@ -268,7 +268,7 @@
                       <button 
                         mat-menu-item 
                         (click)="confirmarPago(pago)"
-                        *ngIf="puedeConfirmar(pago)"
+                        *ngIf="puedeConfirmarPago(pago)"
                         [disabled]="procesando">
                         <mat-icon>check_circle</mat-icon>
                         Confirmar Pago
@@ -277,7 +277,7 @@
                       <button 
                         mat-menu-item 
                         (click)="rechazarPago(pago)"
-                        *ngIf="puedeRechazar(pago)"
+                        *ngIf="puedeRechazarPago(pago)"
                         [disabled]="procesando">
                         <mat-icon>cancel</mat-icon>
                         Rechazar Pago

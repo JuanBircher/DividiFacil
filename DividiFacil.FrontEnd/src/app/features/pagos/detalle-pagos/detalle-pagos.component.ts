@@ -39,7 +39,7 @@ import { CurrencyFormatPipe } from '../../../shared/pipes/currency-format.pipe';
     CurrencyFormatPipe
   ]
 })
-export class DetalleComponent implements OnInit, OnDestroy {
+export class DetallePagosComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   
   // Estados

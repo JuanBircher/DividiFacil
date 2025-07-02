@@ -5,19 +5,22 @@ import { Pipe, PipeTransform } from '@angular/core';
   standalone: true
 })
 export class CurrencyFormatPipe implements PipeTransform {
-  
-  transform(value: number | null | undefined, currency: string = 'ARS', showSymbol: boolean = true): string {
-    if (value === null || value === undefined || isNaN(value)) {
-      return showSymbol ? '$0.00' : '0.00';
+  transform(value: number | string | null | undefined): string {
+    if (value === null || value === undefined || value === '') {
+      return '$0.00';
     }
 
-    const formatted = new Intl.NumberFormat('es-AR', {
+    const numValue = typeof value === 'string' ? parseFloat(value) : value;
+    
+    if (isNaN(numValue)) {
+      return '$0.00';
+    }
+
+    return new Intl.NumberFormat('es-AR', {
       style: 'currency',
-      currency: currency,
+      currency: 'ARS',
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
-    }).format(value);
-
-    return showSymbol ? formatted : formatted.replace(/[^\d.,]/g, '');
+    }).format(numValue);
   }
 }

@@ -106,6 +106,45 @@ export const routes: Routes = [
     ],
   },
 
+  // PAGOS - RUTAS ACTUALIZADAS
+  {
+    path: 'alta-pagos',
+    loadComponent: () => import('./features/pagos/alta-pagos/alta-pagos.component').then(m => m.AltaPagosComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'listado-pagos',
+    loadComponent: () => import('./features/pagos/listado-pagos/listado-pagos.component').then(m => m.ListadoPagosComponent),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'detalle-pagos/:id',
+    loadComponent: () => import('./features/pagos/detalle-pagos/detalle-pagos.component').then(m => m.DetallePagosComponent),
+    canActivate: [authGuard]
+  },
+
+  // BALANCES - RUTAS NUEVAS
+  {
+    path: 'balances',
+    children: [
+      {
+        path: '',
+        redirectTo: 'grupo',
+        pathMatch: 'full'
+      },
+      {
+        path: 'grupo/:id',
+        loadComponent: () => import('./features/balances/balance-grupo/balance-grupo.component').then(m => m.BalanceGrupoComponent),
+        canActivate: [authGuard]
+      },
+      {
+        path: 'usuario/:id',
+        loadComponent: () => import('./features/balances/balance-usuario/balance-usuario.component').then(m => m.BalanceUsuarioComponent),
+        canActivate: [authGuard]
+      }
+    ]
+  },
+
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: '**', redirectTo: '/auth/login' }
 ];

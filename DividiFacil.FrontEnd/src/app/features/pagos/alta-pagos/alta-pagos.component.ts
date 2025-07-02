@@ -14,11 +14,12 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
-// Services y Models - USANDO TUS SERVICIOS REALES
+// Services y Models - CORREGIDOS
 import { PagoService } from '../../../core/services/pago.service';
 import { GrupoService } from '../../../core/services/grupo.service';
 import { PagoCreacionDto } from '../../../core/models/pago.model';
-import { Grupo, MiembroGrupoSimpleDto } from '../../../core/models/grupo.model';
+import { Grupo, GrupoConMiembrosDto, MiembroGrupoSimpleDto } from '../../../core/models/grupo.model';
+import { MiembroDto } from '../../../core/models/miembro.model';
 import { AuthService } from '../../../core/auth.service';
 import { ApiResponse } from '../../../core/models/response.model';
 
@@ -42,17 +43,17 @@ import { ApiResponse } from '../../../core/models/response.model';
 })
 export class AltaPagosComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-  
+
   // Estados
   loading = false;
   guardando = false;
-  
+
   // Datos
   pagoForm: FormGroup;
   gruposDisponibles: Grupo[] = [];
-  miembrosGrupo: MiembroGrupoSimpleDto[] = []; // ✅ CORRECTO: Usar el tipo que existe
+  miembrosGrupo: MiembroDto[] = []; // ✅ CORREGIDO: Usar MiembroDto que es lo que devuelve el servicio
   usuarioActual: any;
-  
+
   // Filtros
   idGrupoPreseleccionado = '';
 
@@ -75,7 +76,7 @@ export class AltaPagosComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.usuarioActual = this.authService.obtenerUsuario();
-    
+
     this.route.queryParams
       .pipe(takeUntil(this.destroy$))
       .subscribe(params => {
@@ -95,7 +96,6 @@ export class AltaPagosComponent implements OnInit, OnDestroy {
   cargarGrupos(): void {
     this.loading = true;
 
-    // ✅ CORRECTO: Usar getGrupos() que SÍ existe
     this.grupoService.getGrupos()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -103,7 +103,7 @@ export class AltaPagosComponent implements OnInit, OnDestroy {
           this.loading = false;
           if (response.exito && response.data) {
             this.gruposDisponibles = response.data;
-            
+
             if (this.idGrupoPreseleccionado) {
               this.pagoForm.patchValue({ idGrupo: this.idGrupoPreseleccionado });
               this.onGrupoSeleccionado();
@@ -119,7 +119,7 @@ export class AltaPagosComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * 👥 CUANDO SE SELECCIONA UN GRUPO - USANDO TU ESTRUCTURA REAL
+   * 👥 CUANDO SE SELECCIONA UN GRUPO - CORREGIDO
    */
   onGrupoSeleccionado(): void {
     const idGrupo = this.pagoForm.get('idGrupo')?.value;
@@ -128,16 +128,20 @@ export class AltaPagosComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // ✅ CORRECTO: obtenerMiembros devuelve GrupoConMiembrosDto
+    // ✅ CORREGIDO: obtenerMiembros() devuelve ApiResponse<MiembroDto[]>
     this.grupoService.obtenerMiembros(idGrupo)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response: any) => {
-          if (response.exito && response.data && response.data.miembros) {
-            // ✅ CORRECTO: Acceder a miembros desde response.data.miembros
-            this.miembrosGrupo = response.data.miembros.filter(
-              (miembro: MiembroGrupoSimpleDto) => miembro.idUsuario !== this.usuarioActual?.idUsuario
-            );
+        next: (response: ApiResponse<GrupoConMiembrosDto>) => {
+          if (response.exito && response.data) {
+            // ✅ CORREGIDO: response.data.miembros ES el array de MiembroDto[]
+            this.miembrosGrupo = (response.data.miembros || [])
+              .filter((miembro: MiembroGrupoSimpleDto) => miembro.idUsuario !== this.usuarioActual?.idUsuario)
+              .map((miembro: MiembroGrupoSimpleDto) => ({
+                ...miembro,
+                nombre: miembro.nombreUsuario ?? '', // Ajusta según el campo real disponible
+                email: miembro.emailUsuario ?? ''    // Ajusta según el campo real disponible
+              })) as MiembroDto[];
           }
         },
         error: (err: any) => {
@@ -148,7 +152,7 @@ export class AltaPagosComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * 💾 CREAR PAGO
+   * 💾 CREAR PAGO - CORREGIDO
    */
   crearPago(): void {
     if (!this.pagoForm.valid) return;
@@ -165,15 +169,16 @@ export class AltaPagosComponent implements OnInit, OnDestroy {
     this.pagoService.crearPago(pagoData)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response: any) => {
+        next: (response: ApiResponse<any>) => {
           this.guardando = false;
           if (response.exito) {
-            this.snackBar.open('¡Pago creado exitosamente!', 'Cerrar', { 
+            this.snackBar.open('¡Pago creado exitosamente!', 'Cerrar', {
               duration: 3000,
               panelClass: ['success-snackbar']
             });
-            
-            this.router.navigate(['/pagos'], {
+
+            // ✅ CORREGIDO: Navegar a listado-pagos
+            this.router.navigate(['/listado-pagos'], {
               queryParams: { idGrupo: pagoData.idGrupo }
             });
           } else {
@@ -189,15 +194,15 @@ export class AltaPagosComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * 🔙 CANCELAR
+   * 🔙 CANCELAR - CORREGIDO
    */
   cancelar(): void {
     if (this.idGrupoPreseleccionado) {
-      this.router.navigate(['/pagos'], {
+      this.router.navigate(['/listado-pagos'], {
         queryParams: { idGrupo: this.idGrupoPreseleccionado }
       });
     } else {
-      this.router.navigate(['/pagos']);
+      this.router.navigate(['/listado-pagos']);
     }
   }
 
@@ -210,10 +215,10 @@ export class AltaPagosComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * 🎨 OBTENER NOMBRE DEL MIEMBRO - USANDO TU ESTRUCTURA REAL
+   * 🎨 OBTENER NOMBRE DEL MIEMBRO - CORREGIDO
    */
   obtenerNombreMiembro(idUsuario: string): string {
     const miembro = this.miembrosGrupo.find(m => m.idUsuario === idUsuario);
-    return miembro?.nombreUsuario || ''; // ✅ CORRECTO: nombreUsuario según tu modelo
+    return miembro?.nombre || ''; // ✅ CORREGIDO: MiembroDto usa 'nombre', no 'nombreUsuario'
   }
 }

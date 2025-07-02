@@ -1,0 +1,174 @@
+<!-- src/app/features/balances/balance-grupo/balance-grupo.component.html -->
+<div class="balance-grupo-container">
+  
+  <!-- HEADER -->
+  <div class="header-section">
+    <button mat-icon-button (click)="volverAlGrupo()" class="back-button">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h1>
+      <mat-icon>account_balance</mat-icon>
+      Balance del Grupo
+    </h1>
+    <div class="header-actions">
+      <button mat-button (click)="cargarBalance()" [disabled]="loading">
+        <mat-icon>refresh</mat-icon>
+        Actualizar
+      </button>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Cargando balance del grupo...</p>
+  </div>
+
+  <!-- CONTENIDO -->
+  <div *ngIf="!loading && balanceGrupo" class="balance-content">
+    
+    <!-- ✅ CORREGIDO: RESUMEN CON CAMPOS CORRECTOS -->
+    <mat-card class="resumen-card">
+      <mat-card-header>
+        <mat-card-title>{{ balanceGrupo.nombreGrupo }}</mat-card-title>
+        <mat-card-subtitle>Resumen Financiero</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="resumen-grid">
+          <div class="resumen-item">
+            <mat-icon>payments</mat-icon>
+            <div class="resumen-info">
+              <span class="label">Total Gastos</span>
+              <span class="value">{{ balanceGrupo.totalGastos | currencyFormat }}</span>
+            </div>
+          </div>
+          
+          <!-- ✅ ELIMINADO: totalPagos y balanceGeneral no existen en backend -->
+          
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- ✅ CORREGIDO: TABLA CON CAMPOS CORRECTOS -->
+    <mat-card class="balance-tabs-card">
+      <mat-tab-group>
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <span>
+              <mat-icon>people</mat-icon>
+              Balance por Usuario
+            </span>
+          </ng-template>
+          
+          <div class="tab-content">
+            <div class="balance-table-container">
+              <table mat-table [dataSource]="balanceGrupo.balancesUsuarios" class="balance-table">
+                
+                <!-- Usuario -->
+                <ng-container matColumnDef="usuario">
+                  <th mat-header-cell *matHeaderCellDef>Usuario</th>
+                  <td mat-cell *matCellDef="let balance">
+                    <div class="usuario-cell">
+                      <mat-icon>person</mat-icon>
+                      <span>{{ balance.nombreUsuario }}</span>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <!-- ✅ CORREGIDO: Campos correctos del DTO -->
+                <ng-container matColumnDef="totalPagado">
+                  <th mat-header-cell *matHeaderCellDef>Total Pagado</th>
+                  <td mat-cell *matCellDef="let balance">
+                    <span class="monto-pagado">{{ balance.totalPagado | currencyFormat }}</span>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="deberiaHaberPagado">
+                  <th mat-header-cell *matHeaderCellDef>Debería Haber Pagado</th>
+                  <td mat-cell *matCellDef="let balance">
+                    <span class="monto-debido">{{ balance.deberiaHaberPagado | currencyFormat }}</span>
+                  </td>
+                </ng-container>
+
+                <!-- Balance -->
+                <ng-container matColumnDef="balance">
+                  <th mat-header-cell *matHeaderCellDef>Balance</th>
+                  <td mat-cell *matCellDef="let balance">
+                    <mat-chip [color]="obtenerColorBalance(balance.balance)">
+                      <mat-icon>{{ obtenerIconoBalance(balance.balance) }}</mat-icon>
+                      {{ balance.balance | currencyFormat }}
+                    </mat-chip>
+                  </td>
+                </ng-container>
+
+                <!-- Acciones -->
+                <ng-container matColumnDef="acciones">
+                  <th mat-header-cell *matHeaderCellDef>Acciones</th>
+                  <td mat-cell *matCellDef="let balance">
+                    <button mat-button (click)="verDetalleUsuario(balance.idUsuario)">
+                      <mat-icon>visibility</mat-icon>
+                      Ver Detalle
+                    </button>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumnsBalance"></tr>
+                <tr mat-row *matRowDef="let balance; columns: displayedColumnsBalance; trackBy: trackByUsuario"></tr>
+              </table>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- ✅ CORREGIDO: TAB DEUDAS CON CAMPOS CORRECTOS -->
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <span [matBadge]="balanceGrupo.deudasSimplificadas.length" 
+                  [matBadgeHidden]="balanceGrupo.deudasSimplificadas.length === 0"
+                  matBadgeColor="warn"
+                  matBadgeSize="small">
+              <mat-icon>account_balance_wallet</mat-icon>
+              Deudas Pendientes
+            </span>
+          </ng-template>
+          
+          <div class="tab-content">
+            <div *ngIf="balanceGrupo.deudasSimplificadas.length === 0" class="empty-tab">
+              <mat-icon>check_circle</mat-icon>
+              <h3>¡Todas las deudas están saldadas!</h3>
+              <p>No hay deudas pendientes en este grupo</p>
+            </div>
+            
+            <div *ngIf="balanceGrupo.deudasSimplificadas.length > 0" class="deudas-table-container">
+              <table mat-table [dataSource]="balanceGrupo.deudasSimplificadas" class="deudas-table">
+                
+                <!-- ✅ CORREGIDO: Campos correctos del DTO -->
+                <ng-container matColumnDef="deudor">
+                  <th mat-header-cell *matHeaderCellDef>Deudor</th>
+                  <td mat-cell *matCellDef="let deuda">
+                    <div class="usuario-cell deudor">
+                      <mat-icon>person_remove</mat-icon>
+                      <span>{{ deuda.nombreUsuarioDeudor }}</span>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="acreedor">
+                  <th mat-header-cell *matHeaderCellDef>Acreedor</th>
+                  <td mat-cell *matCellDef="let deuda">
+                    <div class="usuario-cell acreedor">
+                      <mat-icon>person_add</mat-icon>
+                      <span>{{ deuda.nombreUsuarioAcreedor }}</span>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <!-- Resto igual... -->
+                
+              </table>
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card>
+  </div>
+</div>

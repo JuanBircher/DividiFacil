@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DividiFacil.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+df637a09713baeb5955b1b16f99e7d101158476e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f8c766ebd8d3283e095137d5b9644b97787f0407")]
 [assembly: System.Reflection.AssemblyProductAttribute("DividiFacil.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DividiFacil.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -202,7 +202,7 @@ export class DetalleGruposComponent implements OnInit, OnDestroy {
    */
   private cargarDatosAdicionales(): void {
     forkJoin({
-      balance: this.balanceService.calcularBalanceGrupo(this.idGrupo),
+      balance: this.balanceService.obtenerBalanceGrupo(this.idGrupo),
       gastos: this.gastoService.obtenerGastosPorGrupo(this.idGrupo),
       pagos: this.pagoService.obtenerPagosPorGrupo(this.idGrupo),
       movimientos: this.balanceService.obtenerHistorialMovimientos(this.idGrupo)
@@ -478,6 +478,31 @@ export class DetalleGruposComponent implements OnInit, OnDestroy {
   verHistorialGastos(): void {
     this.router.navigate(['/gastos'], { 
       queryParams: { idGrupo: this.idGrupo } 
+    });
+  }
+
+  /**
+   * 📊 VER BALANCE DEL GRUPO
+   */
+  verBalanceGrupo(): void {
+    this.router.navigate(['/balances/grupo', this.idGrupo]);
+  }
+
+  /**
+   * 💰 VER PAGOS DEL GRUPO
+   */
+  verPagosGrupo(): void {
+    this.router.navigate(['/listado-pagos'], {
+      queryParams: { idGrupo: this.idGrupo }
+    });
+  }
+
+  /**
+   * 💳 CREAR PAGO RÁPIDO
+   */
+  crearPagoRapido(): void {
+    this.router.navigate(['/alta-pagos'], {
+      queryParams: { idGrupo: this.idGrupo }
     });
   }
 

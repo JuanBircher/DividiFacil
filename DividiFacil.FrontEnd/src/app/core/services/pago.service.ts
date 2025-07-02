@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, forkJoin, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ApiResponse } from '../models/response.model';
@@ -91,5 +91,22 @@ export class PagoService {
    */
   eliminarPago(idPago: string): Observable<ApiResponse<any>> {
     return this.http.delete<ApiResponse<any>>(`${this.apiUrl}/${idPago}`);
+  }
+
+  /**
+   * ✅ NUEVO: Obtener todos los pagos con filtros
+   */
+  obtenerPagos(filtros?: any): Observable<ApiResponse<PagoDto[]>> {
+    let params = new HttpParams();
+    
+    if (filtros) {
+      if (filtros.idGrupo) params = params.set('idGrupo', filtros.idGrupo);
+      if (filtros.fechaDesde) params = params.set('fechaDesde', filtros.fechaDesde);
+      if (filtros.fechaHasta) params = params.set('fechaHasta', filtros.fechaHasta);
+      if (filtros.estado) params = params.set('estado', filtros.estado);
+      if (filtros.busqueda) params = params.set('busqueda', filtros.busqueda);
+    }
+    
+    return this.http.get<ApiResponse<PagoDto[]>>(`${this.apiUrl}`, { params });
   }
 }

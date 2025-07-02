@@ -52,4 +52,15 @@ export class AltaGruposComponent {
       });
     }
   }
+
+  submit() {
+  // Implement your form submission logic here
+  // For example, you might want to check if the form is valid and then process the data
+  if (this.grupoForm.valid) {
+    // Submit the form data
+    // Example: this.yourService.createGrupo(this.grupoForm.value).subscribe(...)
+  } else {
+    this.grupoForm.markAllAsTouched();
+  }
+}
 }
