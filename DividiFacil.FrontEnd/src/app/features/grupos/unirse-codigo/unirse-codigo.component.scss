@@ -1,0 +1,155 @@
+.unirse-codigo-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  
+  @media (max-width: 768px) {
+    padding: 10px;
+  }
+}
+
+.codigo-card {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+}
+
+.codigo-input {
+  width: 100%;
+  margin-bottom: 20px;
+  
+  input {
+    text-align: center;
+    font-family: 'Courier New', monospace;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    font-weight: bold;
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.grupo-encontrado {
+  text-align: center;
+  padding: 20px 0;
+}
+
+.encontrado-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+  
+  .success-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 8px;
+  }
+  
+  h3 {
+    margin: 0;
+    color: #4caf50;
+    font-size: 1.5rem;
+  }
+}
+
+.grupo-info {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  
+  .grupo-nombre {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 8px;
+  }
+  
+  .grupo-descripcion {
+    color: #666;
+    margin-bottom: 16px;
+    font-style: italic;
+  }
+  
+  .grupo-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    
+    @media (min-width: 768px) {
+      flex-direction: row;
+      justify-content: center;
+      gap: 20px;
+    }
+    
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: #666;
+      font-size: 0.9rem;
+      
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+        color: #3f51b5;
+      }
+    }
+  }
+}
+
+.grupo-acciones {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  
+  @media (max-width: 480px) {
+    flex-direction: column;
+  }
+}
+
+.info-adicional {
+  margin-top: 30px;
+  
+  .info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 20px;
+    
+    mat-icon {
+      margin-top: 4px;
+      flex-shrink: 0;
+    }
+    
+    .info-texto {
+      h4 {
+        margin: 0 0 4px 0;
+        color: #333;
+        font-size: 1rem;
+      }
+      
+      p {
+        margin: 0;
+        color: #666;
+        font-size: 0.9rem;
+        line-height: 1.4;
+      }
+    }
+  }
+}
+
+.spinning {
+  animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

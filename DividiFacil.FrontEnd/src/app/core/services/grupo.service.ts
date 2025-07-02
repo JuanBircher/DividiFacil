@@ -45,7 +45,12 @@ export class GrupoService {
     return this.http.get<ApiResponse<GrupoConMiembrosDto>>(`${this.apiUrl}/${idGrupo}/miembros`);
   }
 
-  // 🔧 MÉTODO EXISTENTE: Buscar por código
+  // 🔧 CORREGIR: Método generarCodigoAcceso (el backend devuelve string, no objeto)
+  generarCodigoAcceso(idGrupo: string): Observable<ApiResponse<string>> {
+    return this.http.post<ApiResponse<string>>(`${this.apiUrl}/${idGrupo}/codigo-acceso`, {});
+  }
+
+  // 🔧 MÉTODO YA EXISTENTE: buscarPorCodigo 
   buscarPorCodigo(codigo: string): Observable<ApiResponse<Grupo>> {
     return this.http.get<ApiResponse<Grupo>>(`${this.apiUrl}/codigo/${codigo}`);
   }
@@ -63,10 +68,6 @@ export class GrupoService {
   }
 
   // 🔧 MÉTODOS PARA GESTIÓN DE MIEMBROS
-  generarCodigoAcceso(idGrupo: string): Observable<ApiResponse<CodigoAccesoDto>> {
-    return this.http.post<ApiResponse<CodigoAccesoDto>>(`${this.apiUrl}/${idGrupo}/codigo-acceso`, {});
-  }
-
   agregarMiembro(idGrupo: string, invitacion: InvitacionDto): Observable<ApiResponse<any>> {
     return this.http.post<ApiResponse<any>>(`${this.apiUrl}/${idGrupo}/miembros`, invitacion);
   }

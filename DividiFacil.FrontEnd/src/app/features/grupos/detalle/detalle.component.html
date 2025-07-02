@@ -164,9 +164,11 @@
                   <button 
                     mat-raised-button 
                     color="primary" 
+                    [disabled]="generandoCodigo"
                     (click)="invitarMiembro()">
-                    <mat-icon>qr_code</mat-icon>
-                    Generar Código
+                    <mat-icon *ngIf="!generandoCodigo">qr_code</mat-icon>
+                    <mat-icon *ngIf="generandoCodigo" class="spinning">hourglass_empty</mat-icon>
+                    {{ generandoCodigo ? 'Generando...' : 'Generar Código' }}
                   </button>
                   
                   <button 
@@ -431,3 +433,52 @@
     Refrescar
   </button>
 </mat-menu>
+
+<!-- 🎫 MODAL CÓDIGO DE ACCESO -->
+<div class="modal-overlay" *ngIf="mostrarModalCodigo" (click)="cerrarModalCodigo()">
+  <div class="modal-content codigo-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>
+        <mat-icon>qr_code</mat-icon>
+        Código de Acceso Generado
+      </h2>
+      <button mat-icon-button (click)="cerrarModalCodigo()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="codigo-display">
+        <div class="codigo-titulo">Tu código de acceso:</div>
+        <div class="codigo-valor">{{ codigoAccesoActual }}</div>
+        <div class="codigo-info">
+          <mat-icon>info</mat-icon>
+          Comparte este código para que otros puedan unirse al grupo
+        </div>
+      </div>
+      
+      <div class="codigo-instrucciones">
+        <h4>¿Cómo funciona?</h4>
+        <ol>
+          <li>Comparte este código con las personas que quieres invitar</li>
+          <li>Ellas deben ir a "Unirse a Grupo" en la app</li>
+          <li>Ingresar el código y automáticamente se unirán</li>
+        </ol>
+      </div>
+    </div>
+    
+    <div class="modal-actions">
+      <button mat-button (click)="cerrarModalCodigo()">
+        Cerrar
+      </button>
+      <button mat-stroked-button color="accent" (click)="copiarCodigo()">
+        <mat-icon>content_copy</mat-icon>
+        Copiar Código
+      </button>
+      <button mat-raised-button color="primary" (click)="compartirCodigo()">
+        <mat-icon>share</mat-icon>
+        Compartir
+      </button>
+    </div>
+  </div>
+</div>

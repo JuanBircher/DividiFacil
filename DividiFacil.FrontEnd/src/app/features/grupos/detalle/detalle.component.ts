@@ -116,6 +116,11 @@ export class DetalleComponent implements OnInit, OnDestroy {
   emailNuevoMiembro = '';
   procesandoAccion = false;
 
+  // 🔧 AGREGAR: Variables para códigos de acceso
+  codigoAccesoActual: string | null = null;
+  generandoCodigo = false;
+  mostrarModalCodigo = false;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -313,22 +318,69 @@ export class DetalleComponent implements OnInit, OnDestroy {
    * 👥 ACCIONES DE GESTIÓN DE MIEMBROS
    */
   invitarMiembro(): void {
+    if (!this.esAdministrador) return;
+    
+    this.generandoCodigo = true;
+
     this.grupoService.generarCodigoAcceso(this.idGrupo)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          if (response.exito && response.data) {
-            this.snackBar.open(`Código generado: ${response.data.codigo}`, 'Cerrar', {
-              duration: 5000,
-              horizontalPosition: 'center',
-              verticalPosition: 'top'
-            });
+          this.generandoCodigo = false;
+          if (response.exito) {
+            this.codigoAccesoActual = response.data;
+            this.mostrarModalCodigo = true;
+          } else {
+            this.snackBar.open(response.mensaje || 'Error al generar código', 'Cerrar', { duration: 3000 });
           }
         },
         error: (err) => {
-          this.snackBar.open('Error al generar código', 'Cerrar', { duration: 3000 });
+          this.generandoCodigo = false;
+          this.snackBar.open('Error al generar código de acceso', 'Cerrar', { duration: 3000 });
         }
       });
+  }
+
+  /**
+   * 📋 COPIAR CÓDIGO AL PORTAPAPELES
+   */
+  copiarCodigo(): void {
+    if (!this.codigoAccesoActual) return;
+
+    navigator.clipboard.writeText(this.codigoAccesoActual).then(() => {
+      this.snackBar.open('Código copiado al portapapeles', 'Cerrar', { duration: 2000 });
+    }).catch(() => {
+      this.snackBar.open('Error al copiar código', 'Cerrar', { duration: 2000 });
+    });
+  }
+
+  /**
+   * 🔗 COMPARTIR CÓDIGO
+   */
+  compartirCodigo(): void {
+    if (!this.codigoAccesoActual) return;
+
+    const mensaje = `¡Te invito a unirte al grupo "${this.grupo.nombreGrupo}"!\n\nCódigo de acceso: ${this.codigoAccesoActual}\n\nIngresa este código en DividiFácil para unirte.`;
+
+    if (navigator.share) {
+      navigator.share({
+        title: `Invitación a ${this.grupo.nombreGrupo}`,
+        text: mensaje
+      });
+    } else {
+      // Fallback: copiar mensaje completo
+      navigator.clipboard.writeText(mensaje).then(() => {
+        this.snackBar.open('Mensaje de invitación copiado', 'Cerrar', { duration: 3000 });
+      });
+    }
+  }
+
+  /**
+   * ❌ CERRAR MODAL CÓDIGO
+   */
+  cerrarModalCodigo(): void {
+    this.mostrarModalCodigo = false;
+    this.codigoAccesoActual = null;
   }
 
   eliminarMiembro(idMiembro: string): void {
