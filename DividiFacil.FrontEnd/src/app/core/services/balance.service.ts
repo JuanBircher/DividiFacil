@@ -43,7 +43,7 @@ export class BalanceService {
    * Obtener historial de movimientos de un grupo
    */
   obtenerHistorialMovimientos(idGrupo: string): Observable<ApiResponse<MovimientoDto[]>> {
-    return this.http.get<ApiResponse<MovimientoDto[]>>(`${this.apiUrl}/movimientos/${idGrupo}`);
+    return this.http.get<ApiResponse<MovimientoDto[]>>(`${this.apiUrl}/grupo/${idGrupo}/movimientos`);
   }
 
   /**

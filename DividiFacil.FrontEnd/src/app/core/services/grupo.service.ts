@@ -2,12 +2,27 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Grupo, GrupoCreacionDto, GrupoConMiembrosDto, MiembroGrupoDto, AgregarMiembroDto } from '../models/grupo.model';
+import { ApiResponse } from '../models/response.model';
+import { 
+  Grupo, 
+  GrupoConMiembrosDto, 
+  MiembroGrupoSimpleDto 
+} from '../models/grupo.model';
 
-interface ApiResponse<T> {
-  exito: boolean;
-  data: T;
-  mensaje?: string;
+export interface GrupoCreacionDto {
+  nombreGrupo: string;
+  descripcion?: string;
+  modoOperacion: string;
+}
+
+export interface InvitacionDto {
+  emailUsuario: string;
+  rol?: string;
+}
+
+export interface CodigoAccesoDto {
+  codigo: string;
+  fechaExpiracion: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -16,6 +31,7 @@ export class GrupoService {
 
   constructor(private http: HttpClient) {}
 
+  // ✅ MÉTODOS EXISTENTES CORREGIDOS
   getGrupos(): Observable<ApiResponse<Grupo[]>> {
     return this.http.get<ApiResponse<Grupo[]>>(this.apiUrl);
   }
@@ -24,11 +40,21 @@ export class GrupoService {
     return this.http.get<ApiResponse<Grupo>>(`${this.apiUrl}/${idGrupo}`);
   }
 
+  // 🔧 MÉTODO CRÍTICO: Obtener grupo con miembros
+  obtenerMiembros(idGrupo: string): Observable<ApiResponse<GrupoConMiembrosDto>> {
+    return this.http.get<ApiResponse<GrupoConMiembrosDto>>(`${this.apiUrl}/${idGrupo}/miembros`);
+  }
+
+  // 🔧 MÉTODO EXISTENTE: Buscar por código
+  buscarPorCodigo(codigo: string): Observable<ApiResponse<Grupo>> {
+    return this.http.get<ApiResponse<Grupo>>(`${this.apiUrl}/codigo/${codigo}`);
+  }
+
   crearGrupo(grupo: GrupoCreacionDto): Observable<ApiResponse<Grupo>> {
     return this.http.post<ApiResponse<Grupo>>(this.apiUrl, grupo);
   }
 
-  actualizarGrupo(idGrupo: string, grupo: Partial<Grupo>): Observable<ApiResponse<Grupo>> {
+  actualizarGrupo(idGrupo: string, grupo: GrupoCreacionDto): Observable<ApiResponse<Grupo>> {
     return this.http.put<ApiResponse<Grupo>>(`${this.apiUrl}/${idGrupo}`, grupo);
   }
 
@@ -36,41 +62,26 @@ export class GrupoService {
     return this.http.delete<ApiResponse<any>>(`${this.apiUrl}/${idGrupo}`);
   }
 
-  obtenerGruposPorUsuario(): Observable<ApiResponse<GrupoConMiembrosDto[]>> {
-    return this.http.get<ApiResponse<GrupoConMiembrosDto[]>>(`${this.apiUrl}/usuario`);
+  // 🔧 MÉTODOS PARA GESTIÓN DE MIEMBROS
+  generarCodigoAcceso(idGrupo: string): Observable<ApiResponse<CodigoAccesoDto>> {
+    return this.http.post<ApiResponse<CodigoAccesoDto>>(`${this.apiUrl}/${idGrupo}/codigo-acceso`, {});
   }
 
-  buscarPorCodigo(codigoAcceso: string): Observable<ApiResponse<Grupo>> {
-    return this.http.get<ApiResponse<Grupo>>(`${this.apiUrl}/codigo/${codigoAcceso}`);
+  agregarMiembro(idGrupo: string, invitacion: InvitacionDto): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/${idGrupo}/miembros`, invitacion);
   }
 
-  unirseAGrupo(codigoAcceso: string): Observable<ApiResponse<boolean>> {
-    return this.http.post<ApiResponse<boolean>>(`${this.apiUrl}/unirse`, { codigoAcceso });
+  eliminarMiembro(idGrupo: string, idMiembro: string): Observable<ApiResponse<any>> {
+    return this.http.delete<ApiResponse<any>>(`${this.apiUrl}/${idGrupo}/miembros/${idMiembro}`);
   }
 
-  obtenerMiembros(idGrupo: string): Observable<ApiResponse<MiembroGrupoDto[]>> {
-    return this.http.get<ApiResponse<MiembroGrupoDto[]>>(`${this.apiUrl}/${idGrupo}/miembros`);
-  }
-
-  agregarMiembro(idGrupo: string, miembro: AgregarMiembroDto): Observable<ApiResponse<boolean>> {
-    return this.http.post<ApiResponse<boolean>>(`${this.apiUrl}/${idGrupo}/miembros`, miembro);
-  }
-
-  eliminarMiembro(idGrupo: string, idMiembro: string): Observable<ApiResponse<boolean>> {
-    return this.http.delete<ApiResponse<boolean>>(`${this.apiUrl}/${idGrupo}/miembros/${idMiembro}`);
-  }
-
-  cambiarRolMiembro(idGrupo: string, idMiembro: string, nuevoRol: string): Observable<ApiResponse<boolean>> {
-    return this.http.put<ApiResponse<boolean>>(`${this.apiUrl}/${idGrupo}/miembros/${idMiembro}/rol`, { 
-      rol: nuevoRol 
+  cambiarRolMiembro(idGrupo: string, idMiembro: string, nuevoRol: string): Observable<ApiResponse<any>> {
+    return this.http.put<ApiResponse<any>>(`${this.apiUrl}/${idGrupo}/miembros/${idMiembro}/rol`, {
+      nuevoRol: nuevoRol
     });
   }
 
-  /**
-   * Genera un código de acceso para un grupo específico.
-   * Backend: POST /api/grupos/{id}/codigo-acceso
-   */
-  generarCodigoAcceso(idGrupo: string): Observable<ApiResponse<{ codigo: string }>> {
-    return this.http.post<ApiResponse<{ codigo: string }>>(`${this.apiUrl}/${idGrupo}/codigo-acceso`, {});
+  obtenerGastosPorGrupo(idGrupo: string): Observable<ApiResponse<GastoDto[]>> {
+    return this.http.get<ApiResponse<GastoDto[]>>(`${this.apiUrl}/grupo/${idGrupo}`);
   }
 }
