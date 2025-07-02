@@ -8,6 +8,7 @@ import {
   GrupoConMiembrosDto, 
   MiembroGrupoSimpleDto 
 } from '../models/grupo.model';
+import { GastoDto } from '../models/gasto.model';
 
 export interface GrupoCreacionDto {
   nombreGrupo: string;

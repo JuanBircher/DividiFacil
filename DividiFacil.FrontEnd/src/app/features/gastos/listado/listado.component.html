@@ -1,19 +1,197 @@
-<div class="listado-container">
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>
-        <mat-icon>receipt</mat-icon>
-        Mis Gastos
-      </mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <p>Listado de gastos - En desarrollo</p>
-    </mat-card-content>
-    <mat-card-actions>
-      <button mat-raised-button color="primary" routerLink="/gastos/alta">
+<div class="listado-gastos-container">
+  <!-- HEADER -->
+  <div class="gastos-header">
+    <div class="header-info">
+      <button mat-icon-button (click)="volverAGrupos()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="titulo-section">
+        <h1>
+          <mat-icon>receipt_long</mat-icon>
+          Gastos del Grupo
+        </h1>
+        <div class="grupo-info" *ngIf="grupo">
+          <mat-icon>group</mat-icon>
+          {{ grupo.nombreGrupo }}
+        </div>
+      </div>
+    </div>
+    
+    <div class="header-actions">
+      <button mat-icon-button (click)="actualizarLista()" [disabled]="loading">
+        <mat-icon [class.spinning]="loading">refresh</mat-icon>
+      </button>
+      <button mat-raised-button color="primary" (click)="crearGasto()">
         <mat-icon>add</mat-icon>
         Nuevo Gasto
       </button>
-    </mat-card-actions>
+    </div>
+  </div>
+
+  <!-- FILTROS -->
+  <mat-card class="filtros-card">
+    <mat-card-content>
+      <form [formGroup]="filtrosForm" class="filtros-form">
+        <div class="filtros-row">
+          <!-- Búsqueda -->
+          <mat-form-field appearance="outline" class="busqueda-field">
+            <mat-label>Buscar gastos</mat-label>
+            <input matInput 
+                   formControlName="busqueda"
+                   placeholder="Descripción o categoría...">
+            <mat-icon matPrefix>search</mat-icon>
+          </mat-form-field>
+
+          <!-- Ordenamiento -->
+          <mat-form-field appearance="outline" class="ordenamiento-field">
+            <mat-label>Ordenar por</mat-label>
+            <mat-select formControlName="ordenamiento">
+              <mat-option *ngFor="let opcion of opcionesOrdenamiento" [value]="opcion.valor">
+                {{ opcion.nombre }}
+              </mat-option>
+            </mat-select>
+            <mat-icon matPrefix>sort</mat-icon>
+          </mat-form-field>
+
+          <!-- Acciones filtros -->
+          <div class="filtros-actions">
+            <button mat-stroked-button (click)="limpiarFiltros()" type="button">
+              <mat-icon>clear</mat-icon>
+              Limpiar
+            </button>
+          </div>
+        </div>
+      </form>
+    </mat-card-content>
   </mat-card>
+
+  <!-- LISTA DE GASTOS -->
+  <div class="gastos-content">
+    <!-- Loading -->
+    <div class="loading-container" *ngIf="loading">
+      <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
+      <p>Cargando gastos...</p>
+    </div>
+
+    <!-- Lista vacía -->
+    <mat-card class="empty-state" *ngIf="!loading && gastos.length === 0">
+      <mat-card-content>
+        <div class="empty-content">
+          <mat-icon class="empty-icon">receipt_long</mat-icon>
+          <h3>No hay gastos registrados</h3>
+          <p *ngIf="filtrosForm.get('busqueda')?.value">
+            No se encontraron gastos con los filtros aplicados.
+          </p>
+          <p *ngIf="!filtrosForm.get('busqueda')?.value">
+            ¡Comienza creando tu primer gasto!
+          </p>
+          <button mat-raised-button color="primary" (click)="crearGasto()">
+            <mat-icon>add</mat-icon>
+            Crear Primer Gasto
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Lista de gastos -->
+    <div class="gastos-grid" *ngIf="!loading && gastos.length > 0">
+      <mat-card 
+        *ngFor="let gasto of gastos; trackBy: trackByGasto" 
+        class="gasto-card"
+        [class.eliminando]="eliminando">
+        
+        <mat-card-header>
+          <div mat-card-avatar class="gasto-avatar">
+            <mat-icon>{{ obtenerIconoCategoria(gasto.categoria) }}</mat-icon>
+          </div>
+          
+          <mat-card-title>{{ gasto.descripcion }}</mat-card-title>
+          
+          <mat-card-subtitle>
+            <div class="gasto-meta">
+              <span class="fecha">
+                <mat-icon>calendar_today</mat-icon>
+                {{ gasto.fechaGasto | date:'dd/MM/yyyy' }}
+              </span>
+              <span class="categoria" *ngIf="gasto.categoria">
+                <mat-chip>{{ gasto.categoria }}</mat-chip>
+              </span>
+            </div>
+          </mat-card-subtitle>
+
+          <!-- Menú de acciones -->
+          <button mat-icon-button [matMenuTriggerFor]="menuAcciones">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menuAcciones="matMenu">
+            <button mat-menu-item (click)="verDetalle(gasto)">
+              <mat-icon>visibility</mat-icon>
+              Ver Detalle
+            </button>
+            <button mat-menu-item (click)="editarGasto(gasto)">
+              <mat-icon>edit</mat-icon>
+              Editar
+            </button>
+            <mat-divider></mat-divider>
+            <button mat-menu-item (click)="eliminarGasto(gasto)" class="delete-action">
+              <mat-icon>delete</mat-icon>
+              Eliminar
+            </button>
+          </mat-menu>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="gasto-info">
+            <!-- Monto principal -->
+            <div class="monto-principal">
+              <span class="monto-valor" [ngClass]="obtenerColorMonto(gasto.monto)">
+                ${{ gasto.monto | number:'1.2-2' }}
+              </span>
+            </div>
+
+            <!-- Información del pagador -->
+            <div class="pagador-info">
+              <span class="pagador-label">Pagado por:</span>
+              <span class="pagador-nombre">{{ gasto.nombreMiembroPagador }}</span>
+            </div>
+
+            <!-- Participantes -->
+            <div class="participantes-info" *ngIf="gasto.detalles && gasto.detalles.length > 0">
+              <span class="participantes-label">{{ gasto.detalles.length }} participante(s)</span>
+              <div class="participantes-montos">
+                <span *ngFor="let detalle of gasto.detalles.slice(0, 3); let last = last">
+                  {{ detalle.nombreMiembroDeudor }}: ${{ detalle.monto | number:'1.2-2' }}{{ !last ? ', ' : '' }}
+                </span>
+                <span *ngIf="gasto.detalles.length > 3">
+                  y {{ gasto.detalles.length - 3 }} más...
+                </span>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+
+        <mat-card-actions>
+          <button mat-button (click)="verDetalle(gasto)">
+            <mat-icon>visibility</mat-icon>
+            Ver Detalle
+          </button>
+          <button mat-button (click)="editarGasto(gasto)">
+            <mat-icon>edit</mat-icon>
+            Editar
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+
+    <!-- Paginación -->
+    <mat-paginator 
+      *ngIf="!loading && gastos.length > 0"
+      [length]="totalItems"
+      [pageSize]="itemsPorPagina"
+      [pageIndex]="paginaActual - 1"
+      [pageSizeOptions]="[5, 10, 25, 50]"
+      (page)="onPageChange($event)"
+      showFirstLastButtons>
+    </mat-paginator>
+  </div>
 </div>

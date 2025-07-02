@@ -360,11 +360,12 @@ export class DetalleComponent implements OnInit, OnDestroy {
   compartirCodigo(): void {
     if (!this.codigoAccesoActual) return;
 
-    const mensaje = `¡Te invito a unirte al grupo "${this.grupo.nombreGrupo}"!\n\nCódigo de acceso: ${this.codigoAccesoActual}\n\nIngresa este código en DividiFácil para unirte.`;
+    const nombreGrupo = this.grupo?.nombreGrupo || 'el grupo';
+    const mensaje = `¡Te invito a unirte al grupo "${nombreGrupo}"!\n\nCódigo de acceso: ${this.codigoAccesoActual}\n\nIngresa este código en DividiFácil para unirte.`;
 
     if (navigator.share) {
       navigator.share({
-        title: `Invitación a ${this.grupo.nombreGrupo}`,
+        title: `Invitación a ${nombreGrupo}`,
         text: mensaje
       });
     } else {

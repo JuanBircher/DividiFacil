@@ -119,7 +119,7 @@ export class AltaComponent implements OnInit, OnDestroy {
   cargarGrupo(): void {
     this.loading = true;
     
-    this.grupoService.obtenerConMiembros(this.idGrupo)
+    this.grupoService.obtenerMiembros(this.idGrupo)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
