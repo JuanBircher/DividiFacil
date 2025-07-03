@@ -14,9 +14,12 @@ export interface BalanceUsuarioDto {
   nombreUsuario: string;
   imagenPerfil: string;
   totalPagado: number;           // ✅ Campo correcto del backend
+  totalGastado: number;          // ✅ Campo para el total gastado
   deberiaHaberPagado: number;    // ✅ Campo correcto del backend
   balance: number;
   deudasDetalladas: DeudaDetalladaDto[];
+  deudas: DeudaDetalladaDto[];   // ✅ Campo para deudas
+  creditos: DeudaDetalladaDto[]; // ✅ Campo para créditos
 }
 
 // ✅ ALINEADO CON BACKEND DeudaSimplificadaDto.cs

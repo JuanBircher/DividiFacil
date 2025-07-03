@@ -32,7 +32,6 @@ import { ApiResponse } from '../../../core/models/response.model';
 
 // Pipes
 import { CurrencyFormatPipe } from '../../../shared/pipes/currency-format.pipe';
-import { DateFormatPipe } from "../../../shared/pipes/date-format.pipe";
 
 @Component({
   selector: 'app-listado-pagos',
@@ -58,8 +57,7 @@ import { DateFormatPipe } from "../../../shared/pipes/date-format.pipe";
     MatSortModule,
     MatMenuModule,
     MatBadgeModule,
-    CurrencyFormatPipe,
-    DateFormatPipe
+    CurrencyFormatPipe
 ]
 })
 export class ListadoPagosComponent implements OnInit, OnDestroy {

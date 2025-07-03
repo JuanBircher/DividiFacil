@@ -21,7 +21,6 @@ export class EstadisticasService {
   private readonly apiUrl = `${environment.apiUrl}/api`;
 
   constructor(
-    private http: HttpClient,
     private grupoService: GrupoService,
     private notificacionService: NotificacionService,
     private gastoService: GastoService

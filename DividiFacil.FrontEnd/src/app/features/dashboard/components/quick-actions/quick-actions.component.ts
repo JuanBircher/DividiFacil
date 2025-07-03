@@ -39,7 +39,7 @@ export class QuickActionsComponent {
       description: 'Inicia un nuevo grupo para dividir gastos',
       icon: 'group_add',
       color: 'primary',
-      route: '/grupos/alta'
+      route: '/grupos/alta'  // ✅ CORRECTA - esta ruta SÍ existe
     },
     {
       id: 'add-expense',
@@ -47,7 +47,7 @@ export class QuickActionsComponent {
       description: 'Añade un nuevo gasto a un grupo',
       icon: 'receipt_long',
       color: 'accent',
-      route: '/gastos/alta'
+      route: '/gastos/alta'  // ✅ CORRECTA - esta ruta SÍ existe
     },
     {
       id: 'notifications',
@@ -55,7 +55,7 @@ export class QuickActionsComponent {
       description: 'Ver alertas y pendientes',
       icon: 'notifications',
       color: 'warn',
-      route: '/notificaciones'
+      route: '/notificaciones'  // ✅ CORRECTA
     },
     {
       id: 'my-groups',
@@ -63,7 +63,7 @@ export class QuickActionsComponent {
       description: 'Ver todos mis grupos activos',
       icon: 'groups',
       color: 'info',
-      route: '/grupos'
+      route: '/grupos'  // ✅ CORRECTA
     },
     {
       id: 'payments',
@@ -71,7 +71,15 @@ export class QuickActionsComponent {
       description: 'Gestionar pagos y balances',
       icon: 'payment',
       color: 'success',
-      route: '/pagos'
+      route: '/listado-pagos'  // ✅ CORRECTA
+    },
+    {
+      id: 'caja-comun',
+      title: 'Caja Común',
+      description: 'Gestionar fondos compartidos',
+      icon: 'account_balance',
+      color: 'info',
+      route: '/caja'  // ✅ NUEVA - esta ruta SÍ existe
     },
     {
       id: 'profile',
@@ -79,11 +87,11 @@ export class QuickActionsComponent {
       description: 'Configurar cuenta y preferencias',
       icon: 'account_circle',
       color: 'primary',
-      action: () => this.abrirPerfil()
+      route: '/perfil'  // ✅ CORRECTA
     }
   ];
 
-  constructor(private router: Router) {}
+  constructor(public router: Router) {}
 
   /**
    * 🎓 EXPLICACIÓN: Ejecuta la acción correspondiente
@@ -99,15 +107,6 @@ export class QuickActionsComponent {
     } else if (action.action) {
       action.action();
     }
-  }
-
-  /**
-   * 🎓 EXPLICACIÓN: Función personalizada para abrir perfil
-   * Por ahora navega a una ruta, pero podría abrir un modal
-   */
-  private abrirPerfil(): void {
-    // Por ahora navegamos, pero en el futuro podría ser un modal
-    this.router.navigate(['/perfil']);
   }
 
   /**

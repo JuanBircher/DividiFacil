@@ -197,14 +197,14 @@ export class RecentActivityComponent implements OnInit {
   }
 
   /**
-   * 🎓 EXPLICACIÓN: Navegación a detalles específicos
+   * 🔧 CORREGIDO: Navegación a detalles específicos
    */
   verDetalleGasto(idGasto: string): void {
     this.router.navigate(['/gastos/detalle', idGasto]);
   }
 
   verDetallePago(idPago: string): void {
-    this.router.navigate(['/pagos/detalle', idPago]);
+    this.router.navigate(['/detalle-pagos', idPago]);  // ✅ CORREGIDO
   }
 
   verTodosLosGastos(): void {
@@ -212,7 +212,7 @@ export class RecentActivityComponent implements OnInit {
   }
 
   verTodosLosPagos(): void {
-    this.router.navigate(['/pagos']);
+    this.router.navigate(['/listado-pagos']);  // ✅ CORREGIDO
   }
 
   crearGasto(): void {
@@ -234,5 +234,12 @@ export class RecentActivityComponent implements OnInit {
       return this.actividadReciente;
     }
     return this.actividadReciente.filter(item => item.tipo === tipo);
+  }
+
+  /**
+   * 🎓 EXPLICACIÓN: TrackBy function para optimizar el ngFor
+   */
+  trackByItemId(index: number, item: ActivityItem): string {
+    return item.id;
   }
 }
