@@ -7,11 +7,6 @@ import { RouterOutlet } from '@angular/router';
   standalone: true,
   templateUrl: './auth-layout.component.html',
   styleUrls: ['./auth-layout.component.scss'],
-  imports: [
-    CommonModule,
-    RouterOutlet
-  ]
+  imports: [CommonModule, RouterOutlet]
 })
-export class AuthLayoutComponent {
-  currentYear = new Date().getFullYear();
-}
+export class AuthLayoutComponent {}

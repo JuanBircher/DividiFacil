@@ -134,7 +134,8 @@ export const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },
-
+  // Rutas de pruebas
+  { path: 'api-test', loadComponent: () => import('./features/test/api-test.component').then(m => m.ApiTestComponent) },
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: '**', redirectTo: '/auth/login' }
 ];
