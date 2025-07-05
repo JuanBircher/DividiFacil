@@ -62,9 +62,9 @@ export class AltaGruposComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef
   ) {
     this.grupoForm = this.fb.group({
-      nombreGrupo: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
-      descripcion: ['', [Validators.maxLength(200)]],
-      modoOperacion: [ModoOperacion.ESTANDAR, [Validators.required]]
+      NombreGrupo: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
+      Descripcion: ['', [Validators.maxLength(200)]],
+      ModoOperacion: [ModoOperacion.ESTANDAR, [Validators.required]]
     });
   }
 
@@ -96,9 +96,9 @@ export class AltaGruposComponent implements OnInit, OnDestroy {
         next: (response: any) => {
           if (response.exito && response.data) {
             this.grupoForm.patchValue({
-              nombreGrupo: response.data.nombreGrupo,
-              descripcion: response.data.descripcion,
-              modoOperacion: response.data.modoOperacion
+              NombreGrupo: response.data.nombreGrupo,
+              Descripcion: response.data.descripcion,
+              ModoOperacion: response.data.modoOperacion
             });
           }
           this.procesando = false;
@@ -124,9 +124,9 @@ export class AltaGruposComponent implements OnInit, OnDestroy {
     this.cdr.markForCheck();
 
     const grupoData: GrupoCreacionDto = {
-      nombreGrupo: this.grupoForm.get('nombreGrupo')?.value,
-      descripcion: this.grupoForm.get('descripcion')?.value,
-      modoOperacion: this.grupoForm.get('modoOperacion')?.value
+      nombreGrupo: this.grupoForm.get('NombreGrupo')?.value,
+      descripcion: this.grupoForm.get('Descripcion')?.value,
+      modoOperacion: this.grupoForm.get('ModoOperacion')?.value
     };
 
     console.log('🔧 Datos del grupo:', grupoData);
@@ -164,7 +164,7 @@ export class AltaGruposComponent implements OnInit, OnDestroy {
   }
 
   // ✅ GETTER PARA FÁCIL ACCESO A CONTROLES
-  get nombreGrupo() { return this.grupoForm.get('nombreGrupo'); }
-  get descripcion() { return this.grupoForm.get('descripcion'); }
-  get modoOperacion() { return this.grupoForm.get('modoOperacion'); }
+  get nombreGrupo() { return this.grupoForm.get('NombreGrupo'); }
+  get descripcion() { return this.grupoForm.get('Descripcion'); }
+  get modoOperacion() { return this.grupoForm.get('ModoOperacion'); }
 }

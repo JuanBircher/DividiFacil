@@ -1,29 +1,37 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ListadoGastosComponent } from './listado.component';
+import { AltaPagosComponent } from './alta-pagos.component';
+import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { RouterTestingModule } from '@angular/router/testing';
 
-describe('ListadoGastosComponent', () => {
-  let component: ListadoGastosComponent;
-  let fixture: ComponentFixture<ListadoGastosComponent>;
+describe('AltaPagosComponent', () => {
+  let component: AltaPagosComponent;
+  let fixture: ComponentFixture<AltaPagosComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        ListadoGastosComponent,
+        AltaPagosComponent,
+        ReactiveFormsModule,
         HttpClientTestingModule,
         MatSnackBarModule,
         RouterTestingModule
       ]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ListadoGastosComponent);
+    fixture = TestBed.createComponent(AltaPagosComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('debería crearse correctamente', () => {
     expect(component).toBeTruthy();
   });
+
+  it('debería tener el formulario inicializado', () => {
+    expect(component.pagoForm).toBeDefined();
+  });
+
+  // Agrega más tests de lógica y validaciones aquí
 });

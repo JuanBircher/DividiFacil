@@ -1,29 +1,31 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ListadoGastosComponent } from './listado.component';
+import { DetallePagosComponent } from './detalle-pagos.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { RouterTestingModule } from '@angular/router/testing';
 
-describe('ListadoGastosComponent', () => {
-  let component: ListadoGastosComponent;
-  let fixture: ComponentFixture<ListadoGastosComponent>;
+describe('DetallePagosComponent', () => {
+  let component: DetallePagosComponent;
+  let fixture: ComponentFixture<DetallePagosComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        ListadoGastosComponent,
+        DetallePagosComponent,
         HttpClientTestingModule,
         MatSnackBarModule,
         RouterTestingModule
       ]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ListadoGastosComponent);
+    fixture = TestBed.createComponent(DetallePagosComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('debería crearse correctamente', () => {
     expect(component).toBeTruthy();
   });
+
+  // Agrega más tests de lógica y validaciones aquí
 });

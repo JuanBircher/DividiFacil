@@ -1,4 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
 
 import { DetalleComponent } from './detalle.component';
 
@@ -8,7 +11,16 @@ describe('DetalleComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DetalleComponent]
+      imports: [DetalleComponent, HttpClientTestingModule],
+      providers: [
+        { provide: ActivatedRoute, useValue: {
+            snapshot: {
+              paramMap: { get: (key: string) => null },
+              queryParamMap: { get: (key: string) => key === 'id' ? '1' : null }
+            },
+            paramMap: of({ get: (key: string) => key === 'id' ? '1' : null })
+        } }
+      ]
     })
     .compileComponents();
 

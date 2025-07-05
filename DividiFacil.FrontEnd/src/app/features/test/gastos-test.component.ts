@@ -37,13 +37,16 @@ export class GastosTestComponent implements OnInit {
     this.loading = true;
     this.testResult = null;
 
-    // Elimina la interface GastosRecientesResponse porque no es necesaria
+    interface GastosRecientesResponse {
+      data: GastoDto[];
+      [key: string]: any;
+    }
 
     interface TestResultSuccess {
       success: true;
       operation: string;
       count: number;
-      data: any;
+      data: GastosRecientesResponse;
       timestamp: string;
     }
 
