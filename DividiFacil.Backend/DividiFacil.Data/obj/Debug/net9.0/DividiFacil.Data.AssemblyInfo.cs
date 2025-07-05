@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DividiFacil.Data")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+52a8f8eaff3fe609356fda2e0da8f3bc0b649069")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c9c328f069763cf47d7ca010caff0972ebb0003f")]
 [assembly: System.Reflection.AssemblyProductAttribute("DividiFacil.Data")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DividiFacil.Data")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
