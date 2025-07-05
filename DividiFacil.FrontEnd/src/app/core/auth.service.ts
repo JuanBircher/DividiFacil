@@ -1,24 +1,17 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, BehaviorSubject, throwError } from 'rxjs';
+import { tap, catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
-import { Usuario, UsuarioCreacionDto } from './models/usuario.model';
+import { Usuario, UsuarioLoginDto, UsuarioRegistroDto } from './models/usuario.model';
+import { ApiResponse } from './models/response.model';
+import { Router } from '@angular/router';
 
-interface ApiResponse<T> {
-  exito: boolean;
-  data: T;
-  mensaje?: string;
-}
-
-interface LoginDto {
-  email: string;
-  password: string;
-}
-
-interface UsuarioLogueadoDto {
-  usuario: Usuario;
+interface LoginResponseDto {
   token: string;
+  expiracion: string;
+  refreshToken: string;
+  usuario: Usuario;
 }
 
 @Injectable({
@@ -26,145 +19,128 @@ interface UsuarioLogueadoDto {
 })
 export class AuthService {
   private readonly apiUrl = `${environment.apiUrl}/api/auth`;
-  
   private usuarioActualSubject = new BehaviorSubject<Usuario | null>(null);
+  
   public usuarioActual$ = this.usuarioActualSubject.asObservable();
 
-  constructor(private http: HttpClient) {
-    this.cargarUsuarioDesdeStorage();
+  constructor(
+    private http: HttpClient,
+    private router: Router
+  ) {
+    this.inicializarUsuario();
   }
 
-  login(loginData: LoginDto): Observable<ApiResponse<UsuarioLogueadoDto>> {
-    return this.http.post<ApiResponse<UsuarioLogueadoDto>>(`${this.apiUrl}/login`, loginData)
+  private inicializarUsuario(): void {
+    const usuarioGuardado = localStorage.getItem('usuario');
+    if (usuarioGuardado) {
+      try {
+        const usuario = JSON.parse(usuarioGuardado);
+        this.usuarioActualSubject.next(usuario);
+      } catch (error) {
+        console.error('Error al parsear usuario guardado:', error);
+        this.limpiarSesion();
+      }
+    }
+  }
+
+  login(credenciales: UsuarioLoginDto): Observable<ApiResponse<LoginResponseDto>> {
+    return this.http.post<ApiResponse<LoginResponseDto>>(`${this.apiUrl}/login`, credenciales)
       .pipe(
         tap(response => {
           if (response.exito && response.data) {
-            localStorage.setItem('token', response.data.token);
-            localStorage.setItem('usuario', JSON.stringify(response.data.usuario));
-            this.usuarioActualSubject.next(response.data.usuario);
+            this.guardarSesion(response.data);
           }
+        }),
+        catchError(error => {
+          console.error('Error en login:', error);
+          return throwError(() => error);
         })
       );
   }
 
-  register(registerData: UsuarioCreacionDto): Observable<ApiResponse<UsuarioLogueadoDto>> {
-    return this.http.post<ApiResponse<UsuarioLogueadoDto>>(`${this.apiUrl}/register`, registerData)
+  register(registro: UsuarioRegistroDto): Observable<ApiResponse<LoginResponseDto>> {
+    return this.http.post<ApiResponse<LoginResponseDto>>(`${this.apiUrl}/registro`, registro)
       .pipe(
         tap(response => {
           if (response.exito && response.data) {
-            localStorage.setItem('token', response.data.token);
-            localStorage.setItem('usuario', JSON.stringify(response.data.usuario));
-            this.usuarioActualSubject.next(response.data.usuario);
+            this.guardarSesion(response.data);
           }
+        }),
+        catchError(error => {
+          console.error('Error en registro:', error);
+          return throwError(() => error);
         })
       );
   }
 
-  logout(): Observable<ApiResponse<boolean>> {
-    return this.http.post<ApiResponse<boolean>>(`${this.apiUrl}/logout`, {})
+  logout(): Observable<any> {
+    const token = this.obtenerToken();
+    return this.http.post(`${this.apiUrl}/logout`, { token })
       .pipe(
-        tap(() => {
+        tap(() => this.limpiarSesion()),
+        catchError(error => {
           this.limpiarSesion();
+          return throwError(() => error);
         })
       );
   }
 
-  obtenerUsuarioActual(): Observable<ApiResponse<Usuario>> {
-    return this.http.get<ApiResponse<Usuario>>(`${this.apiUrl}/usuario-actual`)
+  refreshToken(): Observable<ApiResponse<LoginResponseDto>> {
+    const refreshToken = localStorage.getItem('refreshToken');
+    return this.http.post<ApiResponse<LoginResponseDto>>(`${this.apiUrl}/refresh`, { refreshToken })
       .pipe(
         tap(response => {
           if (response.exito && response.data) {
-            localStorage.setItem('usuario', JSON.stringify(response.data));
-            this.usuarioActualSubject.next(response.data);
+            this.guardarSesion(response.data);
           }
+        }),
+        catchError(error => {
+          this.limpiarSesion();
+          return throwError(() => error);
         })
       );
+  }
+
+  private guardarSesion(data: LoginResponseDto): void {
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('refreshToken', data.refreshToken);
+    localStorage.setItem('usuario', JSON.stringify(data.usuario));
+    this.usuarioActualSubject.next(data.usuario);
+  }
+
+  private limpiarSesion(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('usuario');
+    this.usuarioActualSubject.next(null);
   }
 
   estaLogueado(): boolean {
-    return !!localStorage.getItem('token');
+    return !!this.obtenerToken() && !this.tokenExpirado();
+  }
+
+  tokenExpirado(): boolean {
+    const token = this.obtenerToken();
+    if (!token) return true;
+    
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const now = Date.now() / 1000;
+      return payload.exp < now;
+    } catch (error) {
+      return true;
+    }
+  }
+
+  obtenerUsuario(): Usuario | null {
+    return this.usuarioActualSubject.value;
   }
 
   obtenerToken(): string | null {
     return localStorage.getItem('token');
   }
 
-  /**
-   * 🔧 MÉTODO NECESARIO: Obtener usuario actual
-   */
-  obtenerUsuario(): any {
-    const token = localStorage.getItem('token');
-    if (!token) return null;
-    
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return {
-        idUsuario: payload.sub || payload.userId || payload.nameid,
-        nombre: payload.nombre || payload.name || payload.unique_name,
-        email: payload.email
-      };
-    } catch (error) {
-      console.error('Error decodificando token:', error);
-      return null;
-    }
-  }
-
-  /**
-   * Verifica si el token ha expirado
-   * 🎓 EXPLICACIÓN: Los JWT tienen fecha de expiración por seguridad
-   */
-  tokenExpirado(): boolean {
-    const token = localStorage.getItem('token');
-    if (!token) return true;
-    
-    try {
-      // Decodificar la parte del payload del JWT
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      const expiration = payload.exp * 1000; // Convertir a millisegundos
-      return Date.now() > expiration;
-    } catch (error) {
-      // Si no se puede decodificar, considerar expirado por seguridad
-      return true;
-    }
-  }
-
-  /**
-   * Obtiene información del usuario desde el token
-   * 🎓 EXPLICACIÓN: Los JWT contienen información del usuario
-   */
-  obtenerInfoToken(): any {
-    const token = localStorage.getItem('token');
-    if (!token) return null;
-    
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return {
-        id: payload.sub || payload.userId,
-        nombre: payload.nombre || payload.name,
-        email: payload.email,
-        exp: payload.exp
-      };
-    } catch (error) {
-      return null;
-    }
-  }
-
-  private cargarUsuarioDesdeStorage(): void {
-    const usuarioJson = localStorage.getItem('usuario');
-    if (usuarioJson) {
-      try {
-        const usuario = JSON.parse(usuarioJson);
-        this.usuarioActualSubject.next(usuario);
-      } catch (error) {
-        console.error('Error al parsear usuario desde localStorage:', error);
-        this.limpiarSesion();
-      }
-    }
-  }
-
-  private limpiarSesion(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('usuario');
-    this.usuarioActualSubject.next(null);
+  obtenerRefreshToken(): string | null {
+    return localStorage.getItem('refreshToken');
   }
 }

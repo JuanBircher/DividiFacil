@@ -1,36 +1,43 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatTabsModule } from '@angular/material/tabs';
-import { CardComponent } from '../../../../shared/components/card/card.component';
-import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
-import { CajaComunService } from '../../../../core/services/caja-comun.service';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Subject, takeUntil, forkJoin } from 'rxjs';
+
+// ✅ SOLO SERVICIOS QUE EXISTEN
 import { GastoService } from '../../../../core/services/gasto.service';
-import { PagoService } from '../../../../core/services/pago.service';
-import { MovimientoCajaDto } from '../../../../core/models/caja-comun.model';
+import { GrupoService } from '../../../../core/services/grupo.service';
+
+// ✅ SOLO MODELOS QUE EXISTEN
 import { GastoDto } from '../../../../core/models/gasto.model';
-import { PagoDto } from '../../../../core/models/pago.model';
+import { GrupoDto } from '../../../../core/models/grupo.model';
+
+// ✅ PIPES CORRECTOS
 import { DateFormatPipe } from '../../../../shared/pipes/date-format.pipe';
 import { CurrencyFormatPipe } from '../../../../shared/pipes/currency-format.pipe';
-import { TruncatePipe } from '../../../../shared/pipes/truncate.pipe';
-import { forkJoin, map } from 'rxjs';
 
-interface ActivityItem {
+interface ActividadItem {
   id: string;
-  tipo: 'movimiento' | 'gasto' | 'pago';
-  concepto: string;
+  tipo: 'gasto' | 'grupo';
+  descripcion: string;
   monto: number;
-  fecha: string;
-  estado?: string;
+  fecha: Date;
   icono: string;
-  color: 'primary' | 'accent' | 'warn' | 'success';
   usuarioRelacionado?: string;
   grupoRelacionado?: string;
-  accion?: () => void;
+  categoria?: string;
+  estado?: string;
+}
+
+interface FiltroItem {
+  id: string;
+  nombre: string;
+  activo: boolean;
+  tipo: 'todos' | 'gasto' | 'grupo';
 }
 
 @Component({
@@ -38,208 +45,219 @@ interface ActivityItem {
   standalone: true,
   templateUrl: './recent-activity.component.html',
   styleUrls: ['./recent-activity.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    RouterModule,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
     MatChipsModule,
-    MatTabsModule,
-    CardComponent,
-    LoadingSpinnerComponent,
+    MatProgressSpinnerModule,
     DateFormatPipe,
-    CurrencyFormatPipe,
-    TruncatePipe
+    CurrencyFormatPipe
   ]
 })
-export class RecentActivityComponent implements OnInit {
-  loading = true;
+export class RecentActivityComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+
+  actividadReciente: ActividadItem[] = [];
+  actividadOriginal: ActividadItem[] = [];
+  
+  filtros: FiltroItem[] = [
+    { id: 'todos', nombre: 'Todos', activo: true, tipo: 'todos' },
+    { id: 'gastos', nombre: 'Gastos', activo: false, tipo: 'gasto' },
+    { id: 'grupos', nombre: 'Grupos', activo: false, tipo: 'grupo' }
+  ];
+  
+  loading = false;
   error: string | null = null;
-  
-  // Datos separados por tipo
-  movimientos: MovimientoCajaDto[] = [];
-  gastos: GastoDto[] = [];
-  pagos: PagoDto[] = [];
-  
-  // Actividad unificada para mostrar
-  actividadReciente: ActivityItem[] = [];
-  
-  // Estados para cada sección
-  loadingMovimientos = false;
-  loadingGastos = false;
-  loadingPagos = false;
 
   constructor(
-    private cajaComunService: CajaComunService,
     private gastoService: GastoService,
-    private pagoService: PagoService,
-    private router: Router
+    private grupoService: GrupoService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    this.cargarActividad();
+    this.cargarActividadReal();
   }
 
-  /**
-   * 🎓 EXPLICACIÓN: Carga toda la actividad reciente del usuario
-   * Hace llamadas en paralelo para obtener datos rápidamente
-   */
-  cargarActividad(): void {
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  cargarActividadReal(): void {
     this.loading = true;
     this.error = null;
+    this.cdr.markForCheck();
 
-    // Solo llamar a métodos que EXISTEN
+    console.log('🔄 Cargando actividad reciente...');
+
+    // ✅ SOLO SERVICIOS QUE FUNCIONAN
     forkJoin({
-      gastos: this.gastoService.obtenerMisGastos(),
-      pagosRealizados: this.pagoService.obtenerPagosRealizados(),
-      pagosRecibidos: this.pagoService.obtenerPagosRecibidos()
-    }).subscribe({
-      next: (responses) => {
-        this.loading = false;
-        
-        // Procesar gastos
-        if (responses.gastos.exito && responses.gastos.data) {
-          this.gastos = responses.gastos.data.slice(0, 5);
-        }
-        
-        // Combinar pagos realizados y recibidos
-        const todosPagos: any[] = [];
-        if (responses.pagosRealizados.exito && responses.pagosRealizados.data) {
-          todosPagos.push(...responses.pagosRealizados.data);
-        }
-        if (responses.pagosRecibidos.exito && responses.pagosRecibidos.data) {
-          todosPagos.push(...responses.pagosRecibidos.data);
-        }
-        
-        // Ordenar y tomar solo los 5 más recientes
-        this.pagos = todosPagos
-          .sort((a, b) => new Date(b.fechaCreacion).getTime() - new Date(a.fechaCreacion).getTime())
-          .slice(0, 5);
-
-        // Unificar y ordenar toda la actividad
-        this.unificarActividad();
+      gastos: this.gastoService.obtenerRecientes(10),
+      grupos: this.grupoService.obtenerGrupos()
+    }).pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (data) => {
+        console.log('📊 Datos recibidos:', data);
+        this.procesarDatosActividad(data);
       },
-      error: (err) => {
+      error: (error) => {
+        console.error('❌ Error al cargar actividad:', error);
+        this.error = 'Error al cargar la actividad reciente.';
         this.loading = false;
-        this.error = 'Error al cargar actividad reciente';
-        console.error('Error cargando actividad:', err);
+        this.cdr.markForCheck();
       }
     });
   }
 
-  /**
-   * 🎓 EXPLICACIÓN: Convierte todos los tipos de datos en una lista unificada
-   * y los ordena por fecha más reciente
-   */
-  private unificarActividad(): void {
-    const items: ActivityItem[] = [];
+  private procesarDatosActividad(data: any): void {
+    this.actividadOriginal = [];
+    
+    // ✅ PROCESAR GASTOS
+    if (data.gastos?.exito && Array.isArray(data.gastos.data)) {
+      interface GastoApiResponse {
+        exito: boolean;
+        data: any[];
+      }
 
-    // Convertir gastos a ActivityItems
-    this.gastos.forEach(gasto => {
-      items.push({
-        id: gasto.idGasto,
-        tipo: 'gasto',
-        concepto: gasto.descripcion,
-        monto: gasto.monto,
-        fecha: gasto.fechaCreacion,
-        icono: 'receipt',
-        color: 'warn',
-        usuarioRelacionado: gasto.idMiembroPagador,
-        accion: () => this.verDetalleGasto(gasto.idGasto)
-      });
-    });
+      const gastosData: any[] = (data.gastos as GastoApiResponse).data;
+      const gastosItems: ActividadItem[] = gastosData
+        .slice(0, 8)
+        .map((gasto: any) => this.mapearGastoAActividad(gasto));
+      this.actividadOriginal.push(...gastosItems);
+    }
+    
+    // ✅ PROCESAR GRUPOS
+    if (Array.isArray(data.grupos)) {
+      interface GrupoApiResponse {
+        idGrupo: string;
+        nombreGrupo: string;
+        fechaCreacion: string;
+        nombreCreador: string;
+      }
 
-    // Convertir pagos a ActivityItems
-    this.pagos.forEach(pago => {
-      items.push({
-        id: pago.idPago,
-        tipo: 'pago',
-        concepto: pago.concepto,
-        monto: pago.monto,
-        fecha: pago.fechaCreacion,
-        estado: pago.estado,
-        icono: this.getIconoPago(pago.estado),
-        color: this.getColorPago(pago.estado),
-        usuarioRelacionado: pago.nombreReceptor,
-        grupoRelacionado: pago.nombreGrupo,
-        accion: () => this.verDetallePago(pago.idPago)
-      });
-    });
+      const gruposRecientes: ActividadItem[] = (data.grupos as GrupoApiResponse[])
+        .sort((a: GrupoApiResponse, b: GrupoApiResponse) => new Date(b.fechaCreacion).getTime() - new Date(a.fechaCreacion).getTime())
+        .slice(0, 3)
+        .map((grupo: GrupoApiResponse) => this.mapearGrupoAActividad(grupo));
+      this.actividadOriginal.push(...gruposRecientes);
+    }
 
-    // Ordenar por fecha (más reciente primero) y tomar solo los primeros 10
-    this.actividadReciente = items
+    this.actividadReciente = this.actividadOriginal
       .sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
       .slice(0, 10);
+
+    this.loading = false;
+    this.cdr.markForCheck();
+    
+    console.log('✅ Actividad procesada:', this.actividadReciente);
   }
 
-  /**
-   * 🎓 EXPLICACIÓN: Obtiene el icono apropiado según el estado del pago
-   */
-  private getIconoPago(estado: string): string {
-    switch (estado) {
-      case 'Completado': return 'check_circle';
-      case 'Pendiente': return 'schedule';
-      case 'Rechazado': return 'cancel';
-      default: return 'payment';
+  private mapearGastoAActividad(gasto: any): ActividadItem {
+    return {
+      id: gasto.idGasto,
+      tipo: 'gasto',
+      descripcion: gasto.descripcion || 'Gasto sin descripción',
+      monto: gasto.monto || 0,
+      fecha: new Date(gasto.fechaCreacion || gasto.fechaGasto),
+      icono: this.obtenerIconoCategoria(gasto.categoria),
+      usuarioRelacionado: gasto.nombreMiembroPagador || 'Usuario',
+      grupoRelacionado: gasto.nombreGrupo || 'Grupo',
+      categoria: gasto.categoria || 'Sin categoría',
+      estado: 'activo'
+    };
+  }
+
+  private mapearGrupoAActividad(grupo: any): ActividadItem {
+    return {
+      id: grupo.idGrupo,
+      tipo: 'grupo',
+      descripcion: `Grupo "${grupo.nombreGrupo}" creado`,
+      monto: 0,
+      fecha: new Date(grupo.fechaCreacion),
+      icono: 'group_add',
+      usuarioRelacionado: grupo.nombreCreador,
+      grupoRelacionado: grupo.nombreGrupo,
+      estado: 'activo'
+    };
+  }
+
+  private obtenerIconoCategoria(categoria: string): string {
+    const iconos: { [key: string]: string } = {
+      'Alimentación': 'restaurant',
+      'Transporte': 'directions_car',
+      'Entretenimiento': 'movie',
+      'Salud': 'local_hospital',
+      'Otros': 'receipt'
+    };
+    return iconos[categoria] || 'receipt';
+  }
+
+  aplicarFiltro(filtro: FiltroItem): void {
+    this.filtros.forEach(f => f.activo = false);
+    filtro.activo = true;
+
+    if (filtro.tipo === 'todos') {
+      this.actividadReciente = this.actividadOriginal;
+    } else {
+      this.actividadReciente = this.actividadOriginal.filter(item => item.tipo === filtro.tipo);
     }
-  }
-
-  /**
-   * 🎓 EXPLICACIÓN: Obtiene el color apropiado según el estado del pago
-   */
-  private getColorPago(estado: string): 'primary' | 'accent' | 'warn' | 'success' {
-    switch (estado) {
-      case 'Completado': return 'success';
-      case 'Pendiente': return 'accent';
-      case 'Rechazado': return 'warn';
-      default: return 'primary';
-    }
-  }
-
-  /**
-   * 🔧 CORREGIDO: Navegación a detalles específicos
-   */
-  verDetalleGasto(idGasto: string): void {
-    this.router.navigate(['/gastos/detalle', idGasto]);
-  }
-
-  verDetallePago(idPago: string): void {
-    this.router.navigate(['/detalle-pagos', idPago]);  // ✅ CORREGIDO
+    
+    this.cdr.markForCheck();
   }
 
   verTodosLosGastos(): void {
-    this.router.navigate(['/gastos']);
+    console.log('🔗 Navegando a todos los gastos');
   }
 
-  verTodosLosPagos(): void {
-    this.router.navigate(['/listado-pagos']);  // ✅ CORREGIDO
-  }
-
-  crearGasto(): void {
-    this.router.navigate(['/gastos/alta']);
-  }
-
-  /**
-   * 🎓 EXPLICACIÓN: Método para refrescar datos
-   */
   refrescar(): void {
-    this.cargarActividad();
+    this.cargarActividadReal();
   }
 
-  /**
-   * 🎓 EXPLICACIÓN: Filtra actividad por tipo
-   */
-  filtrarPorTipo(tipo: 'movimiento' | 'gasto' | 'pago' | 'todos'): ActivityItem[] {
-    if (tipo === 'todos') {
-      return this.actividadReciente;
+  // ✅ MÉTODOS PARA TEMPLATE
+  getIconStyles(tipo: string): any {
+    const baseStyles = {
+      'flex-shrink': '0',
+      'width': '40px',
+      'height': '40px',
+      'border-radius': '50%',
+      'display': 'flex',
+      'align-items': 'center',
+      'justify-content': 'center',
+      'margin-right': '1rem'
+    };
+
+    switch (tipo) {
+      case 'gasto':
+        return { ...baseStyles, 'background-color': '#ffebee', 'color': '#c62828' };
+      case 'grupo':
+        return { ...baseStyles, 'background-color': '#e3f2fd', 'color': '#1565c0' };
+      default:
+        return baseStyles;
     }
-    return this.actividadReciente.filter(item => item.tipo === tipo);
   }
 
-  /**
-   * 🎓 EXPLICACIÓN: TrackBy function para optimizar el ngFor
-   */
-  trackByItemId(index: number, item: ActivityItem): string {
-    return item.id;
+  onMouseEnter(event: any): void {
+    event.target.style.backgroundColor = '#f5f5f5';
   }
+
+  onMouseLeave(event: any): void {
+    event.target.style.backgroundColor = 'transparent';
+  }
+
+  // ✅ MÉTODOS PARA PIPES EN TEMPLATE
+  dateFormat(fecha: Date): string {
+    return new DateFormatPipe().transform(fecha);
+  }
+
+  currencyFormat(monto: number): string {
+    return new CurrencyFormatPipe().transform(monto);
+  }
+
+  trackByItemId = (index: number, item: ActividadItem): string => item.id;
+  trackByFiltro = (index: number, filtro: FiltroItem): string => filtro.id;
 }

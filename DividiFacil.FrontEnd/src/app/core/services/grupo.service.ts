@@ -1,89 +1,238 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-import { ApiResponse } from '../models/response.model';
 import { 
-  Grupo, 
+  GrupoDto, 
+  GrupoCreacionDto, 
   GrupoConMiembrosDto, 
-  MiembroGrupoSimpleDto 
+  MiembroDto,
+  MiembroGrupoSimpleDto,
+  InvitacionDto,
+  CambioRolDto 
 } from '../models/grupo.model';
-import { GastoDto } from '../models/gasto.model';
+import { ResponseDto, PaginatedResponse } from '../models/response.model';
 
-export interface GrupoCreacionDto {
-  nombreGrupo: string;
-  descripcion?: string;
-  modoOperacion: string;
-}
-
-export interface InvitacionDto {
-  emailUsuario: string;
-  rol?: string;
-}
-
-export interface CodigoAccesoDto {
-  codigo: string;
-  fechaExpiracion: string;
-}
-
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class GrupoService {
   private readonly apiUrl = `${environment.apiUrl}/api/grupos`;
 
   constructor(private http: HttpClient) {}
 
-  // ✅ MÉTODOS EXISTENTES CORREGIDOS
-  getGrupos(): Observable<ApiResponse<Grupo[]>> {
-    return this.http.get<ApiResponse<Grupo[]>>(this.apiUrl);
+  // ✅ MÉTODO 1: CrearGrupoAsync
+  crearGrupo(grupoCreacion: GrupoCreacionDto): Observable<ResponseDto<GrupoDto>> {
+    return this.http.post<ResponseDto<GrupoDto>>(this.apiUrl, grupoCreacion)
+      .pipe(
+        catchError(error => {
+          console.error('Error creando grupo:', error);
+          return of({ 
+            exito: false, 
+            data: undefined, 
+            mensaje: 'Error al crear grupo' 
+          });
+        })
+      );
   }
 
-  getGrupo(idGrupo: string): Observable<ApiResponse<Grupo>> {
-    return this.http.get<ApiResponse<Grupo>>(`${this.apiUrl}/${idGrupo}`);
+  // ✅ MÉTODO 2: GetByIdAsync
+  obtenerGrupo(idGrupo: string): Observable<ResponseDto<GrupoDto>> {
+    return this.http.get<ResponseDto<GrupoDto>>(`${this.apiUrl}/${idGrupo}`)
+      .pipe(
+        catchError(error => {
+          console.error('Error obteniendo grupo:', error);
+          return of({ 
+            exito: false, 
+            data: undefined, 
+            mensaje: 'Error al obtener grupo' 
+          });
+        })
+      );
   }
 
-  // 🔧 MÉTODO CRÍTICO: Obtener grupo con miembros
-  obtenerMiembros(idGrupo: string): Observable<ApiResponse<GrupoConMiembrosDto>> {
-    return this.http.get<ApiResponse<GrupoConMiembrosDto>>(`${this.apiUrl}/${idGrupo}/miembros`);
+  // ✅ ALIAS: Para mantener compatibilidad
+  obtenerGrupoPorId(idGrupo: string): Observable<ResponseDto<GrupoDto>> {
+    return this.obtenerGrupo(idGrupo);
   }
 
-  // 🔧 CORREGIR: Método generarCodigoAcceso (el backend devuelve string, no objeto)
-  generarCodigoAcceso(idGrupo: string): Observable<ApiResponse<string>> {
-    return this.http.post<ApiResponse<string>>(`${this.apiUrl}/${idGrupo}/codigo-acceso`, {});
+  // ✅ MÉTODO 3: GetConMiembrosAsync - CORREGIDO
+  obtenerGrupoConMiembros(idGrupo: string): Observable<ResponseDto<GrupoConMiembrosDto>> {
+    return this.http.get<ResponseDto<GrupoConMiembrosDto>>(`${this.apiUrl}/${idGrupo}/con-miembros`)
+      .pipe(
+        catchError(error => {
+          console.error('Error obteniendo grupo con miembros:', error);
+          return of({ 
+            exito: false, 
+            data: undefined, 
+            mensaje: 'Error al obtener grupo con miembros' 
+          });
+        })
+      );
   }
 
-  // 🔧 MÉTODO YA EXISTENTE: buscarPorCodigo 
-  buscarPorCodigo(codigo: string): Observable<ApiResponse<Grupo>> {
-    return this.http.get<ApiResponse<Grupo>>(`${this.apiUrl}/codigo/${codigo}`);
+  // ✅ MÉTODO 4: GetByUsuarioAsync
+  obtenerGrupos(): Observable<ResponseDto<GrupoDto[]>> {
+    return this.http.get<ResponseDto<GrupoDto[]>>(`${this.apiUrl}/usuario`)
+      .pipe(
+        map(response => ({
+          exito: response.exito,
+          data: Array.isArray(response.data) ? response.data : [],
+          mensaje: response.mensaje
+        })),
+        catchError(error => {
+          console.error('Error obteniendo grupos:', error);
+          return of({ 
+            exito: false, 
+            data: [], 
+            mensaje: 'Error al obtener grupos' 
+          });
+        })
+      );
   }
 
-  crearGrupo(grupo: GrupoCreacionDto): Observable<ApiResponse<Grupo>> {
-    return this.http.post<ApiResponse<Grupo>>(this.apiUrl, grupo);
+  // ✅ MÉTODO 5: GetByCodigoAccesoAsync
+  obtenerGrupoPorCodigo(codigo: string): Observable<ResponseDto<GrupoDto>> {
+    return this.http.get<ResponseDto<GrupoDto>>(`${this.apiUrl}/codigo/${codigo}`)
+      .pipe(
+        catchError(error => {
+          console.error('Error obteniendo grupo por código:', error);
+          return of({ 
+            exito: false, 
+            data: undefined, 
+            mensaje: 'Código de acceso inválido' 
+          });
+        })
+      );
   }
 
-  actualizarGrupo(idGrupo: string, grupo: GrupoCreacionDto): Observable<ApiResponse<Grupo>> {
-    return this.http.put<ApiResponse<Grupo>>(`${this.apiUrl}/${idGrupo}`, grupo);
+  // ✅ MÉTODO 6: AgregarMiembroAsync
+  agregarMiembro(idGrupo: string, invitacion: InvitacionDto): Observable<ResponseDto<void>> {
+    return this.http.post<ResponseDto<void>>(`${this.apiUrl}/${idGrupo}/miembros`, invitacion)
+      .pipe(
+        catchError(error => {
+          console.error('Error agregando miembro:', error);
+          return of({ 
+            exito: false, 
+            data: undefined, 
+            mensaje: 'Error al agregar miembro' 
+          });
+        })
+      );
   }
 
-  eliminarGrupo(idGrupo: string): Observable<ApiResponse<any>> {
-    return this.http.delete<ApiResponse<any>>(`${this.apiUrl}/${idGrupo}`);
+  // ✅ MÉTODO 7: EliminarMiembroAsync
+  eliminarMiembro(idGrupo: string, idMiembro: string): Observable<ResponseDto<void>> {
+    return this.http.delete<ResponseDto<void>>(`${this.apiUrl}/${idGrupo}/miembros/${idMiembro}`)
+      .pipe(
+        catchError(error => {
+          console.error('Error eliminando miembro:', error);
+          return of({ 
+            exito: false, 
+            data: undefined, 
+            mensaje: 'Error al eliminar miembro' 
+          });
+        })
+      );
   }
 
-  // 🔧 MÉTODOS PARA GESTIÓN DE MIEMBROS
-  agregarMiembro(idGrupo: string, invitacion: InvitacionDto): Observable<ApiResponse<any>> {
-    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/${idGrupo}/miembros`, invitacion);
+  // ✅ MÉTODO 8: CambiarRolMiembroAsync
+  cambiarRolMiembro(idGrupo: string, idMiembro: string, nuevoRol: string): Observable<ResponseDto<void>> {
+    const cambioRol: CambioRolDto = { nuevoRol };
+    return this.http.put<ResponseDto<void>>(`${this.apiUrl}/${idGrupo}/miembros/${idMiembro}/rol`, cambioRol)
+      .pipe(
+        catchError(error => {
+          console.error('Error cambiando rol:', error);
+          return of({ 
+            exito: false, 
+            data: undefined, 
+            mensaje: 'Error al cambiar rol' 
+          });
+        })
+      );
   }
 
-  eliminarMiembro(idGrupo: string, idMiembro: string): Observable<ApiResponse<any>> {
-    return this.http.delete<ApiResponse<any>>(`${this.apiUrl}/${idGrupo}/miembros/${idMiembro}`);
+  // ✅ MÉTODO 9: GenerarCodigoAccesoAsync
+  generarCodigoAcceso(idGrupo: string): Observable<ResponseDto<string>> {
+    return this.http.post<ResponseDto<string>>(`${this.apiUrl}/${idGrupo}/codigo-acceso`, {})
+      .pipe(
+        catchError(error => {
+          console.error('Error generando código:', error);
+          return of({ 
+            exito: false, 
+            data: undefined, 
+            mensaje: 'Error al generar código de acceso' 
+          });
+        })
+      );
   }
 
-  cambiarRolMiembro(idGrupo: string, idMiembro: string, nuevoRol: string): Observable<ApiResponse<any>> {
-    return this.http.put<ApiResponse<any>>(`${this.apiUrl}/${idGrupo}/miembros/${idMiembro}/rol`, {
-      nuevoRol: nuevoRol
-    });
+  // ✅ MÉTODO 10: ActualizarGrupoAsync
+  actualizarGrupo(idGrupo: string, grupoActualizacion: GrupoCreacionDto): Observable<ResponseDto<void>> {
+    return this.http.put<ResponseDto<void>>(`${this.apiUrl}/${idGrupo}`, grupoActualizacion)
+      .pipe(
+        catchError(error => {
+          console.error('Error actualizando grupo:', error);
+          return of({ 
+            exito: false, 
+            data: undefined, 
+            mensaje: 'Error al actualizar grupo' 
+          });
+        })
+      );
   }
 
-  obtenerGastosPorGrupo(idGrupo: string): Observable<ApiResponse<GastoDto[]>> {
-    return this.http.get<ApiResponse<GastoDto[]>>(`${this.apiUrl}/grupo/${idGrupo}`);
+  // ✅ MÉTODO 11: EliminarGrupoAsync
+  eliminarGrupo(idGrupo: string): Observable<ResponseDto<void>> {
+    return this.http.delete<ResponseDto<void>>(`${this.apiUrl}/${idGrupo}`)
+      .pipe(
+        catchError(error => {
+          console.error('Error eliminando grupo:', error);
+          return of({ 
+            exito: false, 
+            data: undefined, 
+            mensaje: 'Error al eliminar grupo' 
+          });
+        })
+      );
+  }
+
+  // ✅ MÉTODO AUXILIAR: Para unirse con código (mantener compatibilidad)
+  unirseConCodigo(codigo: string): Observable<ResponseDto<GrupoDto>> {
+    return this.obtenerGrupoPorCodigo(codigo);
+  }
+
+  // ✅ MÉTODO AUXILIAR: Para compatibilidad con componentes existentes
+  obtenerMiembros(idGrupo: string): Observable<ResponseDto<GrupoConMiembrosDto>> {
+    return this.obtenerGrupoConMiembros(idGrupo);
+  }
+
+  // ✅ MÉTODO AUXILIAR: Para mantener compatibilidad con PaginatedResponse
+  obtenerGruposPaginados(pagina: number = 1, limite: number = 10): Observable<PaginatedResponse<GrupoDto>> {
+    const params = new HttpParams()
+      .set('pagina', pagina.toString())
+      .set('limite', limite.toString());
+
+    return this.http.get<PaginatedResponse<GrupoDto>>(this.apiUrl, { params })
+      .pipe(
+        catchError(error => {
+          console.error('Error obteniendo grupos paginados:', error);
+          return of({ 
+            exito: false, 
+            data: [], 
+            totalRegistros: 0,
+            totalPaginas: 0,
+            paginaActual: 1,
+            registrosPorPagina: limite,
+            mensaje: 'Error al obtener grupos' 
+          });
+        })
+      );
+  }
+
+  // ✅ MÉTODO AUXILIAR: Para compatibilidad con getGrupos()
+  getGrupos(): Observable<ResponseDto<GrupoDto[]>> {
+    return this.obtenerGrupos();
   }
 }

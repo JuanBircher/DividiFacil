@@ -1,22 +1,13 @@
-export interface Usuario {
-  idUsuario: string;
-  nombre: string;
-  email: string;
-  telefono?: string;
-  urlImagen?: string;
-  fechaRegistro: string;  // ✅ CORREGIDO: era fechaCreacion
-  activo: boolean;        // ✅ CORREGIDO: era estaActivo
+export interface UsuarioDto {
+  idUsuario: string;        // Guid -> string
+  nombre: string;           // ✅ Correcto
+  email: string;            // ✅ Correcto
+  urlImagen?: string; 
+  telefono?: string;        // ✅ Correcto
+  fechaRegistro: string;    // ✅ Correcto (ISO format)
+
 }
 
-// DTO para creación de usuario
-export interface UsuarioCreacionDto {
-  nombre: string;
-  email: string;
-  password: string;
-  telefono?: string;
-}
-
-// DTO para registro (con confirmación)
 export interface UsuarioRegistroDto {
   nombre: string;
   email: string;
@@ -25,21 +16,30 @@ export interface UsuarioRegistroDto {
   telefono?: string;
 }
 
-// DTO para actualización de usuario
+export interface UsuarioLoginDto {
+  email: string;
+  password: string;
+}
+
 export interface UsuarioActualizacionDto {
   nombre: string;
   telefono?: string;
   urlImagen?: string;
 }
 
-/**
- * 🔧 NUEVO: DTO que coincide exactamente con el backend
- */
-export interface UsuarioDto {
-  idUsuario: string;
-  nombre: string;
-  email: string;
-  urlImagen?: string;
-  telefono?: string;
-  fechaRegistro: string;
+// 🔧 ALIAS para compatibilidad
+export interface Usuario extends UsuarioDto {}
+
+// 🔧 AGREGAR: Interfaces para nuevos métodos
+export interface CambiarPasswordDto {
+  passwordActual: string;
+  passwordNuevo: string;
+}
+
+export interface EstadisticasUsuarioDto {
+  gruposActivos: number;
+  gastosRegistrados: number;
+  totalGastado: number;
+  diasRegistrado: number;
+  ultimaActividad: string;
 }

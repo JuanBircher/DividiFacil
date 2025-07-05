@@ -1,15 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
-import { tap, map } from 'rxjs/operators';
+import { Observable, BehaviorSubject, of } from 'rxjs';
+import { tap, map, catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { NotificacionDto } from '../models/notificacion.model';
-
-interface ApiResponse<T> {
-  exito: boolean;
-  data: T;
-  mensaje?: string;
-}
+import { ResponseDto } from '../models/response.model';
 
 export interface ConfiguracionNotificacionesDto {
   idConfiguracion: string;
@@ -20,62 +15,48 @@ export interface ConfiguracionNotificacionesDto {
   notificarCambiosEstadoPagos: boolean;
   recordatoriosDeudas: boolean;
   recordatoriosPagos: boolean;
-  frecuenciaRecordatorios: string; // "Diario", "Semanal", "Mensual"
+  frecuenciaRecordatorios: string;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotificacionService {
-  private readonly apiUrl = `${environment.apiUrl}/api/notificaciones`;
-  
-  // Contador de notificaciones no leídas
+  private apiUrl = `${environment.apiUrl}/api/notificaciones`;
   private contadorNoLeidasSubject = new BehaviorSubject<number>(0);
   public contadorNoLeidas$ = this.contadorNoLeidasSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
-  /**
-   * Obtener notificaciones pendientes del usuario
-   */
-  obtenerPendientes(): Observable<ApiResponse<NotificacionDto[]>> {
-    return this.http.get<ApiResponse<NotificacionDto[]>>(`${this.apiUrl}/pendientes`)
+  obtenerPendientes(idUsuario: string): Observable<ResponseDto<NotificacionDto[]>> {
+    return this.http.get<ResponseDto<NotificacionDto[]>>(`${this.apiUrl}/pendientes/${idUsuario}`)
       .pipe(
         tap(response => {
           if (response.exito && response.data) {
-            // 🔧 USAR: Propiedades que existen en tu NotificacionDto
-            const noLeidas = response.data.filter(n => n.estado !== 'LEIDA').length;
+            const noLeidas = response.data.filter(n => n.estado !== 'Enviado' && n.estado !== 'Leida').length;
             this.contadorNoLeidasSubject.next(noLeidas);
           }
+        }),
+        catchError(error => {
+          console.error('Error al obtener notificaciones pendientes:', error);
+          return of({ exito: false, data: [], mensaje: 'Error al obtener notificaciones' });
         })
       );
   }
 
-  /**
-   * Marcar notificación como enviada/leída
-   */
-  marcarComoLeida(idNotificacion: string): Observable<ApiResponse<boolean>> {
-    return this.http.put<ApiResponse<boolean>>(`${this.apiUrl}/${idNotificacion}/marcar-enviada`, {});
+  marcarComoLeida(idNotificacion: string, idUsuario: string): Observable<ResponseDto<void>> {
+    return this.http.put<ResponseDto<void>>(`${this.apiUrl}/${idNotificacion}/marcar-enviada`, { idUsuario });
   }
 
-  /**
-   * 🔧 NUEVO: Obtener configuración de notificaciones del usuario
-   */
-  obtenerConfiguracion(): Observable<ApiResponse<ConfiguracionNotificacionesDto>> {
-    return this.http.get<ApiResponse<ConfiguracionNotificacionesDto>>(`${this.apiUrl}/configuracion`);
+  obtenerConfiguracion(idUsuario: string): Observable<ResponseDto<ConfiguracionNotificacionesDto>> {
+    return this.http.get<ResponseDto<ConfiguracionNotificacionesDto>>(`${this.apiUrl}/configuracion/${idUsuario}`);
   }
 
-  /**
-   * 🔧 NUEVO: Actualizar configuración de notificaciones
-   */
-  actualizarConfiguracion(configuracion: ConfiguracionNotificacionesDto): Observable<ApiResponse<any>> {
-    return this.http.put<ApiResponse<any>>(`${this.apiUrl}/configuracion`, configuracion);
+  actualizarConfiguracion(configuracion: ConfiguracionNotificacionesDto, idUsuarioAdmin: string): Observable<ResponseDto<void>> {
+    return this.http.put<ResponseDto<void>>(`${this.apiUrl}/configuracion/${idUsuarioAdmin}`, configuracion);
   }
 
-  /**
-   * Obtener contador actual de notificaciones no leídas
-   */
-  obtenerContadorNoLeidas(): number {
-    return this.contadorNoLeidasSubject.value;
+  obtenerPorGrupo(idGrupo: string, idUsuario: string): Observable<ResponseDto<NotificacionDto[]>> {
+    return this.http.get<ResponseDto<NotificacionDto[]>>(`${this.apiUrl}/grupo/${idGrupo}?idUsuario=${idUsuario}`);
   }
 }

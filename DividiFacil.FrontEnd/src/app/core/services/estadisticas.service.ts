@@ -18,7 +18,7 @@ interface EstadisticasUsuario {
   providedIn: 'root'
 })
 export class EstadisticasService {
-  private readonly apiUrl = `${environment.apiUrl}/api`;
+  private readonly apiUrl = `${environment.apiUrl}/api/estadisticas`;
 
   constructor(
     private grupoService: GrupoService,

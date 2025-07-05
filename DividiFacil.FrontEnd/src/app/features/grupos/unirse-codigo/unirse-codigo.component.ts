@@ -8,9 +8,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-
 import { GrupoService } from '../../../core/services/grupo.service';
-import { Grupo } from '../../../core/models/grupo.model';
+import { GrupoDto } from '../../../core/models/grupo.model';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-unirse-codigo',
@@ -24,14 +24,15 @@ import { Grupo } from '../../../core/models/grupo.model';
     MatButtonModule,
     MatIconModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatProgressSpinnerModule
   ]
 })
-export class UnirseCodiceComponent implements OnInit {
+export class UnirseCodigoComponent implements OnInit {
   codigoForm: FormGroup;
   buscando = false;
-  grupoEncontrado: Grupo | null = null;
-  uniendose = false;
+  grupoEncontrado: GrupoDto | null = null;
+  errorBusqueda: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -47,55 +48,6 @@ export class UnirseCodiceComponent implements OnInit {
   ngOnInit(): void {}
 
   /**
-   * 🔍 BUSCAR GRUPO POR CÓDIGO
-   */
-  buscarGrupo(): void {
-    if (this.codigoForm.invalid) return;
-
-    this.buscando = true;
-    this.grupoEncontrado = null;
-
-    const codigo = this.codigoForm.get('codigo')?.value.toUpperCase();
-
-    this.grupoService.buscarPorCodigo(codigo)
-      .subscribe({
-        next: (response) => {
-          this.buscando = false;
-          if (response.exito && response.data) {
-            this.grupoEncontrado = response.data;
-          } else {
-            this.snackBar.open(response.mensaje || 'Código no válido', 'Cerrar', { duration: 3000 });
-          }
-        },
-        error: (err) => {
-          this.buscando = false;
-          this.snackBar.open('Error al buscar grupo', 'Cerrar', { duration: 3000 });
-        }
-      });
-  }
-
-  /**
-   * 🤝 UNIRSE AL GRUPO
-   */
-  unirseAlGrupo(): void {
-    if (!this.grupoEncontrado) return;
-
-    this.uniendose = true;
-
-    // Implementar lógica de unirse (puede requerir endpoint adicional en backend)
-    // Por ahora, redirigir al grupo
-    this.router.navigate(['/grupos/detalle', this.grupoEncontrado.idGrupo]);
-  }
-
-  /**
-   * 🔄 LIMPIAR BÚSQUEDA
-   */
-  limpiarBusqueda(): void {
-    this.codigoForm.reset();
-    this.grupoEncontrado = null;
-  }
-
-  /**
    * 🎨 FORMATEAR CÓDIGO MIENTRAS ESCRIBE
    */
   onCodigoInput(event: any): void {
@@ -104,6 +56,51 @@ export class UnirseCodiceComponent implements OnInit {
       valor = valor.substring(0, 8);
     }
     this.codigoForm.get('codigo')?.setValue(valor, { emitEvent: false });
+  }
+
+  /**
+   * 🔍 BUSCAR GRUPO POR CÓDIGO
+   */
+  buscarGrupoPorCodigo(): void {
+    this.errorBusqueda = null;
+    this.grupoEncontrado = null;
+    if (this.codigoForm.invalid) {
+      this.codigoForm.markAllAsTouched();
+      return;
+    }
+    const codigo = this.codigoForm.value.codigo;
+    this.buscando = true;
+    this.grupoService.obtenerGrupoPorCodigo(codigo).subscribe({
+      next: (response) => {
+        this.buscando = false;
+        if (response.exito && response.data) {
+          this.grupoEncontrado = response.data;
+        } else {
+          this.errorBusqueda = response.mensaje || 'No se encontró el grupo con ese código';
+        }
+      },
+      error: (err) => {
+        this.buscando = false;
+        this.errorBusqueda = 'Error al buscar grupo';
+      }
+    });
+  }
+
+  /**
+   * 🎯 UNIRSE AL GRUPO
+   */
+  unirseAlGrupo(): void {
+    if (!this.grupoEncontrado) return;
+    this.router.navigate(['/grupos/detalle', this.grupoEncontrado.idGrupo]);
+  }
+
+  /**
+   * ❌ LIMPIAR BUSQUEDA
+   */
+  limpiarBusqueda(): void {
+    this.codigoForm.reset();
+    this.grupoEncontrado = null;
+    this.errorBusqueda = null;
   }
 
   /**

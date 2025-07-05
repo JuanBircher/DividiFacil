@@ -9,102 +9,35 @@
         Ingresa el código de acceso que te compartieron
       </mat-card-subtitle>
     </mat-card-header>
-    
     <mat-card-content>
-      <!-- FORMULARIO DE CÓDIGO -->
-      <form [formGroup]="codigoForm" (ngSubmit)="buscarGrupo()" *ngIf="!grupoEncontrado">
-        <mat-form-field appearance="outline" class="codigo-input">
-          <mat-label>Código de Acceso</mat-label>
-          <input 
-            matInput 
-            formControlName="codigo"
-            placeholder="XXXXXXXX"
-            maxlength="8"
-            (input)="onCodigoInput($event)"
-            [disabled]="buscando">
-          <mat-icon matSuffix>qr_code</mat-icon>
-          <mat-hint>Código de 8 caracteres (letras y números)</mat-hint>
-          <mat-error>{{ getErrorMessage() }}</mat-error>
+      <form [formGroup]="codigoForm" (ngSubmit)="buscarGrupoPorCodigo()">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Código de acceso</mat-label>
+          <input matInput formControlName="codigo" maxlength="8" (input)="onCodigoInput($event)" autocomplete="off">
+          <mat-error *ngIf="codigoForm.get('codigo')?.invalid">{{ getErrorMessage() }}</mat-error>
         </mat-form-field>
-        
-        <div class="form-actions">
-          <button 
-            mat-raised-button 
-            color="primary"
-            type="submit"
-            [disabled]="codigoForm.invalid || buscando">
-            <mat-icon *ngIf="!buscando">search</mat-icon>
-            <mat-icon *ngIf="buscando" class="spinning">hourglass_empty</mat-icon>
-            {{ buscando ? 'Buscando...' : 'Buscar Grupo' }}
-          </button>
-        </div>
+        <button mat-raised-button color="primary" type="submit" [disabled]="buscando || codigoForm.invalid">
+          <mat-icon *ngIf="!buscando">search</mat-icon>
+          <mat-spinner *ngIf="buscando" diameter="20"></mat-spinner>
+          Buscar
+        </button>
+        <button mat-button type="button" (click)="limpiarBusqueda()" *ngIf="codigoForm.get('codigo')?.value">Limpiar</button>
       </form>
-
-      <!-- GRUPO ENCONTRADO -->
-      <div class="grupo-encontrado" *ngIf="grupoEncontrado">
-        <div class="encontrado-header">
-          <mat-icon color="primary" class="success-icon">check_circle</mat-icon>
-          <h3>¡Grupo Encontrado!</h3>
-        </div>
-        
-        <div class="grupo-info">
-          <div class="grupo-nombre">{{ grupoEncontrado.nombreGrupo }}</div>
-          <div class="grupo-descripcion" *ngIf="grupoEncontrado.descripcion">
-            {{ grupoEncontrado.descripcion }}
-          </div>
-          <div class="grupo-meta">
-            <!-- 🔧 CORREGIDO: Usando propiedades que SÍ existen -->
-            <span class="meta-item">
-              <mat-icon>calendar_today</mat-icon>
-              Creado el {{ grupoEncontrado.fechaCreacion | date:'dd/MM/yyyy' }}
-            </span>
-            <span class="meta-item">
-              <mat-icon>tune</mat-icon>
-              Modo {{ grupoEncontrado.modoOperacion }}
-            </span>
-            <span class="meta-item">
-              <mat-icon>qr_code</mat-icon>
-              Código: {{ grupoEncontrado.codigoAcceso }}
-            </span>
-          </div>
-        </div>
-        
-        <div class="grupo-acciones">
-          <button 
-            mat-button 
-            (click)="limpiarBusqueda()"
-            [disabled]="uniendose">
-            Buscar Otro
-          </button>
-          <button 
-            mat-raised-button 
-            color="primary"
-            (click)="unirseAlGrupo()"
-            [disabled]="uniendose">
-            <mat-icon *ngIf="!uniendose">group_add</mat-icon>
-            <mat-icon *ngIf="uniendose" class="spinning">hourglass_empty</mat-icon>
-            {{ uniendose ? 'Uniéndose...' : 'Unirse al Grupo' }}
-          </button>
-        </div>
+      <div *ngIf="errorBusqueda" class="error-msg">
+        <mat-icon color="warn">error</mat-icon> {{ errorBusqueda }}
       </div>
-      
-      <!-- INFORMACIÓN ADICIONAL -->
-      <div class="info-adicional" *ngIf="!grupoEncontrado">
-        <div class="info-item">
-          <mat-icon>info</mat-icon>
-          <div class="info-texto">
-            <h4>¿No tienes un código?</h4>
-            <p>Pídele al administrador del grupo que genere un código de acceso desde la configuración del grupo.</p>
-          </div>
-        </div>
-        
-        <div class="info-item">
-          <mat-icon>security</mat-icon>
-          <div class="info-texto">
-            <h4>Códigos Seguros</h4>
-            <p>Los códigos son únicos para cada grupo y solo el administrador puede generarlos.</p>
-          </div>
-        </div>
+      <div *ngIf="grupoEncontrado" class="grupo-encontrado">
+        <mat-card class="found-group-card">
+          <mat-card-title>{{ grupoEncontrado.nombreGrupo }}</mat-card-title>
+          <mat-card-content>
+            <div>ID: {{ grupoEncontrado.idGrupo }}</div>
+            <div>Miembros: {{ grupoEncontrado.cantidadMiembros }}</div>
+            <div>Descripción: {{ grupoEncontrado.descripcion || 'Sin descripción' }}</div>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-raised-button color="accent" (click)="unirseAlGrupo()">Unirse</button>
+          </mat-card-actions>
+        </mat-card>
       </div>
     </mat-card-content>
   </mat-card>

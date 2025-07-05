@@ -94,13 +94,13 @@ export class EditarComponent implements OnInit, OnDestroy {
     this.usuarioService.obtenerUsuario(this.idUsuario)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response) => {
+        next: (response) => {  // 🔧 CAMBIAR: response es ResponseDto<UsuarioDto>
           this.loading = false;
           if (response.exito && response.data) {
             this.usuario = response.data;
             this.cargarDatosEnFormulario();
           } else {
-            this.snackBar.open('Error al cargar perfil', 'Cerrar', { duration: 3000 });
+            this.snackBar.open(response.mensaje || 'Error al cargar perfil', 'Cerrar', { duration: 3000 });
           }
         },
         error: (err) => {
@@ -170,6 +170,7 @@ export class EditarComponent implements OnInit, OnDestroy {
       const response = await this.usuarioService.subirImagen(this.idUsuario, this.imagenSeleccionada).toPromise();
       this.subiendoImagen = false;
       
+      // 🔧 CAMBIAR: response es ResponseDto<{ urlImagen: string }>
       if (response?.exito && response.data) {
         return response.data.urlImagen;
       }
@@ -212,16 +213,16 @@ export class EditarComponent implements OnInit, OnDestroy {
 
       this.guardando = false;
 
+      // 🔧 CAMBIAR: response es ResponseDto<void>
       if (response?.exito) {
         this.snackBar.open('¡Perfil actualizado exitosamente!', 'Cerrar', { 
           duration: 3000,
           panelClass: ['success-snackbar']
         });
         
-        // Volver al perfil
         this.router.navigate(['/perfil']);
       } else {
-        this.snackBar.open('Error al actualizar perfil', 'Cerrar', { duration: 3000 });
+        this.snackBar.open(response?.mensaje || 'Error al actualizar perfil', 'Cerrar', { duration: 3000 });
       }
 
     } catch (error) {

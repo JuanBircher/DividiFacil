@@ -16,6 +16,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { GastoService } from '../../../core/services/gasto.service';
 import { AuthService } from '../../../core/auth.service';
 import { GastoDto, DetalleGastoDto } from '../../../core/models/gasto.model';
+import { ResponseDto } from '../../../core/models/response.model';
 
 interface EstadoParticipante {
     detalle: DetalleGastoDto;
@@ -51,7 +52,7 @@ export class DetalleGastoComponent implements OnInit, OnDestroy {
     gasto: GastoDto | null = null;
     participantes: EstadoParticipante[] = [];
     idGasto: string = '';
-    usuarioActual: string = '';
+    idUsuarioActual: string = '';
 
     // Estados de UI
     loading = false;
@@ -96,7 +97,7 @@ export class DetalleGastoComponent implements OnInit, OnDestroy {
      */
     private obtenerUsuarioActual(): void {
         const usuario = this.authService.obtenerUsuario();
-        this.usuarioActual = usuario?.nombreUsuario || '';
+        this.idUsuarioActual = usuario?.idUsuario || '';
     }
 
     /**
@@ -139,8 +140,8 @@ export class DetalleGastoComponent implements OnInit, OnDestroy {
         }
 
         this.participantes = this.gasto.detalles.map(detalle => {
-            const esUsuarioActual = detalle.nombreMiembroDeudor === this.usuarioActual;
-            const esPagador = this.gasto!.nombreMiembroPagador === this.usuarioActual;
+            const esUsuarioActual = detalle.idMiembroDeudor === this.idUsuarioActual;
+            const esPagador = this.gasto!.idMiembroPagador === this.idUsuarioActual;
 
             return {
                 detalle,
@@ -178,28 +179,26 @@ export class DetalleGastoComponent implements OnInit, OnDestroy {
     /**
      * 💰 MARCAR DETALLE COMO PAGADO
      */
-    async marcarComoPagado(participante: EstadoParticipante): Promise<void> {
-        if (!participante.puedeMarcarPagado || this.procesandoPago) return;
-
-        this.procesandoPago = true;
-
-        try {
-            await this.gastoService.marcarComoPagado(
-                this.idGasto,
-                participante.detalle.idDetalleGasto
-            ).toPromise();
-
-            this.snackBar.open('Pago marcado exitosamente', 'Cerrar', { duration: 3000 });
-
-            // Recargar datos
-            this.cargarDetalleGasto();
-
-        } catch (error) {
-            console.error('Error al marcar como pagado:', error);
-            this.snackBar.open('Error al marcar el pago', 'Cerrar', { duration: 3000 });
-        } finally {
-            this.procesandoPago = false;
+    marcarComoPagado(participante: EstadoParticipante): void {
+        const idDetalle = participante.detalle.idDetalleGasto;
+        if (!idDetalle || !this.gasto) {
+            console.error('ID de detalle o gasto no disponible');
+            return;
         }
+        this.gastoService.marcarComoPagado(this.gasto.idGasto, idDetalle).subscribe({
+          next: (response: ResponseDto<void>) => {
+            if (response.exito) {
+              this.snackBar.open('Pago confirmado exitosamente', 'Cerrar', { duration: 3000 });
+              this.cargarDetalleGasto();
+            } else {
+              this.snackBar.open(response.mensaje || 'Error al confirmar pago', 'Cerrar', { duration: 3000 });
+            }
+          },
+          error: (error: any) => {
+            console.error('Error al marcar como pagado:', error);
+            this.snackBar.open('Error al confirmar pago', 'Cerrar', { duration: 3000 });
+          }
+        });
     }
 
     /**
@@ -301,7 +300,7 @@ export class DetalleGastoComponent implements OnInit, OnDestroy {
      * 👮 VERIFICAR SI ES PAGADOR
      */
     esPagador(): boolean {
-        return this.gasto?.nombreMiembroPagador === this.usuarioActual;
+        return this.gasto?.idMiembroPagador === this.idUsuarioActual;
     }
 
 
@@ -316,9 +315,9 @@ export class DetalleGastoComponent implements OnInit, OnDestroy {
     /**
    * 🔄 TRACK BY PARA OPTIMIZAR PERFORMANCE
    */
-    trackByParticipante(index: number, participante: EstadoParticipante): string {
-        return participante.detalle.idDetalleGasto;
-    }
+    trackByParticipante = (index: number, participante: EstadoParticipante): string => {
+      return participante.detalle.idDetalleGasto || `${index}-${participante.detalle.idMiembroDeudor}`;
+    };
 
     // Exponer Math para el template
     Math = Math;

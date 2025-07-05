@@ -139,7 +139,7 @@
           <div 
             *ngFor="let participante of participantes; trackBy: trackByParticipante"
             class="participante-item"
-            [class.usuario-actual]="participante.detalle.nombreMiembroDeudor === usuarioActual">
+            [class.usuario-actual]="participante.detalle.nombreMiembroDeudor === idUsuarioActual">
             
             <div class="participante-info">
               <div class="participante-avatar">
@@ -149,7 +149,7 @@
               <div class="participante-datos">
                 <div class="participante-nombre">
                   {{ participante.detalle.nombreMiembroDeudor }}
-                  <mat-chip *ngIf="participante.detalle.nombreMiembroDeudor === usuarioActual" 
+                  <mat-chip *ngIf="participante.detalle.nombreMiembroDeudor === idUsuarioActual" 
                            size="small" class="usuario-chip">
                     Tú
                   </mat-chip>

@@ -17,6 +17,8 @@ import { MatDividerModule } from '@angular/material/divider';
 // Services y Models
 import { NotificacionService } from '../../../core/services/notificacion.service';
 import { NotificacionDto } from '../../../core/models/notificacion.model';
+import { AuthService } from '../../../core/auth.service';
+import { Inject } from '@angular/core';
 
 // Pipes
 import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
@@ -40,9 +42,9 @@ import { LoadingSpinnerComponent } from "../../../shared/components/loading-spin
     MatDividerModule,
     DateFormatPipe,
     LoadingSpinnerComponent
-]
+  ]
 })
-export class ListadoComponent implements OnInit, OnDestroy {
+export class ListadoNotificacionesComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   
   // Estados
@@ -53,16 +55,23 @@ export class ListadoComponent implements OnInit, OnDestroy {
   notificaciones: NotificacionDto[] = [];
   notificacionesNoLeidas: NotificacionDto[] = [];
   notificacionesLeidas: NotificacionDto[] = [];
-
+  idUsuario!: string;
   constructor(
     private notificacionService: NotificacionService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    @Inject(AuthService) private authService: AuthService
   ) {}
 
   ngOnInit(): void {
-    this.cargarNotificaciones();
-    this.iniciarPolling();
+    const usuario = this.authService.obtenerUsuario();
+    if (usuario) {
+      this.idUsuario = usuario.idUsuario;
+      this.cargarNotificaciones();
+      this.iniciarPolling();
+    } else {
+      this.snackBar.open('No se pudo obtener el usuario actual', 'Cerrar', { duration: 3000 });
+    }
   }
 
   ngOnDestroy(): void {
@@ -75,8 +84,7 @@ export class ListadoComponent implements OnInit, OnDestroy {
    */
   cargarNotificaciones(): void {
     this.loading = true;
-    
-    this.notificacionService.obtenerPendientes()
+    this.notificacionService.obtenerPendientes(this.idUsuario)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
@@ -98,8 +106,8 @@ export class ListadoComponent implements OnInit, OnDestroy {
    * 📊 SEPARAR NOTIFICACIONES POR ESTADO
    */
   private separarNotificaciones(): void {
-    this.notificacionesNoLeidas = this.notificaciones.filter(n => n.estado !== 'LEIDA');
-    this.notificacionesLeidas = this.notificaciones.filter(n => n.estado === 'LEIDA');
+    this.notificacionesNoLeidas = this.notificaciones.filter(n => n.estado !== 'LEIDA' && n.estado !== 'Leida');
+    this.notificacionesLeidas = this.notificaciones.filter(n => n.estado === 'LEIDA' || n.estado === 'Leida');
   }
 
   /**
@@ -120,17 +128,15 @@ export class ListadoComponent implements OnInit, OnDestroy {
    * 🔄 CARGAR SIN LOADING (para polling)
    */
   private cargarNotificacionesSilencioso(): void {
-    this.notificacionService.obtenerPendientes()
+    this.notificacionService.obtenerPendientes(this.idUsuario)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
           if (response.exito && response.data) {
             const nuevasNotificaciones = response.data.length;
             const anteriores = this.notificaciones.length;
-            
             this.notificaciones = response.data;
             this.separarNotificaciones();
-            
             // Mostrar notificación si hay nuevas
             if (nuevasNotificaciones > anteriores) {
               this.snackBar.open('¡Tienes nuevas notificaciones!', 'Ver', { 
@@ -150,11 +156,11 @@ export class ListadoComponent implements OnInit, OnDestroy {
    * ✅ MARCAR COMO LEÍDA
    */
   marcarComoLeida(notificacion: NotificacionDto): void {
-    if (notificacion.estado === 'LEIDA') return;
+    if (notificacion.estado === 'LEIDA' || notificacion.estado === 'Leida') return;
     
     this.procesando = true;
     
-    this.notificacionService.marcarComoLeida(notificacion.idNotificacion)
+    this.notificacionService.marcarComoLeida(notificacion.idNotificacion, this.idUsuario)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
@@ -189,7 +195,7 @@ export class ListadoComponent implements OnInit, OnDestroy {
     
     // Procesar en paralelo
     const promesas = this.notificacionesNoLeidas.map(notificacion =>
-      this.notificacionService.marcarComoLeida(notificacion.idNotificacion).toPromise()
+      this.notificacionService.marcarComoLeida(notificacion.idNotificacion, this.idUsuario).toPromise()
     );
     
     Promise.all(promesas).then(() => {

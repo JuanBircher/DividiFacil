@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
@@ -26,9 +26,9 @@ import { BalanceService } from '../../../core/services/balance.service';
 import { AuthService } from '../../../core/auth.service';
 
 // 🔧 USAR TUS MODELS EXISTENTES
-import { GrupoConMiembrosDto, MiembroGrupoSimpleDto } from '../../../core/models/grupo.model';
+import { CambioRolDto, GrupoConMiembrosDto, InvitacionDto, MiembroGrupoSimpleDto } from '../../../core/models/grupo.model';
 import { GastoDto } from '../../../core/models/gasto.model';
-import { PagoDto } from '../../../core/models/pago.model';
+import { Pago } from '../../../core/models/pago.model';
 import { BalanceGrupoDto, MovimientoDto } from '../../../core/models/balance.model';
 
 import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
@@ -59,6 +59,7 @@ interface ActividadReciente {
   standalone: true,
   templateUrl: './detalle-grupos.component.html',
   styleUrls: ['./detalle-grupos.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush, // 🚀 AGREGAR ESTO
   imports: [
     CommonModule,
     FormsModule,
@@ -79,7 +80,7 @@ interface ActividadReciente {
     ConfiguracionesComponent // ✅ AGREGAR: Import del componente
   ]
 })
-export class DetalleGruposComponent implements OnInit, OnDestroy {
+export class DetalleGruposComponent implements OnInit {
   private destroy$ = new Subject<void>();
   
   // Estados de carga
@@ -90,6 +91,7 @@ export class DetalleGruposComponent implements OnInit, OnDestroy {
   idGrupo: string = '';
   grupo: GrupoConMiembrosDto | null = null;
   usuarioActual: any;
+  miembros: MiembroGrupoSimpleDto[] = [];
   
   // Estadísticas
   estadisticas: EstadisticasGrupo = {
@@ -129,12 +131,16 @@ export class DetalleGruposComponent implements OnInit, OnDestroy {
     private pagoService: PagoService,
     private balanceService: BalanceService,
     private authService: AuthService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef // 🚀 AGREGAR ESTO
   ) {}
 
   ngOnInit(): void {
     this.usuarioActual = this.authService.obtenerUsuario();
-    this.idGrupo = this.route.snapshot.paramMap.get('id') || '';
+    // ✅ USAR PARÁMETRO CORRECTO
+    this.idGrupo = this.route.snapshot.paramMap.get('idGrupo') || '';
+    
+    console.log('🔍 ID Grupo obtenido de ruta:', this.idGrupo);
     
     if (this.idGrupo) {
       this.cargarDatosCompletos();
@@ -144,11 +150,6 @@ export class DetalleGruposComponent implements OnInit, OnDestroy {
     }
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
   /**
    * 🎯 MÉTODO PRINCIPAL: Carga todos los datos del grupo
    * USANDO TUS SERVICIOS EXISTENTES
@@ -156,27 +157,30 @@ export class DetalleGruposComponent implements OnInit, OnDestroy {
   cargarDatosCompletos(): void {
     this.loading = true;
     this.error = null;
+    this.cdr.markForCheck();
 
-    // 🔧 USAR TU MÉTODO EXISTENTE: obtenerMiembros
-    this.grupoService.obtenerMiembros(this.idGrupo)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          if (response.exito && response.data) {
-            this.grupo = response.data;
-            this.configurarPermisos();
-            this.cargarDatosAdicionales();
-          } else {
-            this.error = 'No se pudo cargar la información del grupo';
-            this.loading = false;
-          }
-        },
-        error: (err) => {
-          this.error = 'Error al cargar el grupo';
-          this.loading = false;
-          console.error('Error cargando grupo:', err);
+    // 🔧 CORREGIDO: Usar método correcto
+    this.grupoService.obtenerGrupoConMiembros(this.idGrupo).subscribe({
+      next: (response) => {
+        console.log('📦 Respuesta grupo:', response);
+        if (response.exito && response.data) {
+          this.grupo = response.data;
+          this.miembros = response.data.miembros || [];
+          this.configurarPermisos();
+          console.log('👥 Grupo cargado:', this.grupo);
+        } else {
+          this.error = response.mensaje || 'Error al cargar el grupo';
         }
-      });
+        this.loading = false;
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        console.error('❌ Error cargando grupo:', err);
+        this.error = 'Error al cargar el grupo';
+        this.loading = false;
+        this.cdr.markForCheck();
+      }
+    });
   }
 
   /**
@@ -210,19 +214,16 @@ export class DetalleGruposComponent implements OnInit, OnDestroy {
     .subscribe({
       next: (responses) => {
         this.loading = false;
-        
         // Procesar balance
         if (responses.balance.exito && responses.balance.data) {
           this.balanceGrupo = responses.balance.data;
         }
-
         // Procesar estadísticas
-        const gastosData = responses.gastos.data || [];
-        const pagosData = responses.pagos.data || [];
+        const gastosData = (responses.gastos && responses.gastos.data) ? responses.gastos.data : [];
+        const pagosData = (responses.pagos && responses.pagos.data) ? responses.pagos.data : [];
         this.calcularEstadisticas(gastosData, pagosData);
-
         // Procesar actividad reciente
-        const movimientosData = responses.movimientos.data || [];
+        const movimientosData = (responses.movimientos && responses.movimientos.data) ? responses.movimientos.data : [];
         this.procesarActividadReciente(gastosData, pagosData, movimientosData);
       },
       error: (err) => {
@@ -236,7 +237,7 @@ export class DetalleGruposComponent implements OnInit, OnDestroy {
   /**
    * 📈 Calcular estadísticas del grupo
    */
-  private calcularEstadisticas(gastos: GastoDto[], pagos: PagoDto[]): void {
+  private calcularEstadisticas(gastos: GastoDto[], pagos: Pago[]): void {
     const ahora = new Date();
     const mesActual = ahora.getMonth();
     const añoActual = ahora.getFullYear();
@@ -262,7 +263,7 @@ export class DetalleGruposComponent implements OnInit, OnDestroy {
   /**
    * 🕒 Obtener fecha de última actividad
    */
-  private obtenerUltimaActividad(gastos: GastoDto[], pagos: PagoDto[]): string {
+  private obtenerUltimaActividad(gastos: GastoDto[], pagos: Pago[]): string {
     const todasFechas = [
       ...gastos.map(g => new Date(g.fechaCreacion)),
       ...pagos.map(p => new Date(p.fechaCreacion))
@@ -277,7 +278,7 @@ export class DetalleGruposComponent implements OnInit, OnDestroy {
   /**
    * 📋 Procesar actividad reciente para timeline
    */
-  private procesarActividadReciente(gastos: GastoDto[], pagos: PagoDto[], movimientos: MovimientoDto[]): void {
+  private procesarActividadReciente(gastos: GastoDto[], pagos: Pago[], movimientos: MovimientoDto[]): void {
     const actividades: ActividadReciente[] = [];
 
     // Procesar gastos más recientes
@@ -317,28 +318,46 @@ export class DetalleGruposComponent implements OnInit, OnDestroy {
   /**
    * 👥 ACCIONES DE GESTIÓN DE MIEMBROS
    */
-  invitarMiembro(): void {
-    if (!this.esAdministrador) return;
-    
-    this.generandoCodigo = true;
-
-    this.grupoService.generarCodigoAcceso(this.idGrupo)
-      .pipe(takeUntil(this.destroy$))
+  cambiarRolMiembro(idMiembro: string, nuevoRol: string): void {
+    this.grupoService.cambiarRolMiembro(this.idGrupo, idMiembro, nuevoRol)
       .subscribe({
         next: (response) => {
-          this.generandoCodigo = false;
           if (response.exito) {
-            this.codigoAccesoActual = response.data;
-            this.mostrarModalCodigo = true;
+            this.snackBar.open('Rol actualizado exitosamente', 'Cerrar', { duration: 3000 });
+            this.cargarDatosCompletos();
           } else {
-            this.snackBar.open(response.mensaje || 'Error al generar código', 'Cerrar', { duration: 3000 });
+            this.snackBar.open(response.mensaje || 'Error al cambiar rol', 'Cerrar', { duration: 3000 });
           }
         },
-        error: (err) => {
-          this.generandoCodigo = false;
-          this.snackBar.open('Error al generar código de acceso', 'Cerrar', { duration: 3000 });
+        error: (error) => {
+          console.error('Error al cambiar rol:', error);
+          this.snackBar.open('Error al cambiar rol', 'Cerrar', { duration: 3000 });
         }
       });
+  }
+
+  invitarMiembro(): void {
+    if (this.emailNuevoMiembro.trim()) {
+      const invitacion: InvitacionDto = {
+        emailInvitado: this.emailNuevoMiembro.trim()
+      };
+      this.grupoService.agregarMiembro(this.idGrupo, invitacion)
+        .subscribe({
+          next: (response) => {
+            if (response.exito) {
+              this.snackBar.open('Invitación enviada exitosamente', 'Cerrar', { duration: 3000 });
+              this.emailNuevoMiembro = '';
+              this.cargarDatosCompletos();
+            } else {
+              this.snackBar.open(response.mensaje || 'Error al enviar invitación', 'Cerrar', { duration: 3000 });
+            }
+          },
+          error: (error) => {
+            console.error('Error al enviar invitación:', error);
+            this.snackBar.open('Error al enviar invitación', 'Cerrar', { duration: 3000 });
+          }
+        });
+    }
   }
 
   /**
@@ -435,7 +454,7 @@ export class DetalleGruposComponent implements OnInit, OnDestroy {
     this.procesandoAccion = true;
 
     this.grupoService.agregarMiembro(this.idGrupo, { 
-      emailUsuario: this.emailNuevoMiembro.trim() 
+      emailInvitado: this.emailNuevoMiembro.trim() 
     })
     .pipe(takeUntil(this.destroy$))
     .subscribe({
@@ -541,4 +560,9 @@ export class DetalleGruposComponent implements OnInit, OnDestroy {
   }
   return this.grupo.miembros.filter((miembro: any) => miembro.rol === rol).length;
 }
+
+  // ✅ MÉTODO CON TIPO EXPLÍCITO
+  confirmarAccion(miembro: MiembroGrupoSimpleDto): void {
+    console.log('Confirmar acción para miembro:', miembro);
+  }
 }

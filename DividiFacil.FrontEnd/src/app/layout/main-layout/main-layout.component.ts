@@ -48,7 +48,8 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // Cargar contador inicial
-    this.notificacionService.obtenerPendientes()
+    const idUsuario = localStorage.getItem('idUsuario') || '';
+    this.notificacionService.obtenerPendientes(idUsuario)
       .pipe(takeUntil(this.destroy$))
       .subscribe();
   }

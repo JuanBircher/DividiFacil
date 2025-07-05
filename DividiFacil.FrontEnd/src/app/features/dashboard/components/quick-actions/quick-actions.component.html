@@ -1,62 +1,74 @@
-<app-card 
-  title="Acciones Rápidas"
-  subtitle="Accede rápidamente a las funciones principales"
-  icon="flash_on"
-  iconColor="primary">
+<mat-card class="quick-actions-card">
+  <mat-card-header>
+    <mat-card-title>
+      <mat-icon color="primary">flash_on</mat-icon>
+      Acciones Rápidas
+    </mat-card-title>
+    <mat-card-subtitle>Accede rápidamente a las funciones principales</mat-card-subtitle>
+  </mat-card-header>
 
-  <div class="actions-grid">
-    <button
-      *ngFor="let action of actions"
-      mat-raised-button
-      class="action-button"
-      [class]="'action-' + action.color"
-      [disabled]="isActionDisabled(action)"
-      (click)="ejecutarAccion(action)">
-      
-      <div class="action-content">
-        <div class="action-icon">
-          <mat-icon [class]="'icon-' + action.color">{{ action.icon }}</mat-icon>
-        </div>
+  <mat-card-content>
+    <div class="actions-grid">
+      <button 
+        *ngFor="let action of actions; trackBy: trackByActionId" 
+        mat-raised-button 
+        [color]="action.color"
+        [disabled]="action.deshabilitado"
+        [class]="'action-' + action.color"
+        (click)="ejecutarAccion(action)"
+        class="action-button">
         
-        <div class="action-text">
-          <h4 class="action-title">{{ action.title }}</h4>
-          <p class="action-description">{{ action.description }}</p>
+        <div class="action-content">
+          <div class="action-icon">
+            <mat-icon 
+              [matBadge]="action.badge || 0"
+              [matBadgeHidden]="!action.badge"
+              matBadgeColor="warn"
+              matBadgeSize="small">
+              {{ action.icono }}
+            </mat-icon>
+          </div>
+          
+          <div class="action-text">
+            <h3 class="action-title">{{ action.titulo }}</h3>
+            <p class="action-description">{{ action.descripcion }}</p>
+          </div>
         </div>
-      </div>
-    </button>
-  </div>
-
-  <!-- Separador -->
-  <div class="divider"></div>
-
-  <!-- Acciones secundarias -->
-  <div class="secondary-actions">
-    <h5 class="secondary-title">Accesos directos</h5>
-    
-    <div class="secondary-buttons">
-      <button 
-        mat-button 
-        color="primary"
-        (click)="router.navigate(['/grupos'])">
-        <mat-icon>list</mat-icon>
-        Ver todos los grupos
-      </button>
-      
-      <button 
-        mat-button 
-        color="primary"
-        (click)="router.navigate(['/listado-pagos'])">
-        <mat-icon>payment</mat-icon>
-        Ver pagos
-      </button>
-      
-      <button 
-        mat-button 
-        color="primary"
-        (click)="router.navigate(['/perfil'])">
-        <mat-icon>person</mat-icon>
-        Mi perfil
       </button>
     </div>
-  </div>
-</app-card>
+
+    <!-- Separador -->
+    <div class="divider"></div>
+
+    <!-- Acciones secundarias -->
+    <div class="secondary-actions">
+      <h5 class="secondary-title">Accesos directos</h5>
+      
+      <div class="secondary-buttons">
+        <button 
+          mat-button 
+          color="primary"
+          (click)="router.navigate(['/grupos'])">
+          <mat-icon>list</mat-icon>
+          Ver todos los grupos
+        </button>
+        
+        <button 
+          mat-button 
+          color="primary"
+          (click)="router.navigate(['/pagos'])">
+          <mat-icon>payment</mat-icon>
+          Ver pagos
+        </button>
+        
+        <button 
+          mat-button 
+          color="primary"
+          (click)="router.navigate(['/perfil'])">
+          <mat-icon>person</mat-icon>
+          Mi perfil
+        </button>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

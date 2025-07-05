@@ -1,4 +1,125 @@
 /* You can add global styles to this file, and also import other style files */
 
+@use './app/shared/styles/utilities.scss';
+
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/* 🚀 OPTIMIZACIONES GLOBALES DE PERFORMANCE */
+
+/* GPU Acceleration para elementos críticos */
+.mat-card,
+.mat-raised-button,
+.mat-fab,
+.mat-mini-fab {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Optimizaciones de scroll */
+.mat-sidenav-content,
+.mat-drawer-content {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Lazy Loading States */
+.lazy-loading {
+  opacity: 0.7;
+  filter: blur(2px);
+  transition: all 0.3s ease;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading-shimmer 1.5s infinite;
+}
+
+.lazy-loaded {
+  opacity: 1;
+  filter: blur(0);
+  transition: all 0.3s ease;
+}
+
+.lazy-error {
+  opacity: 0.5;
+  filter: grayscale(100%);
+}
+
+@keyframes loading-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Micro-interactions optimizadas */
+.mat-raised-button {
+  transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+  
+  &:hover:not(:disabled) {
+    transform: translateY(-2px) translateZ(0);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  
+  &:active:not(:disabled) {
+    transform: translateY(0) translateZ(0);
+    transition: all 0.1s cubic-bezier(0.4, 0.0, 0.2, 1);
+  }
+}
+
+/* Optimizaciones para listas largas */
+.mat-list-item,
+.mat-card {
+  contain: layout style paint;
+}
+
+/* Reducir repaints en tablas */
+.mat-table {
+  contain: layout style;
+}
+
+/* Estados de loading optimizados */
+.loading-container {
+  contain: layout style paint;
+  will-change: opacity;
+}
+
+/* 🚀 VARIABLES CSS PARA CONSISTENCY */
+:root {
+  --app-primary: #1976d2;
+  --app-accent: #ff4081;
+  --app-warn: #f44336;
+  --app-success: #4caf50;
+  
+  --app-border-radius: 8px;
+  --app-box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  --app-transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+  
+  --app-font-size-small: 0.875rem;
+  --app-font-size-normal: 1rem;
+  --app-font-size-large: 1.25rem;
+  --app-font-size-xlarge: 1.5rem;
+}
+
+/* Dark mode preparation */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --app-bg-primary: #121212;
+    --app-bg-card: #1e1e1e;
+    --app-text-primary: #ffffff;
+    --app-text-secondary: #b3b3b3;
+  }
+}
+
+/* 🚀 UTILITY CLASSES */
+.d-flex { display: flex; }
+.flex-column { flex-direction: column; }
+.justify-center { justify-content: center; }
+.align-center { align-items: center; }
+.text-center { text-align: center; }
+.full-width { width: 100%; }
+.cursor-pointer { cursor: pointer; }
+
+/* Spacing utilities */
+.m-0 { margin: 0; }
+.p-0 { padding: 0; }
+.mt-1 { margin-top: 0.5rem; }
+.mb-1 { margin-bottom: 0.5rem; }
+.p-1 { padding: 0.5rem; }

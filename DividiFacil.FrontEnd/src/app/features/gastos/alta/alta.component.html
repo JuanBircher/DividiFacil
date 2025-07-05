@@ -390,3 +390,53 @@
     </mat-card>
   </div>
 </ng-template>
+
+<div class="alta-gastos-container">
+  <!-- PASO 3: División de gastos -->
+  <mat-step [stepControl]="participantesForm">
+    <form [formGroup]="participantesForm">
+      
+      <!-- 🚀 OPTIMIZACIÓN: TOOLTIPS INFORMATIVOS -->
+      <mat-form-field>
+        <mat-label>Tipo de División</mat-label>
+        <mat-select formControlName="tipoDivision">
+          <mat-option value="equitativa">División Equitativa</mat-option>
+          <mat-option value="porcentajes">Por Porcentajes</mat-option>
+          <mat-option value="manual">Montos Manuales</mat-option>
+        </mat-select>
+        <mat-icon 
+          matSuffix 
+          matTooltip="{{tooltips.division}}"
+          matTooltipPosition="above">
+          help_outline
+        </mat-icon>
+      </mat-form-field>
+
+      <!-- Lista de participantes con tooltips -->
+      <div class="participantes-list">
+        <div 
+          *ngFor="let participante of participantes; trackBy: trackByParticipante" 
+          class="participante-item">
+          
+          <!-- Monto con tooltip -->
+          <mat-form-field *ngIf="participantesForm.get('tipoDivision')?.value === 'manual'">
+            <mat-label>Monto</mat-label>
+            <input 
+              matInput 
+              type="number" 
+              [(ngModel)]="participante.monto"
+              (ngModelChange)="onMontoParticipanteChange(participante)">
+            <mat-icon 
+              matSuffix 
+              matTooltip="{{tooltips.montoManual}}"
+              matTooltipPosition="above">
+              help_outline
+            </mat-icon>
+          </mat-form-field>
+          
+          <!-- ...existing content... -->
+        </div>
+      </div>
+    </form>
+  </mat-step>
+</div>

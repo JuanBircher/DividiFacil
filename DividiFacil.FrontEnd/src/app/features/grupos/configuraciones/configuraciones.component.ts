@@ -13,7 +13,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 
-import { GrupoService, GrupoCreacionDto } from '../../../core/services/grupo.service';
+import { GrupoService } from '../../../core/services/grupo.service';
+import { GrupoCreacionDto } from '../../../core/models/grupo.model'; // 🔧 IMPORTAR desde models
 import { NotificacionService, ConfiguracionNotificacionesDto } from '../../../core/services/notificacion.service';
 import { AuthService } from '../../../core/auth.service';
 import { GrupoConMiembrosDto } from '../../../core/models/grupo.model';
@@ -146,7 +147,7 @@ export class ConfiguracionesComponent implements OnInit, OnDestroy {
     this.grupoForm.patchValue(this.grupoOriginal);
 
     // Cargar configuración de notificaciones
-    this.notificacionService.obtenerConfiguracion()
+    this.notificacionService.obtenerConfiguracion(this.usuarioActual?.idUsuario || '')
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
@@ -227,7 +228,7 @@ export class ConfiguracionesComponent implements OnInit, OnDestroy {
       ...this.notificacionesForm.value
     };
 
-    this.notificacionService.actualizarConfiguracion(configuracion)
+    this.notificacionService.actualizarConfiguracion(configuracion, this.usuarioActual?.idUsuario || '')
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {

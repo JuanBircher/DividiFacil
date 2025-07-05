@@ -13,7 +13,7 @@ export class LoadingInterceptor implements HttpInterceptor {
     // URLs que no deben mostrar loading
     const excludeUrls = [
       '/api/notificaciones/pendientes',
-      '/api/auth/usuario-actual'
+      '/api/auth/me'
     ];
 
     const shouldShowLoading = !excludeUrls.some(url => req.url.includes(url));

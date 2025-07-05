@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.dividifacil.com', // URL de producción
+  apiUrl: 'https://http://localhost:62734', // URL de producción
   appName: 'DividiFacil',
   version: '1.0.0',
   
@@ -9,7 +9,7 @@ export const environment = {
   logLevel: 'error',
   
   // Configuraciones de autenticación
-  tokenKey: 'dividifacil_token',
+  tokenKey: 'token',
   refreshTokenKey: 'dividifacil_refresh_token',
   
   // Configuraciones de caché

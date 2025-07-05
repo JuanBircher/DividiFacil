@@ -1,12 +1,10 @@
-/**
- * 🔧 NUEVO: Modelo que coincide con el backend
- */
-export interface MiembroDto {
-  idMiembro: string;
-  idUsuario: string;
-  nombre: string;
-  email: string;
-  urlImagen?: string;
-  rol: string;
-  fechaUnion: string;
+export interface MiembroGrupoDto {
+  idMiembro: string;                    // Guid -> string
+  idUsuario: string;                    // Guid -> string
+  idGrupo: string;                      // Guid -> string
+  nombre: string;                       // ✅ Correcto
+  email: string;                        // ✅ Correcto
+  urlImagen?: string;                   // ✅ Correcto
+  rol: string;                          // ✅ Correcto
+  fechaUnion: string;                   // DateTime -> string (ISO format)
 }

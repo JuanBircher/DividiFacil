@@ -1,61 +1,76 @@
-<div class="stats-container">
-  <!-- Error State -->
-  <div *ngIf="error && !loading" class="error-container">
-    <app-card 
-      title="Error" 
-      icon="error" 
-      iconColor="warn">
-      <p>{{ error }}</p>
-      <button mat-button color="primary" (click)="refrescar()">
-        Intentar nuevamente
-      </button>
-    </app-card>
+<div class="dashboard-stats-container">
+  <!-- Loading State -->
+  <div *ngIf="cargando" class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Cargando estadísticas...</p>
   </div>
 
-  <!-- Stats Grid -->
-  <div *ngIf="!error" class="stats-grid">
-    <!-- Total Grupos -->
-    <app-card
-      title="Grupos Activos"
-      subtitle="Total de grupos donde participas"
-      icon="group"
-      iconColor="primary"
-      [value]="stats.totalGrupos"
-      [loading]="loading"
-      [clickable]="true">
-    </app-card>
+  <!-- Error State -->
+  <div *ngIf="error && !cargando" class="error-container">
+    <mat-card class="error-card">
+      <mat-card-content>
+        <mat-icon color="warn">error</mat-icon>
+        <span>{{ error }}</span>
+        <button mat-button color="primary" (click)="refrescar()">
+          <mat-icon>refresh</mat-icon>
+          Reintentar
+        </button>
+      </mat-card-content>
+    </mat-card>
+  </div>
 
-    <!-- Gastos del Mes -->
-    <app-card
-      title="Gastos del Mes"
-      subtitle="Total gastado este mes"
-      icon="receipt"
-      iconColor="warn"
-      [value]="loading ? undefined : (stats.gastosDelMes | currencyFormat)"
-      [loading]="loading"
-      [clickable]="true">
-    </app-card>
+  <!-- Statistics Cards -->
+  <div *ngIf="!cargando && !error && estadisticas.length > 0" class="stats-grid">
+    <mat-card 
+      *ngFor="let estadistica of estadisticas; trackBy: trackByEstadisticaTitulo"
+      class="stat-card"
+      [attr.data-color]="estadistica.color">
+      
+      <mat-card-header>
+        <div mat-card-avatar class="stat-icon" [attr.data-color]="estadistica.color">
+          <mat-icon>{{ estadistica.icono }}</mat-icon>
+        </div>
+        <mat-card-title>{{ estadistica.titulo }}</mat-card-title>
+        <mat-card-subtitle>{{ estadistica.subtitulo }}</mat-card-subtitle>
+      </mat-card-header>
 
-    <!-- Notificaciones -->
-    <app-card
-      title="Notificaciones"
-      subtitle="Alertas pendientes"
-      icon="notifications"
-      iconColor="accent"
-      [value]="stats.notificaciones"
-      [loading]="loading"
-      [clickable]="true">
-    </app-card>
+      <mat-card-content>
+        <div class="stat-value">
+          <span class="value" [attr.data-color]="estadistica.color">
+            <!-- Formatear según el tipo -->
+            <ng-container *ngIf="estadistica.titulo.includes('Monto')">
+              {{ estadistica.valor | currency:'ARS':'symbol-narrow':'1.0-0' }}
+            </ng-container>
+            <ng-container *ngIf="!estadistica.titulo.includes('Monto')">
+              {{ estadistica.valor }}
+            </ng-container>
+          </span>
+          
+          <div class="trend-indicator" *ngIf="estadistica.tendencia">
+            <mat-icon 
+              [attr.data-trend]="estadistica.tendencia"
+              class="trend-icon">
+              {{ estadistica.tendencia === 'up' ? 'trending_up' : 
+                 estadistica.tendencia === 'down' ? 'trending_down' : 'trending_flat' }}
+            </mat-icon>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
 
-    <!-- Balance Total -->
-    <app-card
-      title="Balance Total"
-      subtitle="Saldo en todas las cajas"
-      icon="account_balance_wallet"
-      iconColor="success"
-      [value]="loading ? undefined : (stats.balanceTotal | currencyFormat)"
-      [loading]="loading"
-      [clickable]="true">
-    </app-card>
+  <!-- Empty State -->
+  <div *ngIf="!cargando && !error && estadisticas.length === 0" class="empty-state">
+    <mat-card>
+      <mat-card-content>
+        <mat-icon class="empty-icon">analytics</mat-icon>
+        <h3>No hay estadísticas disponibles</h3>
+        <p>Cuando tengas grupos y gastos, las estadísticas aparecerán aquí</p>
+        <button mat-raised-button color="primary" (click)="refrescar()">
+          <mat-icon>refresh</mat-icon>
+          Actualizar
+        </button>
+      </mat-card-content>
+    </mat-card>
   </div>
 </div>

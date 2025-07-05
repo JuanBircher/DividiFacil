@@ -1,0 +1,59 @@
+<div class="test-container">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>🧪 Pruebas de Gastos</mat-card-title>
+        </mat-card-header>
+        
+        <mat-card-content>
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>📋 Obtener Gastos Recientes</mat-panel-title>
+            </mat-expansion-panel-header>
+            
+            <div class="test-section">
+              <button mat-raised-button color="primary" (click)="probarGastosRecientes()" [disabled]="loading">
+                {{ loading ? 'Cargando...' : 'Probar Gastos Recientes' }}
+              </button>
+              
+              <div *ngIf="gastosRecientes.length > 0" class="result">
+                <h4>✅ Gastos encontrados: {{gastosRecientes.length}}</h4>
+                <div *ngFor="let gasto of gastosRecientes" class="gasto-item">
+                  <strong>{{gasto.descripcion}}</strong> - 
+                  ${{gasto.monto}} - 
+                  {{gasto.nombreGrupo}} - 
+                  {{gasto.fechaGasto | date:'short'}}
+                </div>
+              </div>
+            </div>
+          </mat-expansion-panel>
+
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>💰 Obtener Saldos</mat-panel-title>
+            </mat-expansion-panel-header>
+            
+            <div class="test-section">
+              <button mat-raised-button color="accent" (click)="probarSaldos()" [disabled]="loading">
+                {{ loading ? 'Cargando...' : 'Probar Saldos' }}
+              </button>
+              
+              <div *ngIf="saldos.length > 0" class="result">
+                <h4>✅ Saldos encontrados: {{saldos.length}}</h4>
+                <div *ngFor="let saldo of saldos" class="saldo-item">
+                  <strong>{{saldo.nombreUsuario}}</strong> - 
+                  Saldo: ${{saldo.saldo}} 
+                  <span [class]="saldo.saldo >= 0 ? 'positive' : 'negative'">
+                    {{saldo.saldo >= 0 ? '(Le deben)' : '(Debe)'}}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </mat-expansion-panel>
+          
+          <div class="results" *ngIf="testResult">
+            <h3>📊 Último Resultado</h3>
+            <pre>{{ testResult | json }}</pre>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>

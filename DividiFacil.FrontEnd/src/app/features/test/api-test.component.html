@@ -1,0 +1,79 @@
+<!-- src/app/features/test/api-test.component.html -->
+<div class="api-test-container">
+  <h2>🧪 Pruebas de API</h2>
+  
+  <div class="test-section">
+    <h3>🔧 Información del Sistema</h3>
+    <p><strong>URL Base:</strong> {{ environment.apiUrl }}</p>
+    <p><strong>Token presente:</strong> {{ !!getTokenInfo() ? '✅ Sí' : '❌ No' }}</p>
+  </div>
+  
+  <div class="test-buttons">
+    <button (click)="testAuthentication()" [disabled]="loading">
+      🔐 Probar Autenticación
+    </button>
+    
+    <button (click)="testGrupos()" [disabled]="loading">
+      👥 Probar Grupos
+    </button>
+    
+    <button (click)="testGastos()" [disabled]="loading">
+      💰 Probar Gastos
+    </button>
+    
+    <button (click)="testPagos()" [disabled]="loading">
+      💳 Probar Pagos
+    </button>
+    
+    <button (click)="testNotificaciones()" [disabled]="loading">
+      🔔 Probar Notificaciones
+    </button>
+    
+    <button (click)="testAllEndpoints()" [disabled]="loading" class="test-all">
+      🚀 Probar Todos
+    </button>
+    
+    <button (click)="clearResults()" [disabled]="loading" class="clear">
+      🧹 Limpiar
+    </button>
+  </div>
+  
+  <!-- Resultados -->
+  <div class="results" *ngIf="authTestResult || gruposTestResult || gastosTestResult || pagosTestResult || notificacionesTestResult">
+    
+    <!-- Resultado Autenticación -->
+    <div *ngIf="authTestResult" class="result-item" [class.success]="authTestResult.success" [class.error]="!authTestResult.success">
+      <h4>🔐 Autenticación</h4>
+      <pre>{{ authTestResult.data | json }}</pre>
+    </div>
+    
+    <!-- Resultado Grupos -->
+    <div *ngIf="gruposTestResult" class="result-item" [class.success]="gruposTestResult.success" [class.error]="!gruposTestResult.success">
+      <h4>👥 Grupos</h4>
+      <pre>{{ gruposTestResult.data | json }}</pre>
+    </div>
+    
+    <!-- Resultado Gastos -->
+    <div *ngIf="gastosTestResult" class="result-item" [class.success]="gastosTestResult.success" [class.error]="!gastosTestResult.success">
+      <h4>💰 Gastos</h4>
+      <pre>{{ gastosTestResult.data | json }}</pre>
+    </div>
+    
+    <!-- Resultado Pagos -->
+    <div *ngIf="pagosTestResult" class="result-item" [class.success]="pagosTestResult.success" [class.error]="!pagosTestResult.success">
+      <h4>💳 Pagos</h4>
+      <pre>{{ pagosTestResult.data | json }}</pre>
+    </div>
+    
+    <!-- Resultado Notificaciones -->
+    <div *ngIf="notificacionesTestResult" class="result-item" [class.success]="notificacionesTestResult.success" [class.error]="!notificacionesTestResult.success">
+      <h4>🔔 Notificaciones</h4>
+      <pre>{{ notificacionesTestResult.data | json }}</pre>
+    </div>
+    
+  </div>
+  
+  <div *ngIf="loading" class="loading">
+    ⏳ Cargando...
+  </div>
+</div>

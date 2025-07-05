@@ -93,94 +93,97 @@
       </mat-card-content>
     </mat-card>
 
-    <!-- Lista de gastos -->
-    <div class="gastos-grid" *ngIf="!loading && gastos.length > 0">
-      <mat-card 
-        *ngFor="let gasto of gastos; trackBy: trackByGasto" 
-        class="gasto-card"
-        [class.eliminando]="eliminando">
+    <!-- Lista de gastos - OPTIMIZADA -->
+    <!-- 🚀 VIRTUAL SCROLLING para listas largas -->
+    <div class="gastos-content" *ngIf="!loading && gastos.length > 0">
+      <cdk-virtual-scroll-viewport 
+        itemSize="200" 
+        class="gastos-viewport"
+        [style.height.px]="600">
         
-        <mat-card-header>
-          <div mat-card-avatar class="gasto-avatar">
-            <mat-icon>{{ obtenerIconoCategoria(gasto.categoria) }}</mat-icon>
-          </div>
+        <mat-card 
+          *cdkVirtualFor="let gasto of gastos; trackBy: trackByGasto; templateCacheSize: 20"
+          class="gasto-card">
           
-          <mat-card-title>{{ gasto.descripcion }}</mat-card-title>
-          
-          <mat-card-subtitle>
-            <div class="gasto-meta">
-              <span class="fecha">
-                <mat-icon>calendar_today</mat-icon>
-                {{ gasto.fechaGasto | date:'dd/MM/yyyy' }}
-              </span>
-              <span class="categoria" *ngIf="gasto.categoria">
-                <mat-chip>{{ gasto.categoria }}</mat-chip>
-              </span>
+          <!-- Contenido del gasto optimizado -->
+          <mat-card-header>
+            <div mat-card-avatar class="gasto-avatar">
+              <!-- 🚀 LAZY LOADING para avatares de usuarios -->
+              <img 
+              [src]="obtenerIconoCategoria(gasto.categoria)"
+              [alt]="gasto.categoria"
+              class="categoria-img">
             </div>
-          </mat-card-subtitle>
+            
+            <mat-card-title>{{ gasto.descripcion }}</mat-card-title>
+            <mat-card-subtitle>
+              <span class="pagador">{{ gasto.nombreMiembroPagador }}</span>
+              <span class="fecha">{{ gasto.fechaCreacion | dateFormat }}</span>
+            </mat-card-subtitle>
 
-          <!-- Menú de acciones -->
-          <button mat-icon-button [matMenuTriggerFor]="menuAcciones">
-            <mat-icon>more_vert</mat-icon>
-          </button>
-          <mat-menu #menuAcciones="matMenu">
-            <button mat-menu-item (click)="verDetalle(gasto)">
+            <!-- Menú de acciones -->
+            <button mat-icon-button [matMenuTriggerFor]="menuAcciones">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menuAcciones="matMenu">
+              <button mat-menu-item (click)="verDetalle(gasto)">
+                <mat-icon>visibility</mat-icon>
+                Ver Detalle
+              </button>
+              <button mat-menu-item (click)="editarGasto(gasto)">
+                <mat-icon>edit</mat-icon>
+                Editar
+              </button>
+              <mat-divider></mat-divider>
+              <button mat-menu-item (click)="eliminarGasto(gasto)" class="delete-action">
+                <mat-icon>delete</mat-icon>
+                Eliminar
+              </button>
+            </mat-menu>
+          </mat-card-header>
+
+          <mat-card-content>
+            <div class="gasto-info">
+              <!-- Monto principal -->
+              <div class="monto-principal">
+                <span class="monto-valor" [ngClass]="obtenerColorMonto(gasto.monto)">
+                  ${{ gasto.monto | number:'1.2-2' }}
+                </span>
+              </div>
+
+              <!-- Información del pagador -->
+              <div class="pagador-info">
+                <span class="pagador-label">Pagado por:</span>
+                <span class="pagador-nombre">{{ gasto.nombreMiembroPagador }}</span>
+              </div>
+
+              <!-- Participantes - OPTIMIZADO CON TRACKBY -->
+              <div class="participantes-info" *ngIf="gasto.detalles && gasto.detalles.length > 0">
+                <span class="participantes-label">{{ gasto.detalles.length }} participante(s)</span>
+                <div class="participantes-montos">
+                  <span *ngFor="let detalle of gasto.detalles.slice(0, 3); trackBy: trackByDetalle; let last = last">
+                    {{ detalle.nombreMiembroDeudor }}: ${{ detalle.monto | number:'1.2-2' }}{{ !last ? ', ' : '' }}
+                  </span>
+                  <span *ngIf="gasto.detalles.length > 3">
+                    y {{ gasto.detalles.length - 3 }} más...
+                  </span>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+
+          <mat-card-actions>
+            <button mat-button (click)="verDetalle(gasto)">
               <mat-icon>visibility</mat-icon>
               Ver Detalle
             </button>
-            <button mat-menu-item (click)="editarGasto(gasto)">
+            <button mat-button (click)="editarGasto(gasto)">
               <mat-icon>edit</mat-icon>
               Editar
             </button>
-            <mat-divider></mat-divider>
-            <button mat-menu-item (click)="eliminarGasto(gasto)" class="delete-action">
-              <mat-icon>delete</mat-icon>
-              Eliminar
-            </button>
-          </mat-menu>
-        </mat-card-header>
-
-        <mat-card-content>
-          <div class="gasto-info">
-            <!-- Monto principal -->
-            <div class="monto-principal">
-              <span class="monto-valor" [ngClass]="obtenerColorMonto(gasto.monto)">
-                ${{ gasto.monto | number:'1.2-2' }}
-              </span>
-            </div>
-
-            <!-- Información del pagador -->
-            <div class="pagador-info">
-              <span class="pagador-label">Pagado por:</span>
-              <span class="pagador-nombre">{{ gasto.nombreMiembroPagador }}</span>
-            </div>
-
-            <!-- Participantes -->
-            <div class="participantes-info" *ngIf="gasto.detalles && gasto.detalles.length > 0">
-              <span class="participantes-label">{{ gasto.detalles.length }} participante(s)</span>
-              <div class="participantes-montos">
-                <span *ngFor="let detalle of gasto.detalles.slice(0, 3); let last = last">
-                  {{ detalle.nombreMiembroDeudor }}: ${{ detalle.monto | number:'1.2-2' }}{{ !last ? ', ' : '' }}
-                </span>
-                <span *ngIf="gasto.detalles.length > 3">
-                  y {{ gasto.detalles.length - 3 }} más...
-                </span>
-              </div>
-            </div>
-          </div>
-        </mat-card-content>
-
-        <mat-card-actions>
-          <button mat-button (click)="verDetalle(gasto)">
-            <mat-icon>visibility</mat-icon>
-            Ver Detalle
-          </button>
-          <button mat-button (click)="editarGasto(gasto)">
-            <mat-icon>edit</mat-icon>
-            Editar
-          </button>
-        </mat-card-actions>
-      </mat-card>
+          </mat-card-actions>
+        </mat-card>
+      </cdk-virtual-scroll-viewport>
     </div>
 
     <!-- Paginación -->

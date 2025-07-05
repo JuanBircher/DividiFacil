@@ -1,0 +1,79 @@
+/* 🚀 PERFORMANCE OPTIMIZATIONS */
+
+/* GPU Acceleration */
+.dashboard-container,
+.gastos-grid,
+.pagos-table-container,
+.main-content,
+.actions-grid,
+.stats-grid {
+  contain: layout style paint;
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Card optimizations */
+mat-card,
+.action-card,
+.stat-card {
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+/* Lazy loading animations */
+.lazy-loading {
+  opacity: 0.7;
+  filter: blur(2px);
+  transition: all 0.3s ease;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading-shimmer 1.5s infinite;
+}
+
+.lazy-loaded {
+  opacity: 1;
+  filter: blur(0);
+  transition: all 0.3s ease;
+}
+
+.lazy-error {
+  opacity: 0.5;
+  filter: grayscale(100%);
+}
+
+@keyframes loading-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Smooth scrolling */
+.dashboard-container,
+.listado-gastos-container,
+.pagos-container {
+  scroll-behavior: smooth;
+}
+
+/* Loading optimizations */
+.loading-container {
+  contain: layout style paint;
+  
+  mat-spinner {
+    will-change: transform;
+  }
+}
+
+/* Animation optimizations */
+.fade-in-up {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

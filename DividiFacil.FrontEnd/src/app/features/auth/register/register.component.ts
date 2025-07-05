@@ -87,6 +87,7 @@ export class RegisterComponent implements OnInit {
       nombre: this.registerForm.value.nombre,
       email: this.registerForm.value.email,
       password: this.registerForm.value.password,
+      confirmarPassword: this.registerForm.value.confirmarPassword,
       telefono: this.registerForm.value.telefono || undefined // Solo enviar si tiene valor
     };
 

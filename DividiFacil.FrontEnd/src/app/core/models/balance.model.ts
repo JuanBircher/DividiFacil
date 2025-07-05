@@ -1,28 +1,23 @@
-// ✅ ALINEADO CON BACKEND BalanceGrupoDto.cs
+// src/app/core/models/balance.model.ts
 export interface BalanceGrupoDto {
   idGrupo: string;
   nombreGrupo: string;
   totalGastos: number;
-  balancesUsuarios: BalanceUsuarioDto[];        // ✅ Nombre correcto
-  deudasSimplificadas: DeudaSimplificadaDto[];  // ✅ Nombre correcto
+  balancesUsuarios: BalanceUsuarioDto[];
+  deudasSimplificadas: DeudaSimplificadaDto[];
 }
 
-// ✅ ALINEADO CON BACKEND BalanceUsuarioDto.cs
 export interface BalanceUsuarioDto {
   idMiembro: string;
   idUsuario: string;
   nombreUsuario: string;
   imagenPerfil: string;
-  totalPagado: number;           // ✅ Campo correcto del backend
-  totalGastado: number;          // ✅ Campo para el total gastado
-  deberiaHaberPagado: number;    // ✅ Campo correcto del backend
+  totalPagado: number;
+  deberiaHaberPagado: number;
   balance: number;
   deudasDetalladas: DeudaDetalladaDto[];
-  deudas: DeudaDetalladaDto[];   // ✅ Campo para deudas
-  creditos: DeudaDetalladaDto[]; // ✅ Campo para créditos
 }
 
-// ✅ ALINEADO CON BACKEND DeudaSimplificadaDto.cs
 export interface DeudaSimplificadaDto {
   idUsuarioDeudor: string;
   nombreUsuarioDeudor: string;
@@ -33,29 +28,22 @@ export interface DeudaSimplificadaDto {
   monto: number;
 }
 
-// ✅ ALINEADO CON BACKEND DeudaDetalladaDto.cs
 export interface DeudaDetalladaDto {
-  idGasto: string;
-  conceptoGasto: string;
-  fechaGasto: string;
-  montoTotal: number;
-  montoCorresponde: number;
-  montoPagado: number;
-  montoPendiente: number;
-  origenesDeuda: DeudaOrigenDto[];
+  idUsuarioDeudor: string;
+  nombreUsuarioDeudor: string;
+  idUsuarioAcreedor: string;
+  nombreUsuarioAcreedor: string;
+  monto: number;
+  origenes: DeudaOrigenDto[];
 }
 
-// ✅ ALINEADO CON BACKEND DeudaOrigenDto.cs
 export interface DeudaOrigenDto {
   idGasto: string;
-  conceptoGasto: string;
+  descripcionGasto: string;
   fechaGasto: string;
-  montoGasto: number;
-  participacionUsuario: number;
-  montoPagadoUsuario: number;
+  montoOriginal: number;
 }
 
-// ✅ NUEVO: MovimientoDto para historial
 export interface MovimientoDto {
   idMovimiento: string;
   tipoMovimiento: string;
@@ -67,6 +55,6 @@ export interface MovimientoDto {
   nombreUsuarioRelacionado: string;
   imagenPerfilRelacionado?: string;
   esPropio: boolean;
-  idGrupo: string;
-  nombreGrupo: string;
+  idGrupo?: string;
+  nombreGrupo?: string;
 }

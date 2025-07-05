@@ -2,15 +2,17 @@
  * 🔧 CORREGIDO: Estructura que coincide EXACTAMENTE con el backend
  */
 export interface NotificacionDto {
-  idNotificacion: string;
-  idUsuario: string;
-  idGrupo: string;              // 🔧 AGREGADO: existe en backend
-  tipo: string;                 // 🔧 SIMPLIFICADO: usar string como en backend
-  mensaje: string;
-  estado: string;               // 🔧 AGREGADO: existe en backend
-  fechaCreacion: string;
-  fechaEnvio?: string;          // 🔧 AGREGADO: existe en backend
-  canalEnvio: string;           // 🔧 AGREGADO: existe en backend
+  idNotificacion: string;               // Guid -> string
+  idUsuario: string;                    // Guid -> string
+  idGrupo: string;                      // Nuevo campo: ID del grupo
+  tipo: string;                         // ✅ Correcto
+  mensaje: string;                      // ✅ Correcto
+  estado: string;                       // Nuevo campo: Estado de la notificación
+  fechaCreacion: string;                // DateTime -> string (ISO format)
+  fechaEnvio?: string;                  // DateTime -> string (ISO format), opcional
+  canalEnvio: string;                  // Nuevo campo: Canal de envío
+  nombreUsuario?: string;               // Opcional para mostrar el nombre del usuario
+  nombreGrupo?: string;                 // Opcional para mostrar el nombre del grupo
 }
 
 /**

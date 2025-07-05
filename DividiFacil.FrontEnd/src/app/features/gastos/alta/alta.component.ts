@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
@@ -12,6 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -32,6 +33,7 @@ interface ParticipanteGasto {
   standalone: true,
   templateUrl: './alta.component.html',
   styleUrls: ['./alta.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush, // 🚀 AGREGAR ESTO
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -43,11 +45,13 @@ interface ParticipanteGasto {
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
+    MatTooltipModule,
     MatChipsModule,
+    
     MatCheckboxModule
   ]
 })
-export class AltaComponent implements OnInit, OnDestroy {
+export class AltaGastosComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   // Formularios del stepper
@@ -86,7 +90,8 @@ export class AltaComponent implements OnInit, OnDestroy {
     private grupoService: GrupoService,
     private snackBar: MatSnackBar,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef // 🚀 AGREGAR ESTO
   ) {
     this.detallesForm = this.fb.group({
       descripcion: ['', [Validators.required, Validators.minLength(3)]],
@@ -129,10 +134,11 @@ export class AltaComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * 🔄 CARGAR DATOS DEL GRUPO
+   * 🔄 CARGAR DATOS DEL GRUPO - OPTIMIZADO
    */
   cargarGrupo(): void {
     this.loading = true;
+    this.cdr.markForCheck(); // 🚀 AGREGAR ESTO
     
     this.grupoService.obtenerMiembros(this.idGrupo)
       .pipe(takeUntil(this.destroy$))
@@ -146,11 +152,14 @@ export class AltaComponent implements OnInit, OnDestroy {
             this.snackBar.open('Error al cargar grupo', 'Cerrar', { duration: 3000 });
             this.router.navigate(['/grupos']);
           }
+          this.cdr.markForCheck(); // 🚀 AGREGAR ESTO
         },
         error: (err) => {
           this.loading = false;
           this.snackBar.open('Error al cargar grupo', 'Cerrar', { duration: 3000 });
           console.error('Error:', err);
+          this.router.navigate(['/grupos']);
+          this.cdr.markForCheck(); // 🚀 AGREGAR ESTO
         }
       });
   }
@@ -172,7 +181,7 @@ export class AltaComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * 🧮 CALCULAR DIVISIÓN SEGÚN TIPO SELECCIONADO
+   * 🧮 CALCULAR DIVISIÓN SEGUN TIPO SELECCIONADO - OPTIMIZADO
    */
   calcularDivision(): void {
     const tipoDivision = this.participantesForm.get('tipoDivision')?.value;
@@ -192,6 +201,8 @@ export class AltaComponent implements OnInit, OnDestroy {
         // No calcular automáticamente, el usuario ingresa manualmente
         break;
     }
+    
+    this.cdr.markForCheck(); // 🚀 AGREGAR ESTO
   }
 
   /**
@@ -245,22 +256,18 @@ export class AltaComponent implements OnInit, OnDestroy {
     this.calcularDivision();
   }
 
-  /**
-   * 🧮 RECALCULAR MONTO AL CAMBIAR PORCENTAJE
-   */
   onPorcentajeChange(participante: ParticipanteGasto): void {
     const montoTotal = this.detallesForm.get('monto')?.value || 0;
     participante.monto = Math.round((montoTotal * participante.porcentaje / 100) * 100) / 100;
+    this.cdr.markForCheck(); // 🚀 AGREGAR ESTO
   }
 
-  /**
-   * 🧮 RECALCULAR PORCENTAJE AL CAMBIAR MONTO
-   */
   onMontoParticipanteChange(participante: ParticipanteGasto): void {
     const montoTotal = this.detallesForm.get('monto')?.value || 0;
     if (montoTotal > 0) {
       participante.porcentaje = Math.round((participante.monto / montoTotal) * 100);
     }
+    this.cdr.markForCheck(); // 🚀 AGREGAR ESTO
   }
 
   /**
@@ -495,6 +502,11 @@ export class AltaComponent implements OnInit, OnDestroy {
     if (!this.modoEdicion || !this.gastoOriginal) return true;
     return true; // Por ahora permitimos edición
   }
+
+  tooltips = {
+    division: 'Selecciona cómo se dividirá el gasto entre los participantes.',
+    montoManual: 'Ingresa el monto que este participante pagará.'
+  };
 
   // Exponer Math para el template
   Math = Math;

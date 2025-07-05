@@ -1,88 +1,106 @@
-<app-card 
-  title="Grupos Recientes"
-  subtitle="Últimos grupos donde has participado"
-  icon="group"
-  iconColor="primary"
-  [showAction]="true"
-  actionText="Ver todos"
-  (click)="verTodosLosGrupos()">
+<mat-card class="recent-groups-card">
+  <mat-card-header>
+    <mat-card-title>
+      <mat-icon color="primary">group</mat-icon>
+      Grupos Recientes
+    </mat-card-title>
+    <mat-card-subtitle>Últimos grupos donde has participado</mat-card-subtitle>
+  </mat-card-header>
 
-  <!-- Loading State -->
-  <div *ngIf="loading" class="loading-container">
-    <app-loading-spinner 
-      [diameter]="30" 
-      message="Cargando grupos...">
-    </app-loading-spinner>
-  </div>
-
-  <!-- Error State -->
-  <div *ngIf="error && !loading" class="error-message">
-    <mat-icon color="warn">error</mat-icon>
-    <span>{{ error }}</span>
-  </div>
-
-  <!-- Empty State -->
-  <div *ngIf="!loading && !error && grupos.length === 0" class="empty-state">
-    <mat-icon>group_add</mat-icon>
-    <h4>No tienes grupos aún</h4>
-    <p>Crea tu primer grupo para comenzar a dividir gastos</p>
-    <button mat-raised-button color="primary" (click)="crearGrupo()">
-      <mat-icon>add</mat-icon>
-      Crear Grupo
-    </button>
-  </div>
-
-  <!-- Groups List -->
-  <div *ngIf="!loading && !error && grupos.length > 0" class="groups-list">
-    <div 
-      *ngFor="let grupo of grupos" 
-      class="group-item"
-      (click)="verGrupo(grupo.id)">
-      
-      <div class="group-info">
-        <div class="group-header">
-          <h4 class="group-name">{{ grupo.nombre }}</h4>
-          <mat-chip 
-            [color]="grupo.activo ? 'primary' : 'warn'"
-            class="status-chip">
-            {{ grupo.activo | status }}
-          </mat-chip>
-        </div>
-        
-        <p class="group-description">{{ grupo.descripcion || 'Sin descripción' }}</p>
-        
-        <div class="group-meta">
-          <span class="member-count">
-            <mat-icon>person</mat-icon>
-            {{ grupo.miembros?.length || 0 }} miembros
-          </span>
-          <span class="created-date">
-            <mat-icon>schedule</mat-icon>
-            {{ grupo.fechaCreacion | dateFormat }}
-          </span>
-        </div>
-      </div>
-
-      <div class="group-action">
-        <mat-icon>chevron_right</mat-icon>
-      </div>
+  <mat-card-content>
+    <!-- Loading State -->
+    <div *ngIf="cargando" class="loading-container">
+      <mat-spinner diameter="30"></mat-spinner>
+      <p class="loading-text">Cargando grupos...</p>
     </div>
 
-    <!-- Action Buttons -->
-    <div class="action-buttons">
-      <button 
-        mat-button 
-        color="primary" 
-        (click)="verTodosLosGrupos(); $event.stopPropagation()">
-        Ver todos los grupos
+    <!-- Error State -->
+    <div *ngIf="error && !cargando" class="error-message">
+      <mat-icon color="warn">error</mat-icon>
+      <span>{{ error }}</span>
+      <button mat-button color="primary" (click)="cargarGruposRecientes()">
+        <mat-icon>refresh</mat-icon>
+        Reintentar
       </button>
-      <button 
-        mat-raised-button 
-        color="primary" 
-        (click)="crearGrupo(); $event.stopPropagation()">
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!cargando && !error && grupos.length === 0" class="empty-state">
+      <mat-icon class="empty-icon">group_add</mat-icon>
+      <h4>No tienes grupos aún</h4>
+      <p>Crea tu primer grupo para comenzar a dividir gastos</p>
+      <button mat-raised-button color="primary" (click)="crearGrupo()">
         <mat-icon>add</mat-icon>
         Crear Grupo
       </button>
     </div>
-  </div>
-</app-card>
+
+    <!-- Groups List -->
+    <div *ngIf="!cargando && !error && grupos.length > 0" class="groups-list">
+      <div 
+        *ngFor="let grupo of grupos; trackBy: trackByGrupoId" 
+        class="group-item"
+        [attr.data-grupo-id]="grupo.idGrupo"
+        (click)="verGrupo(grupo.idGrupo)">
+        
+        <div class="group-info">
+          <div class="group-header">
+            <h4 class="group-name">{{ grupo.nombreGrupo }}</h4>
+            <mat-chip 
+              [color]="obtenerColorModo(grupo.modoOperacion)"
+              class="status-chip">
+              {{ grupo.modoOperacion }}
+            </mat-chip>
+          </div>
+          
+          <p class="group-description">
+            {{ grupo.descripcion || 'Sin descripción' }}
+          </p>
+          
+          <div class="group-meta">
+            <span>
+              <mat-icon>people</mat-icon>
+              {{ grupo.cantidadMiembros }} miembros
+            </span>
+            
+            <span>
+              <mat-icon>attach_money</mat-icon>
+              {{ grupo.totalGastos | currency:'ARS':'symbol-narrow':'1.0-0' }}
+            </span>
+            
+            <span>
+              <mat-icon>person</mat-icon>
+              {{ grupo.nombreCreador || 'Sin creador' }}
+            </span>
+            
+            <span>
+              <mat-icon>schedule</mat-icon>
+              {{ grupo.fechaCreacion | date:'short' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="group-action">
+          <mat-icon>chevron_right</mat-icon>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions class="action-buttons">
+    <button 
+      mat-button 
+      color="primary" 
+      (click)="verTodosLosGrupos()">
+      <mat-icon>visibility</mat-icon>
+      Ver todos
+    </button>
+    <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="crearGrupo()">
+      <mat-icon>add</mat-icon>
+      Crear Grupo
+    </button>
+  </mat-card-actions>
+</mat-card>

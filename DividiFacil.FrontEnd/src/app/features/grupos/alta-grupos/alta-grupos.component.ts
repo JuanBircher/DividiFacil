@@ -1,66 +1,170 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { GrupoCreacionDto } from '../../../core/models/grupo.model';
-import { GrupoService } from '../../../core/services/grupo.service';
-import { Router } from '@angular/router';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
+
+// Material
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
+// Servicios y Modelos
+import { GrupoService } from '../../../core/services/grupo.service';
+import { GrupoCreacionDto, ModoOperacion } from '../../../core/models/grupo.model';
 
 @Component({
   selector: 'app-alta-grupos',
   standalone: true,
   templateUrl: './alta-grupos.component.html',
   styleUrls: ['./alta-grupos.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatProgressSpinnerModule,
+    MatIconModule
   ]
 })
-export class AltaGruposComponent {
+export class AltaGruposComponent implements OnInit, OnDestroy {
   grupoForm: FormGroup;
-  loading = false;
+  procesando = false;
   error: string | null = null;
+  modoEdicion = false;
+  idGrupo: string | null = null;
+  loading = false; // 🔧 AGREGAR
+  
+  // ✅ OPCIONES ALINEADAS CON BACKEND
+  modosOperacion = [
+    { value: ModoOperacion.ESTANDAR, label: 'Estándar', descripcion: 'Distribución básica' },
+    { value: ModoOperacion.EQUITATIVO, label: 'Equitativo', descripcion: 'Todos pagan lo mismo' },
+    { value: ModoOperacion.PROPORCIONAL, label: 'Proporcional', descripcion: 'Según ingresos' }
+  ];
+
+  private destroy$ = new Subject<void>();
 
   constructor(
     private fb: FormBuilder,
     private grupoService: GrupoService,
     private router: Router,
+    private route: ActivatedRoute,
+    private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef
   ) {
     this.grupoForm = this.fb.group({
-      nombreGrupo: ['', [Validators.required, Validators.minLength(3)]],    // ✅ camelCase
-      descripcion: [''],                                                   // ✅ camelCase
-      modoOperacion: ['', Validators.required]                             // ✅ camelCase
+      nombreGrupo: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
+      descripcion: ['', [Validators.maxLength(200)]],
+      modoOperacion: [ModoOperacion.ESTANDAR, [Validators.required]]
     });
   }
 
-  crearGrupo() {
-    if (this.grupoForm.valid) {
-      const grupoData: GrupoCreacionDto = {
-        nombreGrupo: this.grupoForm.get('nombreGrupo')?.value,      // ✅ camelCase
-        descripcion: this.grupoForm.get('descripcion')?.value,      // ✅ camelCase
-        modoOperacion: this.grupoForm.get('modoOperacion')?.value   // ✅ camelCase
-      };
-      
-      this.grupoService.crearGrupo(grupoData).subscribe({
-        next: (response) => {
-          if (response.exito) {
-            this.router.navigate(['/grupos']);
-          }
-        },
-        error: (error) => {
-          console.error('Error al crear grupo:', error);
-        }
-      });
-    }
+  ngOnInit(): void {
+    // Detectar si estamos en modo edición
+    this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params: any) => {
+      if (params['idGrupo']) {
+        this.idGrupo = params['idGrupo'];
+        this.modoEdicion = true;
+        this.cargarGrupo();
+      }
+    });
   }
 
-  submit() {
-  // Implement your form submission logic here
-  // For example, you might want to check if the form is valid and then process the data
-  if (this.grupoForm.valid) {
-    // Submit the form data
-    // Example: this.yourService.createGrupo(this.grupoForm.value).subscribe(...)
-  } else {
-    this.grupoForm.markAllAsTouched();
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
-}
+
+  private cargarGrupo(): void {
+    if (!this.idGrupo) return;
+
+    this.procesando = true;
+    this.cdr.markForCheck();
+
+    this.grupoService.obtenerGrupo(this.idGrupo)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          if (response.exito && response.data) {
+            this.grupoForm.patchValue({
+              nombreGrupo: response.data.nombreGrupo,
+              descripcion: response.data.descripcion,
+              modoOperacion: response.data.modoOperacion
+            });
+          }
+          this.procesando = false;
+          this.cdr.markForCheck();
+        },
+        error: (error: any) => {
+          console.error('❌ Error al cargar grupo:', error);
+          this.error = 'Error al cargar el grupo';
+          this.procesando = false;
+          this.cdr.markForCheck();
+        }
+      });
+  }
+
+  submit(): void {
+    if (this.grupoForm.invalid) {
+      this.grupoForm.markAllAsTouched();
+      return;
+    }
+
+    this.procesando = true;
+    this.error = null;
+    this.cdr.markForCheck();
+
+    const grupoData: GrupoCreacionDto = {
+      nombreGrupo: this.grupoForm.get('nombreGrupo')?.value,
+      descripcion: this.grupoForm.get('descripcion')?.value,
+      modoOperacion: this.grupoForm.get('modoOperacion')?.value
+    };
+
+    console.log('🔧 Datos del grupo:', grupoData);
+
+    const operacion = this.modoEdicion 
+      ? this.grupoService.actualizarGrupo(this.idGrupo!, grupoData)
+      : this.grupoService.crearGrupo(grupoData);
+
+    // Forzamos el tipo del observable para que subscribe acepte el objeto de callbacks
+    (operacion as any)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response: any) => {
+          if (response.exito) {
+            const mensaje = this.modoEdicion ? 'Grupo actualizado exitosamente' : 'Grupo creado exitosamente';
+            this.snackBar.open(mensaje, 'Cerrar', { duration: 3000 });
+            this.router.navigate(['/grupos']);
+          } else {
+            this.error = response.mensaje || 'Error al procesar la solicitud';
+          }
+          this.procesando = false;
+          this.cdr.markForCheck();
+        },
+        error: (error: any) => {
+          console.error('❌ Error al procesar grupo:', error);
+          this.error = 'Error al procesar el grupo. Intente nuevamente.';
+          this.procesando = false;
+          this.cdr.markForCheck();
+        }
+      });
+  }
+
+  cancelar(): void {
+    this.router.navigate(['/grupos']);
+  }
+
+  // ✅ GETTER PARA FÁCIL ACCESO A CONTROLES
+  get nombreGrupo() { return this.grupoForm.get('nombreGrupo'); }
+  get descripcion() { return this.grupoForm.get('descripcion'); }
+  get modoOperacion() { return this.grupoForm.get('modoOperacion'); }
 }

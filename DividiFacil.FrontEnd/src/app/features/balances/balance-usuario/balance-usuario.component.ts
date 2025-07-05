@@ -18,7 +18,7 @@ import { MatBadgeModule } from '@angular/material/badge';
 // Services y Models
 import { BalanceService } from '../../../core/services/balance.service';
 import { BalanceUsuarioDto, DeudaDetalladaDto } from '../../../core/models/balance.model';
-import { ApiResponse } from '../../../core/models/response.model';
+import { ResponseDto } from '../../../core/models/response.model';
 
 // Pipes
 import { CurrencyFormatPipe } from '../../../shared/pipes/currency-format.pipe';
@@ -87,15 +87,15 @@ export class BalanceUsuarioComponent implements OnInit, OnDestroy {
      */
     cargarBalanceUsuario(): void {
         this.loading = true;
-        this.balanceService.obtenerBalanceUsuario()
+        this.balanceService.obtenerBalanceUsuario(this.idUsuario)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
-                next: (response: ApiResponse<BalanceUsuarioDto[]>) => {
+                next: (response: ResponseDto<BalanceUsuarioDto[]>) => {
                     this.loading = false;
                     if (response.exito && response.data && Array.isArray(response.data)) {
                         this.balanceUsuarios = response.data;
                         // Si necesitas un solo usuario, puedes buscarlo por idUsuario
-                        this.balanceUsuario = response.data.find(bu => bu.idUsuario === this.idUsuario) || null;
+                        this.balanceUsuario = response.data.find((bu: BalanceUsuarioDto) => bu.idUsuario === this.idUsuario) || null;
                     } else {
                         this.snackBar.open('Error al cargar balance del usuario', 'Cerrar', { duration: 3000 });
                     }
@@ -115,8 +115,8 @@ export class BalanceUsuarioComponent implements OnInit, OnDestroy {
         this.router.navigate(['/alta-pagos'], {
             queryParams: {
                 idGrupo: this.idGrupo,
-                monto: deuda.montoPendiente,
-                concepto: `Pago por ${deuda.conceptoGasto}`
+                monto: deuda.monto,
+                concepto: `Pago de deuda`
             }
         });
     }
@@ -150,6 +150,6 @@ export class BalanceUsuarioComponent implements OnInit, OnDestroy {
      * 🔢 TRACKBY FUNCTION
      */
     trackByDeuda(index: number, item: DeudaDetalladaDto): string {
-        return item.idGasto;
+        return `${item.idUsuarioDeudor}-${item.idUsuarioAcreedor}`;
     }
 }

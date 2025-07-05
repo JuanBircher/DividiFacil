@@ -15,13 +15,12 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 // Services y Models - CORREGIDOS
-import { PagoService } from '../../../core/services/pago.service';
+import { PagoService, PagoCreacionDto } from '../../../core/services/pago.service';
 import { GrupoService } from '../../../core/services/grupo.service';
-import { PagoCreacionDto } from '../../../core/models/pago.model';
-import { Grupo, GrupoConMiembrosDto, MiembroGrupoSimpleDto } from '../../../core/models/grupo.model';
-import { MiembroDto } from '../../../core/models/miembro.model';
+import { Grupo } from '../../../core/models/grupo.model';
 import { AuthService } from '../../../core/auth.service';
-import { ApiResponse } from '../../../core/models/response.model';
+import { ResponseDto } from '../../../core/models/response.model';
+import { MiembroGrupoDto } from '../../../core/models/miembro.model';
 
 @Component({
   selector: 'app-alta-pagos',
@@ -51,7 +50,7 @@ export class AltaPagosComponent implements OnInit, OnDestroy {
   // Datos
   pagoForm: FormGroup;
   gruposDisponibles: Grupo[] = [];
-  miembrosGrupo: MiembroDto[] = []; // ✅ CORREGIDO: Usar MiembroDto que es lo que devuelve el servicio
+  miembrosGrupo: MiembroGrupoDto[] = []; // Simplificado temporalmente
   usuarioActual: any;
 
   // Filtros
@@ -99,7 +98,7 @@ export class AltaPagosComponent implements OnInit, OnDestroy {
     this.grupoService.getGrupos()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response: ApiResponse<Grupo[]>) => {
+        next: (response: ResponseDto<Grupo[]>) => {
           this.loading = false;
           if (response.exito && response.data) {
             this.gruposDisponibles = response.data;
@@ -132,16 +131,11 @@ export class AltaPagosComponent implements OnInit, OnDestroy {
     this.grupoService.obtenerMiembros(idGrupo)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response: ApiResponse<GrupoConMiembrosDto>) => {
+        next: (response: ResponseDto<any>) => {
           if (response.exito && response.data) {
-            // ✅ CORREGIDO: response.data.miembros ES el array de MiembroDto[]
+            // Simplificado temporalmente
             this.miembrosGrupo = (response.data.miembros || [])
-              .filter((miembro: MiembroGrupoSimpleDto) => miembro.idUsuario !== this.usuarioActual?.idUsuario)
-              .map((miembro: MiembroGrupoSimpleDto) => ({
-                ...miembro,
-                nombre: miembro.nombreUsuario ?? '', // Ajusta según el campo real disponible
-                email: miembro.emailUsuario ?? ''    // Ajusta según el campo real disponible
-              })) as MiembroDto[];
+              .filter((miembro: MiembroGrupoDto) => miembro.idUsuario !== this.usuarioActual?.idUsuario);
           }
         },
         error: (err: any) => {
@@ -169,7 +163,7 @@ export class AltaPagosComponent implements OnInit, OnDestroy {
     this.pagoService.crearPago(pagoData)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response: ApiResponse<any>) => {
+        next: (response: ResponseDto<any>) => {
           this.guardando = false;
           if (response.exito) {
             this.snackBar.open('¡Pago creado exitosamente!', 'Cerrar', {

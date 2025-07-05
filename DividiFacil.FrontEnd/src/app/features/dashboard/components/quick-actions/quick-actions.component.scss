@@ -197,3 +197,37 @@
     text-overflow: unset !important;
   }
 }
+
+/* 🚀 PERFORMANCE OPTIMIZATIONS */
+:host {
+  contain: layout style paint;
+  display: block;
+}
+
+.dashboard-container,
+.stats-container,
+.actions-grid,
+.timeline-list {
+  transform: translateZ(0); /* GPU acceleration */
+  will-change: transform;
+}
+
+mat-card {
+  backface-visibility: hidden;
+}
+
+/* 🚀 SMOOTH ANIMATIONS */
+.dashboard-container > * {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

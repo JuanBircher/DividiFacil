@@ -1,22 +1,56 @@
 <mat-card>
-  <h2>Mis Grupos</h2>
-  <button mat-raised-button color="primary" routerLink="/grupos/alta">Nuevo grupo</button>
-  <mat-list *ngIf="grupos && grupos.length > 0; else sinGrupos">
-    <mat-list-item *ngFor="let grupo of grupos">
-      <mat-icon matListIcon>groups</mat-icon>
-      <div matLine>{{ grupo.nombreGrupo }}</div>
-      <div matLine class="desc">{{ grupo.descripcion }}</div>
-      <button mat-icon-button color="primary" [routerLink]="['/grupos/detalle', grupo.idGrupo]">
-        <mat-icon>visibility</mat-icon>
+  <mat-card-header>
+    <mat-card-title>
+      <mat-icon>groups</mat-icon>
+      Mis Grupos
+    </mat-card-title>
+    <mat-card-subtitle>
+      Administra tus grupos de gastos compartidos
+    </mat-card-subtitle>
+  </mat-card-header>
+  
+  <mat-card-content>
+    <div class="header-actions">
+      <button mat-raised-button color="primary" routerLink="/grupos/alta">
+        <mat-icon>add</mat-icon>
+        Nuevo Grupo
       </button>
-    </mat-list-item>
-  </mat-list>
-  <ng-template #sinGrupos>
-    <div *ngIf="!cargando">
-      <p>No tienes grupos aún.</p>
     </div>
-  </ng-template>
-  <div *ngIf="cargando" style="display:flex; justify-content:center;">
-    <mat-progress-spinner diameter="40" mode="indeterminate"></mat-progress-spinner>
-  </div>
+    
+    <!-- Loading -->
+    <div *ngIf="cargando" class="loading-container">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Cargando grupos...</p>
+    </div>
+    
+    <!-- Lista de grupos -->
+    <mat-list *ngIf="grupos && grupos.length > 0 && !cargando">
+      <mat-list-item *ngFor="let grupo of grupos">
+        <mat-icon matListIcon>groups</mat-icon>
+        
+        <div matLine>{{ grupo.nombreGrupo }}</div>
+        <div matLine class="desc">{{ grupo.descripcion || 'Sin descripción' }}</div>
+        <div matLine class="meta">
+          <span class="miembros">{{ grupo.cantidadMiembros }} miembros</span>
+          <span class="gastos">{{ grupo.totalGastos | currency:'ARS':'symbol':'1.2-2' }}</span>
+          <span class="creador">por {{ grupo.nombreCreador }}</span>
+        </div>
+        
+        <button mat-icon-button color="primary" [routerLink]="['/grupos/detalle', grupo.idGrupo]">
+          <mat-icon>visibility</mat-icon>
+        </button>
+      </mat-list-item>
+    </mat-list>
+    
+    <!-- Empty State -->
+    <div *ngIf="!cargando && grupos.length === 0" class="empty-state">
+      <mat-icon>group_add</mat-icon>
+      <h3>No tienes grupos aún</h3>
+      <p>Crea tu primer grupo para comenzar a dividir gastos</p>
+      <button mat-raised-button color="primary" routerLink="/grupos/alta">
+        <mat-icon>add</mat-icon>
+        Crear Grupo
+      </button>
+    </div>
+  </mat-card-content>
 </mat-card>

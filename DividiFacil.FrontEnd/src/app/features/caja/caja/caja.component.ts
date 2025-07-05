@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil, firstValueFrom } from 'rxjs';
 
 // Angular Material
 import { MatCardModule } from '@angular/material/card';
@@ -24,6 +24,7 @@ import { CajaComunService } from '../../../core/services/caja-comun.service';
 import { GrupoService } from '../../../core/services/grupo.service';
 import { CajaComunDto, MovimientoCajaDto, MovimientoCajaCreacionDto } from '../../../core/models/caja-comun.model';
 import { Grupo } from '../../../core/models/grupo.model';  // ← CAMBIO: Grupo en lugar de GrupoDto
+import { AuthService } from '../../../core/auth.service';
 
 // Pipes
 import { CurrencyFormatPipe } from '../../../shared/pipes/currency-format.pipe';
@@ -81,6 +82,8 @@ export class CajaComponent implements OnInit, OnDestroy {
     puedeRetirar: false
   };
 
+  usuarioActual: any;
+
   constructor(
     private fb: FormBuilder,
     private cajaService: CajaComunService,
@@ -88,7 +91,8 @@ export class CajaComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private authService: AuthService
   ) {
     this.movimientoForm = this.fb.group({
       tipoMovimiento: ['INGRESO', Validators.required],
@@ -104,6 +108,7 @@ export class CajaComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.usuarioActual = this.authService.obtenerUsuario();
     this.route.queryParams
       .pipe(takeUntil(this.destroy$))
       .subscribe(params => {
@@ -126,17 +131,15 @@ export class CajaComponent implements OnInit, OnDestroy {
    */
   async cargarDatos(): Promise<void> {
     this.loading = true;
-    
     try {
-      // Cargar datos en paralelo
       const [cajaResponse, grupoResponse] = await Promise.all([
-        this.cajaService.obtenerCajaPorGrupo(this.idGrupo).toPromise(),
-        this.grupoService.getGrupo(this.idGrupo).toPromise()
+        this.cajaService.obtenerCajaPorGrupo(this.idGrupo, this.usuarioActual.idUsuario).toPromise(),
+        this.grupoService.getGrupos().toPromise()
       ]);
 
-      // Grupo - ASIGNACIÓN DIRECTA
+      // Grupo - Buscar el grupo correspondiente por idGrupo
       if (grupoResponse?.exito && grupoResponse.data) {
-        this.grupo = grupoResponse.data;
+        this.grupo = grupoResponse.data.find((g: Grupo) => g.idGrupo === this.idGrupo) || null;
       }
 
       // Caja común
@@ -162,17 +165,9 @@ export class CajaComponent implements OnInit, OnDestroy {
    */
   async cargarMovimientos(): Promise<void> {
     if (!this.caja) return;
-
     try {
       const filtros = this.filtrosForm.value;
-      const response = await this.cajaService.obtenerMovimientos(this.caja.idCaja, {
-        tipoMovimiento: filtros.tipoMovimiento || undefined,
-        fechaDesde: filtros.fechaDesde || undefined,
-        fechaHasta: filtros.fechaHasta || undefined,
-        pagina: 1,
-        tamaño: 50
-      }).toPromise();
-
+      const response = await this.cajaService.obtenerMovimientos(this.caja.idCaja, this.usuarioActual.idUsuario).toPromise();
       if (response?.exito && response.data) {
         this.movimientos = response.data;
       }
@@ -186,7 +181,6 @@ export class CajaComponent implements OnInit, OnDestroy {
    */
   async cargarPermisos(): Promise<void> {
     if (!this.caja) return;
-
     try {
       const response = await this.cajaService.validarPermisos(this.caja.idCaja).toPromise();
       if (response?.exito && response.data) {
@@ -202,15 +196,9 @@ export class CajaComponent implements OnInit, OnDestroy {
    */
   async crearCajaComun(): Promise<void> {
     if (!this.grupo) return;
-
     this.guardando = true;
-    
     try {
-      const response = await this.cajaService.crearCajaComun(this.idGrupo, {
-        nombreCaja: `Caja de ${this.grupo.nombreGrupo}`,
-        descripcion: 'Caja común del grupo'
-      }).toPromise();
-
+      const response = await this.cajaService.crearCajaComun(this.idGrupo, this.usuarioActual.idUsuario).toPromise();
       if (response?.exito && response.data) {
         this.caja = response.data;
         this.snackBar.open('¡Caja común creada exitosamente!', 'Cerrar', { duration: 3000 });
@@ -229,20 +217,16 @@ export class CajaComponent implements OnInit, OnDestroy {
    */
   async registrarMovimiento(): Promise<void> {
     if (!this.movimientoForm.valid || !this.caja) return;
-
     this.guardando = true;
-
     try {
       const formData = this.movimientoForm.value;
-      const movimiento: MovimientoCajaCreacionDto = {
+      const movimiento = {
         idCaja: this.caja.idCaja,
         tipoMovimiento: formData.tipoMovimiento,
         concepto: formData.concepto,
         monto: formData.monto
       };
-
-      const response = await this.cajaService.registrarMovimiento(movimiento).toPromise();
-
+      const response = await this.cajaService.registrarMovimiento(movimiento, this.usuarioActual.idUsuario).toPromise();
       if (response?.exito) {
         this.snackBar.open('¡Movimiento registrado exitosamente!', 'Cerrar', { duration: 3000 });
         this.movimientoForm.reset({
@@ -251,7 +235,7 @@ export class CajaComponent implements OnInit, OnDestroy {
           monto: 0
         });
         this.mostrarFormulario = false;
-        await this.cargarDatos(); // Recargar todo para actualizar saldo
+        await this.cargarDatos();
       }
     } catch (error) {
       console.error('Error al registrar movimiento:', error);
@@ -282,9 +266,8 @@ export class CajaComponent implements OnInit, OnDestroy {
   async eliminarMovimiento(movimiento: MovimientoCajaDto): Promise<void> {
     const confirmacion = confirm(`¿Estás seguro de eliminar el movimiento "${movimiento.concepto}"?`);
     if (!confirmacion) return;
-
     try {
-      const response = await this.cajaService.eliminarMovimiento(movimiento.idMovimiento).toPromise();
+      const response = await this.cajaService.eliminarMovimiento(movimiento.idMovimiento, this.usuarioActual.idUsuario).toPromise();
       if (response?.exito) {
         this.snackBar.open('Movimiento eliminado', 'Cerrar', { duration: 3000 });
         await this.cargarDatos();

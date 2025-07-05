@@ -91,7 +91,7 @@ export class PerfilComponent implements OnInit, OnDestroy {
             this.usuario = response.data;
             this.calcularEstadisticas();
           } else {
-            this.snackBar.open('Error al cargar perfil', 'Cerrar', { duration: 3000 });
+            this.snackBar.open(response.mensaje || 'Error al cargar perfil', 'Cerrar', { duration: 3000 });
           }
         },
         error: (err) => {
@@ -165,10 +165,7 @@ export class PerfilComponent implements OnInit, OnDestroy {
    * 🎨 OBTENER ESTADO DE USUARIO
    */
   obtenerEstadoUsuario(): { texto: string; color: string } {
-    if (this.usuario?.activo) {
-      return { texto: 'Activo', color: 'primary' };
-    }
-    return { texto: 'Inactivo', color: 'warn' };
+    return { texto: 'Registrado', color: 'primary' };
   }
 
   /**

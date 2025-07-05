@@ -18,8 +18,8 @@ import { MatBadgeModule } from '@angular/material/badge';
 
 // Services y Models
 import { BalanceService } from '../../../core/services/balance.service';
-import { BalanceGrupoDto, DeudaSimplificadaDto } from '../../../core/models/balance.model'; // ✅ CORREGIDO
-import { ApiResponse } from '../../../core/models/response.model';
+import { BalanceGrupoDto, DeudaSimplificadaDto } from '../../../core/models/balance.model';
+import { ResponseDto } from '../../../core/models/response.model';
 
 // Pipes
 import { CurrencyFormatPipe } from '../../../shared/pipes/currency-format.pipe';
@@ -52,8 +52,10 @@ export class BalanceGrupoComponent implements OnInit, OnDestroy {
   procesando = false;
   
   // Datos
-  balanceGrupo: BalanceGrupoDto | null = null; // ✅ CORREGIDO
+  balanceGrupo: any = null;  // ✅ USAR ESTRUCTURA REAL DEL BACKEND
   idGrupo = '';
+  error: string | null = null;
+
   
   // Configuración tabla
   displayedColumnsBalance = ['usuario', 'totalPagado', 'deberiaHaberPagado', 'balance', 'acciones']; // ✅ CORREGIDO
@@ -72,7 +74,10 @@ export class BalanceGrupoComponent implements OnInit, OnDestroy {
       .subscribe(params => {
         this.idGrupo = params['id'];
         if (this.idGrupo) {
-          this.cargarBalance();
+          this.cargarBalance(this.idGrupo);
+        } else {
+          this.error = 'ID de grupo no válido';
+          this.loading = false;
         }
       });
   }
@@ -85,24 +90,26 @@ export class BalanceGrupoComponent implements OnInit, OnDestroy {
   /**
    * 🔄 CARGAR BALANCE DEL GRUPO
    */
-  cargarBalance(): void {
+  cargarBalance(idGrupo: string): void {
     this.loading = true;
+    this.error = null;
 
-    this.balanceService.obtenerBalanceGrupo(this.idGrupo)
+    this.balanceService.obtenerBalanceGrupo(idGrupo)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response: ApiResponse<BalanceGrupoDto>) => { // ✅ CORREGIDO
+        next: (response: ResponseDto<BalanceGrupoDto>) => {
           this.loading = false;
           if (response.exito && response.data) {
             this.balanceGrupo = response.data;
+            console.log('💰 Balance cargado:', this.balanceGrupo);
           } else {
-            this.snackBar.open('Error al cargar balance', 'Cerrar', { duration: 3000 });
+            this.error = response.mensaje || 'Error al cargar balance';
           }
         },
         error: (err: any) => {
           this.loading = false;
-          console.error('Error al cargar balance:', err);
-          this.snackBar.open('Error al cargar balance del grupo', 'Cerrar', { duration: 3000 });
+          console.error('💥 Error al cargar balance:', err);
+          this.error = 'Error al cargar el balance del grupo';
         }
       });
   }
@@ -114,9 +121,9 @@ export class BalanceGrupoComponent implements OnInit, OnDestroy {
     this.router.navigate(['/alta-pagos'], {
       queryParams: {
         idGrupo: this.idGrupo,
-        idReceptor: deuda.idUsuarioAcreedor,  // ✅ Campo correcto
+        idReceptor: deuda.idUsuarioAcreedor,
         monto: deuda.monto,
-        concepto: `Pago de deuda a ${deuda.nombreUsuarioAcreedor}` // ✅ Campo correcto
+        concepto: `Pago de deuda a ${deuda.nombreUsuarioAcreedor}`
       }
     });
   }
@@ -134,7 +141,10 @@ export class BalanceGrupoComponent implements OnInit, OnDestroy {
    * 🔙 VOLVER AL GRUPO
    */
   volverAlGrupo(): void {
-    this.router.navigate(['/grupos', this.idGrupo]);
+    const idGrupo = this.route.snapshot.paramMap.get('idGrupo');
+    if (idGrupo) {
+      this.router.navigate(['/grupos/detalle', idGrupo]);
+    }
   }
 
   /**

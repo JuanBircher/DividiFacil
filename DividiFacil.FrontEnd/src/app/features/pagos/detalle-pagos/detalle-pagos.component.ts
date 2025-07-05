@@ -14,7 +14,7 @@ import { MatDividerModule } from '@angular/material/divider';
 
 // Services y Models
 import { PagoService } from '../../../core/services/pago.service';
-import { PagoDto } from '../../../core/models/pago.model';
+import { Pago } from '../../../core/models/pago.model';
 import { AuthService } from '../../../core/auth.service';
 
 // Pipes
@@ -47,7 +47,7 @@ export class DetallePagosComponent implements OnInit, OnDestroy {
   procesando = false;
   
   // Datos
-  pago: PagoDto | null = null;
+  pago: Pago | null = null;
   idPago = '';
   usuarioActual: any;
 

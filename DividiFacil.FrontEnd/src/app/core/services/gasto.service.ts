@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-import { ApiResponse } from '../models/response.model';
 import { 
-  Gasto, 
+  GastoDto, 
   GastoCreacionDto, 
-  GastoDto,
-  DetalleGastoCreacionDto
+  DetalleGastoDto,
+  SaldoUsuarioDto 
 } from '../models/gasto.model';
+import { ResponseDto, PaginatedResponse } from '../models/response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -18,139 +19,229 @@ export class GastoService {
 
   constructor(private http: HttpClient) {}
 
-  /**
-   * Crear un nuevo gasto
-   */
-  crearGasto(gasto: GastoCreacionDto): Observable<ApiResponse<GastoDto>> {
-    return this.http.post<ApiResponse<GastoDto>>(this.apiUrl, gasto);
+  // ✅ MÉTODO 1: CrearGastoAsync
+  crearGasto(gastoCreacion: GastoCreacionDto): Observable<ResponseDto<GastoDto>> {
+    return this.http.post<ResponseDto<GastoDto>>(this.apiUrl, gastoCreacion)
+      .pipe(
+        catchError(error => {
+          console.error('Error creando gasto:', error);
+          return of({ 
+            exito: false, 
+            data: undefined, 
+            mensaje: error.error?.mensaje || 'Error al crear gasto' 
+          });
+        })
+      );
   }
 
-  /**
-   * Obtener un gasto por ID
-   */
-  obtenerGasto(idGasto: string): Observable<ApiResponse<GastoDto>> {
-    return this.http.get<ApiResponse<GastoDto>>(`${this.apiUrl}/${idGasto}`);
+  // ✅ MÉTODO 2: GetByIdAsync
+  obtenerGasto(idGasto: string): Observable<ResponseDto<GastoDto>> {
+    return this.http.get<ResponseDto<GastoDto>>(`${this.apiUrl}/${idGasto}`)
+      .pipe(
+        catchError(error => {
+          console.error('Error obteniendo gasto:', error);
+          return of({ 
+            exito: false, 
+            data: undefined, 
+            mensaje: error.error?.mensaje || 'Error al obtener gasto' 
+          });
+        })
+      );
   }
 
-  /**
-   * Actualizar un gasto existente
-   */
-  actualizarGasto(idGasto: string, gasto: Partial<GastoCreacionDto>): Observable<ApiResponse<GastoDto>> {
-    return this.http.put<ApiResponse<GastoDto>>(`${this.apiUrl}/${idGasto}`, gasto);
+  // ✅ MÉTODO 3: GetByGrupoAsync - CORREGIDO CON PARÁMETROS
+  obtenerGastosPorGrupo(idGrupo: string): Observable<ResponseDto<GastoDto[]>> {
+    return this.http.get<ResponseDto<GastoDto[]>>(`${this.apiUrl}/grupo/${idGrupo}`)
+      .pipe(
+        map(response => ({
+          exito: response.exito,
+          data: Array.isArray(response.data) ? response.data : [],
+          mensaje: response.mensaje
+        })),
+        catchError(error => {
+          console.error('Error obteniendo gastos por grupo:', error);
+          return of({ 
+            exito: false, 
+            data: [], 
+            mensaje: error.error?.mensaje || 'Error al obtener gastos' 
+          });
+        })
+      );
   }
 
-  /**
-   * 🚨 MÉTODO CRÍTICO FALTANTE para el dashboard
-   * Backend: GET /api/gastos/recientes?cantidad=10
-   */
-  obtenerMisGastos(): Observable<ApiResponse<GastoDto[]>> {
-    return this.http.get<ApiResponse<GastoDto[]>>(`${this.apiUrl}/recientes?cantidad=10`);
+  // ✅ MÉTODO 4: GetRecientesAsync
+  obtenerRecientes(cantidad: number = 10): Observable<ResponseDto<GastoDto[]>> {
+    const params = new HttpParams().set('cantidad', cantidad.toString());
+    
+    return this.http.get<ResponseDto<GastoDto[]>>(`${this.apiUrl}/recientes`, { params })
+      .pipe(
+        map(response => ({
+          exito: response.exito,
+          data: Array.isArray(response.data) ? response.data : [],
+          mensaje: response.mensaje
+        })),
+        catchError(error => {
+          console.error('Error obteniendo gastos recientes:', error);
+          return of({ 
+            exito: false, 
+            data: [], 
+            mensaje: error.error?.mensaje || 'Error al obtener gastos recientes' 
+          });
+        })
+      );
   }
 
-  /**
-   * 🔧 NUEVO: Obtener saldos del usuario
-   * Backend: GET /api/gastos/mis-saldos
-   */
-  obtenerMisSaldos(): Observable<ApiResponse<any[]>> {
-    return this.http.get<ApiResponse<any[]>>(`${this.apiUrl}/mis-saldos`);
+  // ✅ MÉTODO 5: GetSaldosGrupoAsync - NUEVO
+  obtenerSaldosGrupo(idGrupo: string): Observable<ResponseDto<SaldoUsuarioDto[]>> {
+    return this.http.get<ResponseDto<SaldoUsuarioDto[]>>(`${this.apiUrl}/saldos/grupo/${idGrupo}`)
+      .pipe(
+        map(response => ({
+          exito: response.exito,
+          data: Array.isArray(response.data) ? response.data : [],
+          mensaje: response.mensaje
+        })),
+        catchError(error => {
+          console.error('Error obteniendo saldos del grupo:', error);
+          return of({ 
+            exito: false, 
+            data: [], 
+            mensaje: error.error?.mensaje || 'Error al obtener saldos del grupo' 
+          });
+        })
+      );
   }
 
-  /**
-   * 🔧 NUEVO: Obtener saldos de grupo
-   * Backend: GET /api/gastos/grupo/{idGrupo}/saldos
-   */
-  obtenerSaldosGrupo(idGrupo: string): Observable<ApiResponse<any[]>> {
-    return this.http.get<ApiResponse<any[]>>(`${this.apiUrl}/grupo/${idGrupo}/saldos`);
+  // ✅ MÉTODO 6: GetSaldosUsuarioAsync - NUEVO
+  obtenerSaldosUsuario(): Observable<ResponseDto<SaldoUsuarioDto[]>> {
+    return this.http.get<ResponseDto<SaldoUsuarioDto[]>>(`${this.apiUrl}/saldos/usuario`)
+      .pipe(
+        map(response => ({
+          exito: response.exito,
+          data: Array.isArray(response.data) ? response.data : [],
+          mensaje: response.mensaje
+        })),
+        catchError(error => {
+          console.error('Error obteniendo saldos del usuario:', error);
+          return of({ 
+            exito: false, 
+            data: [], 
+            mensaje: error.error?.mensaje || 'Error al obtener saldos del usuario' 
+          });
+        })
+      );
   }
 
-  /**
-   * 🔧 NUEVO: Marcar detalle como pagado
-   * Backend: POST /api/gastos/{idGasto}/detalle/{idDetalle}/marcar-pagado
-   */
-  marcarComoPagado(idGasto: string, idDetalle: string): Observable<ApiResponse<any>> {
-    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/${idGasto}/detalle/${idDetalle}/marcar-pagado`, {});
+  // ✅ MÉTODO 7: MarcarComoPagadoAsync
+  marcarComoPagado(idGasto: string, idDetalle: string): Observable<ResponseDto<void>> {
+    return this.http.put<ResponseDto<void>>(`${this.apiUrl}/${idGasto}/detalle/${idDetalle}/pagado`, {})
+      .pipe(
+        catchError(error => {
+          console.error('Error marcando como pagado:', error);
+          return of({ 
+            exito: false, 
+            data: undefined, 
+            mensaje: error.error?.mensaje || 'Error al marcar como pagado' 
+          });
+        })
+      );
   }
 
-  /**
-   * 🔧 NUEVO: Obtener gastos paginados por grupo
-   * Backend: GET /api/gastos/grupo/{idGrupo}/paginado
-   */
-  obtenerGastosPaginados(idGrupo: string, filtros: any = {}): Observable<ApiResponse<any>> {
-    let params = new HttpParams()
-      .set('pagina', filtros.pagina?.toString() || '1')
-      .set('tamanioPagina', filtros.tamanioPagina?.toString() || '10');
-      
-    if (filtros.busqueda) {
-      params = params.set('searchTerm', filtros.busqueda);
+  // ✅ MÉTODO 8: EliminarGastoAsync
+  eliminarGasto(idGasto: string): Observable<ResponseDto<void>> {
+    return this.http.delete<ResponseDto<void>>(`${this.apiUrl}/${idGasto}`)
+      .pipe(
+        catchError(error => {
+          console.error('Error eliminando gasto:', error);
+          return of({ 
+            exito: false, 
+            data: undefined, 
+            mensaje: error.error?.mensaje || 'Error al eliminar gasto' 
+          });
+        })
+      );
+  }
+
+  // ✅ MÉTODO 9: GetPaginatedByGrupoAsync - NUEVO
+  obtenerGastosPaginados(
+    idGrupo: string, 
+    pagina: number = 1, 
+    limite: number = 10
+  ): Observable<PaginatedResponse<GastoDto>> {
+    const params = new HttpParams()
+      .set('pagina', pagina.toString())
+      .set('limite', limite.toString());
+
+    return this.http.get<PaginatedResponse<GastoDto>>(`${this.apiUrl}/grupo/${idGrupo}/paginado`, { params })
+      .pipe(
+        catchError(error => {
+          console.error('Error obteniendo gastos paginados:', error);
+          return of({ 
+            exito: false, 
+            data: [], 
+            totalRegistros: 0,
+            totalPaginas: 0,
+            paginaActual: 1,
+            registrosPorPagina: limite,
+            mensaje: error.error?.mensaje || 'Error al obtener gastos paginados' 
+          });
+        })
+      );
+  }
+
+  // ✅ MÉTODOS AUXILIARES: Para mantener compatibilidad con código existente
+  obtenerGastos(): Observable<ResponseDto<GastoDto[]>> {
+    return this.http.get<ResponseDto<GastoDto[]>>(`${this.apiUrl}`)
+      .pipe(
+        map(response => ({
+          exito: response.exito,
+          data: Array.isArray(response.data) ? response.data : [],
+          mensaje: response.mensaje
+        })),
+        catchError(error => {
+          console.error('Error obteniendo gastos:', error);
+          return of({ 
+            exito: false, 
+            data: [], 
+            mensaje: 'Error al obtener gastos' 
+          });
+        })
+      );
+  }
+
+  obtenerMisGastos(): Observable<ResponseDto<GastoDto[]>> {
+    return this.obtenerRecientes(100); // Obtener los últimos 100 gastos del usuario
+  }
+
+  // ✅ MÉTODO AUXILIAR: Para estadísticas
+  obtenerEstadisticasGastos(): Observable<ResponseDto<any>> {
+    return this.http.get<ResponseDto<any>>(`${this.apiUrl}/estadisticas`)
+      .pipe(
+        catchError(error => {
+          console.error('Error obteniendo estadísticas:', error);
+          return of({ 
+            exito: false, 
+            data: undefined, 
+            mensaje: error.error?.mensaje || 'Error al obtener estadísticas' 
+          });
+        })
+      );
+  }
+
+  // ✅ MÉTODO AUXILIAR: Para validar gasto antes de crear
+  validarGasto(gastoCreacion: GastoCreacionDto): boolean {
+    if (!gastoCreacion.idGrupo || !gastoCreacion.descripcion || gastoCreacion.monto <= 0) {
+      return false;
     }
     
-    if (filtros.ordenamiento) {
-      params = params.set('sortOrder', filtros.ordenamiento);
+    if (!gastoCreacion.detalles || gastoCreacion.detalles.length === 0) {
+      return false;
     }
-      
-    return this.http.get<ApiResponse<any>>(`${this.apiUrl}/grupo/${idGrupo}/paginado`, { params });
+
+    const totalDetalles = gastoCreacion.detalles.reduce((sum, d) => sum + d.monto, 0);
+    return Math.abs(totalDetalles - gastoCreacion.monto) < 0.01;
   }
 
-  /**
-   * 🔧 NUEVO: Aprobar gasto
-   * Backend: POST /api/gastos/{id}/aprobar
-   */
-  aprobarGasto(idGasto: string): Observable<ApiResponse<any>> {
-    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/${idGasto}/aprobar`, {});
-  }
-
-  /**
-   * 🔧 NUEVO: Rechazar gasto
-   * Backend: POST /api/gastos/{id}/rechazar
-   */
-  rechazarGasto(idGasto: string, motivo?: string): Observable<ApiResponse<any>> {
-    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/${idGasto}/rechazar`, { motivo });
-  }
-
-  /**
-   * 🔧 NUEVO: Eliminar gasto
-   * Backend: DELETE /api/gastos/{id}
-   */
-  eliminarGasto(idGasto: string): Observable<ApiResponse<any>> {
-    return this.http.delete<ApiResponse<any>>(`${this.apiUrl}/${idGasto}`);
-  }
-
-  /**
-   * 🔧 NUEVO: Obtener gastos por grupo
-   */
-  obtenerGastosPorGrupo(idGrupo: string): Observable<ApiResponse<GastoDto[]>> {
-    return this.http.get<ApiResponse<GastoDto[]>>(`${this.apiUrl}/grupo/${idGrupo}`);
-  }
-
-  /**
-   * 🔧 NUEVO: Calcular división equitativa
-   */
-  calcularDivisionEquitativa(montoTotal: number, participantes: string[]): DetalleGastoCreacionDto[] {
-    const montoPorPersona = Math.round((montoTotal / participantes.length) * 100) / 100;
-    const detalles: DetalleGastoCreacionDto[] = [];
-    
-    participantes.forEach((idMiembro, index) => {
-      // Ajustar el último para que la suma sea exacta
-      const monto = index === participantes.length - 1 
-        ? montoTotal - (montoPorPersona * (participantes.length - 1))
-        : montoPorPersona;
-        
-      detalles.push({
-        idMiembroDeudor: idMiembro,
-        monto: monto
-      });
-    });
-    
-    return detalles;
-  }
-
-  /**
-   * 🔧 NUEVO: Calcular división por porcentajes
-   */
-  calcularDivisionPorcentajes(montoTotal: number, participantes: {idMiembro: string, porcentaje: number}[]): DetalleGastoCreacionDto[] {
-    return participantes.map(p => ({
-      idMiembroDeudor: p.idMiembro,
-      monto: Math.round((montoTotal * p.porcentaje / 100) * 100) / 100
-    }));
+  actualizarGasto(idGasto: string, gasto: GastoCreacionDto): Observable<any> {
+    return this.http.put<any>(`/api/gastos/${idGasto}`, gasto);
   }
 }

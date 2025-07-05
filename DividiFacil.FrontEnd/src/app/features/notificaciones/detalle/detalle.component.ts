@@ -1,11 +1,48 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
+import { NotificacionService } from '../../../core/services/notificacion.service';
+import { NotificacionDto } from '../../../core/models/notificacion.model';
+import { AuthService } from '../../../core/auth.service';
+import { MatCardModule } from '@angular/material/card';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { ResponseDto } from '../../../core/models/response.model';
 
 @Component({
   selector: 'app-detalle',
-  imports: [],
+  standalone: true,
   templateUrl: './detalle.component.html',
-  styleUrl: './detalle.component.scss'
+  styleUrl: './detalle.component.scss',
+  imports: [CommonModule, MatCardModule, MatProgressSpinnerModule]
 })
-export class DetalleComponent {
+export class DetalleComponent implements OnInit {
+  notificacion: NotificacionDto | null = null;
+  loading = false;
 
+  constructor(
+    private route: ActivatedRoute,
+    private notificacionService: NotificacionService,
+    private authService: AuthService
+  ) {}
+
+  ngOnInit(): void {
+    this.loading = true;
+    const idNotificacion = this.route.snapshot.queryParamMap.get('id');
+    const usuario = this.authService.obtenerUsuario();
+    if (idNotificacion && usuario) {
+      this.notificacionService.obtenerPendientes(usuario.idUsuario).subscribe({
+        next: (resp: ResponseDto<NotificacionDto[]>) => {
+          if (resp.exito && resp.data) {
+            this.notificacion = resp.data.find((n: NotificacionDto) => n.idNotificacion === idNotificacion) || null;
+          }
+          this.loading = false;
+        },
+        error: () => {
+          this.loading = false;
+        }
+      });
+    } else {
+      this.loading = false;
+    }
+  }
 }

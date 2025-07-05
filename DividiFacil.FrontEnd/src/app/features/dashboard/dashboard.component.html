@@ -21,6 +21,10 @@
               <mat-icon>add</mat-icon>
               Crear Grupo
             </button>
+            <button mat-stroked-button routerLink="/gastos/alta">
+              <mat-icon>receipt_long</mat-icon>
+              Nuevo Gasto
+            </button>
             <button mat-button (click)="logout()">
               <mat-icon>logout</mat-icon>
               Cerrar Sesión
@@ -49,7 +53,7 @@
     </div>
   </div>
 
-  <!-- ✅ NUEVA SECCIÓN: Actividad Reciente -->
+  <!-- Sección de Actividad Reciente -->
   <section class="activity-section">
     <app-recent-activity></app-recent-activity>
   </section>

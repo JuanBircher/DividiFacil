@@ -1,6 +1,5 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil, debounceTime } from 'rxjs';
 
@@ -25,19 +24,22 @@ import { MatBadgeModule } from '@angular/material/badge';
 // Services y Models
 import { PagoService } from '../../../core/services/pago.service';
 import { GrupoService } from '../../../core/services/grupo.service';
-import { PagoDto } from '../../../core/models/pago.model';
+import { UsuarioService } from '../../../core/services/usuario.service';
+import { Pago } from '../../../core/models/pago.model';
 import { Grupo } from '../../../core/models/grupo.model';
 import { AuthService } from '../../../core/auth.service';
-import { ApiResponse } from '../../../core/models/response.model';
+import { ApiResponse, PaginatedResponse } from '../../../core/models/response.model';
 
 // Pipes
 import { CurrencyFormatPipe } from '../../../shared/pipes/currency-format.pipe';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-listado-pagos',
   standalone: true,
   templateUrl: './listado-pagos.component.html',
   styleUrls: ['./listado-pagos.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush, // 🚀 OPTIMIZACIÓN AGREGADA
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -69,8 +71,8 @@ export class ListadoPagosComponent implements OnInit, OnDestroy {
   idGrupoFiltro: string | null = null;
 
   // Datos
-  pagosRealizados: PagoDto[] = [];
-  pagosRecibidos: PagoDto[] = [];
+  pagosRealizados: Pago[] = [];
+  pagosRecibidos: Pago[] = [];
   gruposDisponibles: Grupo[] = [];
   usuarioActual: any;
   todosLosPagos: any[] = [];
@@ -98,7 +100,9 @@ export class ListadoPagosComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef, // 🚀 AGREGAR SOLO ESTO
+    private usuarioService: UsuarioService
   ) {
     this.filtrosForm = this.fb.group({
       idGrupo: [''],
@@ -132,71 +136,73 @@ export class ListadoPagosComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * 🔄 CARGAR GRUPOS
+   * 🔄 CARGAR GRUPOS - OPTIMIZADO
    */
   cargarGrupos(): void {
     this.grupoService.getGrupos()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response: ApiResponse<Grupo[]>) => {
+        next: (response) => {
           if (response.exito && response.data) {
-            this.gruposDisponibles = response.data;
+            // Si necesitas mapear de GrupoDto a Grupo, hazlo aquí
+            // Suponiendo que response.data es GrupoDto[] y necesitas convertirlo a Grupo[]
+            this.gruposDisponibles = (response.data as any[]).map(dto => ({
+              idGrupo: dto.idGrupo,
+              nombreGrupo: dto.nombreGrupo,
+              modoOperacion: dto.modoOperacion,
+              idUsuarioCreador: dto.idUsuarioCreador,
+              nombreCreador: dto.nombreCreador,
+              fechaCreacion: dto.fechaCreacion,
+              descripcion: dto.descripcion,
+              cantidadMiembros: dto.cantidadMiembros ?? 0,
+              totalGastos: dto.totalGastos ?? 0
+            }));
+            this.cdr.markForCheck(); // 🚀 AGREGAR SOLO ESTO
           }
         },
         error: (err: any) => {
           console.error('Error al cargar grupos:', err);
+          this.cdr.markForCheck(); // 🚀 AGREGAR SOLO ESTO
         }
       });
   }
 
   /**
-   * 🔄 CARGAR PAGOS
+   * 🔄 CARGAR PAGOS - OPTIMIZADO
    */
   cargarPagos(): void {
     this.loading = true;
+    this.cdr.markForCheck(); // 🚀 AGREGAR SOLO ESTO
+    
     const filtros = this.filtrosForm.value;
 
-    this.pagoService.obtenerPagos(filtros)
+    this.pagoService.obtenerPago(filtros)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response: ApiResponse<PagoDto[]>) => {
+        next: (response: any) => {
           this.loading = false;
           if (response.exito && response.data) {
-            this.todosLosPagos = response.data;
-            this.separarPagos(response.data);
-            this.cargarNombresUsuarios(response.data);
+            // Si response.data es un solo Pago, conviértelo en array
+            const pagosArray = Array.isArray(response.data) ? response.data : [response.data];
+            this.todosLosPagos = pagosArray;
+            this.separarPagos(pagosArray);
+            this.cargarNombresUsuarios(pagosArray);
           }
+          this.cdr.markForCheck(); // 🚀 AGREGAR SOLO ESTO
         },
         error: (err: any) => {
           this.loading = false;
           console.error('Error al cargar pagos:', err);
           this.snackBar.open('Error al cargar pagos', 'Cerrar', { duration: 3000 });
+          this.cdr.markForCheck(); // 🚀 AGREGAR SOLO ESTO
         }
       });
   }
 
   /**
-   * ✅ NUEVO: Cargar nombres de usuarios para mostrar en template
-   */
-  private cargarNombresUsuarios(pagos: PagoDto[]): void {
-    const idsUsuarios = new Set<string>();
-    
-    pagos.forEach(pago => {
-      idsUsuarios.add(pago.idPagador);
-      idsUsuarios.add(pago.idReceptor);
-    });
-
-    // TODO: Implementar servicio para obtener nombres de usuarios
-    // Por ahora, usar IDs como nombres temporalmente
-    idsUsuarios.forEach(id => {
-      this.usuariosMap.set(id, `Usuario ${id.substring(0, 8)}`);
-    });
-  }
-
-  /**
    * 🔄 SEPARAR PAGOS REALIZADOS VS RECIBIDOS
    */
-  separarPagos(pagos: PagoDto[]): void {
+  separarPagos(pagos: Pago[]): void {
     const usuarioId = this.usuarioActual?.idUsuario;
 
     this.pagosRealizados = pagos.filter(pago => pago.idPagador === usuarioId);
@@ -230,47 +236,58 @@ export class ListadoPagosComponent implements OnInit, OnDestroy {
   /**
    * 👁️ VER DETALLE PAGO
    */
-  verDetallePago(pago: PagoDto): void {
+  verDetallePago(pago: Pago): void {
     this.router.navigate(['/detalle-pagos', pago.idPago]);
   }
 
   /**
-   * ✅ CONFIRMAR PAGO
+   * ✅ CONFIRMAR PAGO - OPTIMIZADO
    */
-  confirmarPago(pago: PagoDto): void {
-    this.procesando = true;
+  confirmarPago(pago: Pago): void {
+    // 1. Actualizar UI inmediatamente (optimistic)
+    const pagoOriginal = { ...pago };
+    pago.estado = 'Completado';
+    pago.fechaConfirmacion = new Date().toISOString();
+    this.cdr.markForCheck();
 
+    // 2. Llamar al backend
     this.pagoService.confirmarPago(pago.idPago)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response: ApiResponse<any>) => {
-          this.procesando = false;
+        next: (response) => {
           if (response.exito) {
+            // 3. Confirmación exitosa - mantener cambios
             this.snackBar.open('Pago confirmado exitosamente', 'Cerrar', {
               duration: 3000,
               panelClass: ['success-snackbar']
             });
-            this.cargarPagos();
+          } else {
+            // 4. Error del servidor - revertir cambios
+            Object.assign(pago, pagoOriginal);
+            this.snackBar.open('Error al confirmar pago', 'Cerrar', { duration: 3000 });
           }
+          this.cdr.markForCheck();
         },
-        error: (err: any) => {
-          this.procesando = false;
-          console.error('Error al confirmar pago:', err);
+        error: (err) => {
+          // 5. Error de red - revertir cambios
+          Object.assign(pago, pagoOriginal);
           this.snackBar.open('Error al confirmar pago', 'Cerrar', { duration: 3000 });
+          this.cdr.markForCheck();
         }
       });
   }
 
   /**
-   * ❌ RECHAZAR PAGO
+   * ❌ RECHAZAR PAGO - OPTIMIZADO
    */
-  rechazarPago(pago: PagoDto): void {
+  rechazarPago(pago: Pago): void {
     this.procesando = true;
+    this.cdr.markForCheck(); // 🚀 AGREGAR SOLO ESTO
 
     this.pagoService.rechazarPago(pago.idPago)
       .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response: ApiResponse<any>) => {
+      .subscribe(
+        (response) => {
           this.procesando = false;
           if (response.exito) {
             this.snackBar.open('Pago rechazado', 'Cerrar', {
@@ -279,51 +296,42 @@ export class ListadoPagosComponent implements OnInit, OnDestroy {
             });
             this.cargarPagos();
           }
+          this.cdr.markForCheck(); // 🚀 AGREGAR SOLO ESTO
         },
-        error: (err: any) => {
+        (err: any) => {
           this.procesando = false;
           console.error('Error al rechazar pago:', err);
           this.snackBar.open('Error al rechazar pago', 'Cerrar', { duration: 3000 });
+          this.cdr.markForCheck(); // 🚀 AGREGAR SOLO ESTO
         }
+      );
+  }
+
+  /**
+   * ✅ NUEVO: Cargar nombres de usuarios para mostrar en template
+   */
+  private cargarNombresUsuarios(pagos: Pago[]): void {
+    const idsUsuarios = new Set<string>();
+    pagos.forEach(pago => {
+      idsUsuarios.add(pago.idPagador);
+      idsUsuarios.add(pago.idReceptor);
+    });
+    idsUsuarios.forEach(id => {
+      this.usuarioService.obtenerUsuario(id).subscribe(resp => {
+        if (resp.exito && resp.data) {
+          this.usuariosMap.set(id, resp.data.nombre);
+        } else {
+          this.usuariosMap.set(id, `Usuario ${id.substring(0, 8)}`);
+        }
+        this.cdr.markForCheck();
       });
-  }
-
-  /**
-   * 🔄 LIMPIAR FILTROS
-   */
-  limpiarFiltros(): void {
-    this.filtrosForm.reset();
-    this.filtrosForm.patchValue({ idGrupo: this.idGrupoPreseleccionado });
-  }
-
-  /**
-   * 🎨 OBTENER COLOR ESTADO
-   */
-  obtenerColorEstado(estado: string): string {
-    switch (estado) {
-      case 'Completado': return 'primary';
-      case 'Pendiente': return 'warn';
-      case 'Rechazado': return 'accent';
-      default: return '';
-    }
-  }
-
-  /**
-   * 🎨 OBTENER ICONO ESTADO
-   */
-  obtenerIconoEstado(estado: string): string {
-    switch (estado) {
-      case 'Completado': return 'check_circle';
-      case 'Pendiente': return 'schedule';
-      case 'Rechazado': return 'cancel';
-      default: return 'help';
-    }
+    });
   }
 
   /**
    * ✅ CORREGIDO: Método verDetalle
    */
-  verDetalle(pago: PagoDto): void {
+  verDetalle(pago: Pago): void {
     this.router.navigate(['/detalle-pagos', pago.idPago]);
   }
 
@@ -352,23 +360,50 @@ export class ListadoPagosComponent implements OnInit, OnDestroy {
   /**
    * 🔢 TRACKBY FUNCTIONS
    */
-  trackByPago(index: number, pago: PagoDto): string {
+  trackByPago(index: number, pago: Pago): string {
     return pago.idPago;
   }
 
   /**
    * 🔄 PUEDE CONFIRMAR PAGO
    */
-  puedeConfirmarPago(pago: PagoDto): boolean {
+  puedeConfirmarPago(pago: Pago): boolean {
     return pago.estado === 'Pendiente' && pago.idReceptor === this.usuarioActual?.idUsuario;
   }
 
   /**
    * 🔄 PUEDE RECHAZAR PAGO
    */
-  puedeRechazarPago(pago: PagoDto): boolean {
+  puedeRechazarPago(pago: Pago): boolean {
     return pago.estado === 'Pendiente' && pago.idReceptor === this.usuarioActual?.idUsuario;
   }
+
+  obtenerColorEstado(estado: string): 'primary' | 'accent' | 'warn' | undefined {
+  switch (estado?.toLowerCase()) {
+    case 'pendiente':
+      return 'accent';
+    case 'confirmado':
+      return 'primary';
+    case 'rechazado':
+      return 'warn';
+    default:
+      return undefined;
+  }
+}
+
+// Devuelve el nombre del ícono de Material según el estado del pago
+obtenerIconoEstado(estado: string): string {
+  switch (estado) {
+    case 'Pendiente':
+      return 'hourglass_empty';
+    case 'Confirmado':
+      return 'check_circle';
+    case 'Rechazado':
+      return 'cancel';
+    default:
+      return 'help_outline';
+  }
+}
 
   volver(): void {
     // Implementa aquí la lógica para volver atrás, por ejemplo navegar a la vista anterior
