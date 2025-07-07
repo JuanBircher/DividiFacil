@@ -1,0 +1,58 @@
+// Variables globales para DividiFácil
+
+// Colores principales
+$color-primary: #1976d2;
+$color-primary-dark: #115293;
+$color-accent: #ffb300;
+$color-warn: #e53935;
+$color-success: #43a047;
+$color-background: #f5f7fa;
+$color-surface: #fff;
+$color-border: #e0e0e0;
+$color-text: #222;
+$color-text-light: #666;
+
+// Tipografía
+$font-family-base: 'Roboto', Arial, sans-serif;
+$font-size-base: 16px;
+$font-size-title: 1.25rem;
+$font-size-subtitle: 1.1rem;
+$font-size-small: 0.95rem;
+
+// Espaciados
+$spacing-xs: 0.5rem;
+$spacing-sm: 1rem;
+$spacing-md: 2rem;
+$spacing-lg: 3rem;
+
+// Bordes y radios
+$border-radius: 12px;
+$border-width: 1px;
+
+// Sombras
+$box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+
+// Breakpoints
+$breakpoint-sm: 600px;
+$breakpoint-md: 900px;
+$breakpoint-lg: 1200px;
+
+// Z-index
+$z-modal: 1000;
+$z-dropdown: 900;
+$z-header: 800;
+
+// DARK MODE
+$color-background-dark: #23272f;
+$color-surface-dark: #181a20;
+$color-border-dark: #333;
+$color-text-dark: #f1f1f1;
+$color-text-light-dark: #b0b0b0;
+$color-primary-darkmode: #90caf9;
+$color-accent-darkmode: #ffd54f;
+$color-warn-darkmode: #ffb74d;
+$color-success-darkmode: #81c784;
+
+// MICROINTERACTIONS
+$transition-base: all 0.3s cubic-bezier(.4,0,.2,1);
+$transition-fast: all 0.15s cubic-bezier(.4,0,.2,1);

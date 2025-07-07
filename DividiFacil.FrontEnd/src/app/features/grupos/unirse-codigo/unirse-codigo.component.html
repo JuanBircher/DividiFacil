@@ -1,15 +1,11 @@
 <div class="unirse-codigo-container">
-  <mat-card class="codigo-card">
-    <mat-card-header>
-      <mat-card-title>
-        <mat-icon>group_add</mat-icon>
-        Unirse a un Grupo
-      </mat-card-title>
-      <mat-card-subtitle>
-        Ingresa el código de acceso que te compartieron
-      </mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content>
+  <app-card cardClass="codigo-card">
+    <ng-container card-header>
+      <mat-icon>group_add</mat-icon>
+      <span>Unirse a un Grupo</span>
+      <span class="subtitle">Ingresa el código de acceso que te compartieron</span>
+    </ng-container>
+    <ng-container card-content>
       <form [formGroup]="codigoForm" (ngSubmit)="buscarGrupoPorCodigo()">
         <mat-form-field appearance="outline" class="w-100">
           <mat-label>Código de acceso</mat-label>
@@ -27,18 +23,20 @@
         <mat-icon color="warn">error</mat-icon> {{ errorBusqueda }}
       </div>
       <div *ngIf="grupoEncontrado" class="grupo-encontrado">
-        <mat-card class="found-group-card">
-          <mat-card-title>{{ grupoEncontrado.nombreGrupo }}</mat-card-title>
-          <mat-card-content>
+        <app-card cardClass="found-group-card">
+          <ng-container card-header>
+            <span>{{ grupoEncontrado.nombreGrupo }}</span>
+          </ng-container>
+          <ng-container card-content>
             <div>ID: {{ grupoEncontrado.idGrupo }}</div>
             <div>Miembros: {{ grupoEncontrado.cantidadMiembros }}</div>
             <div>Descripción: {{ grupoEncontrado.descripcion || 'Sin descripción' }}</div>
-          </mat-card-content>
-          <mat-card-actions>
+          </ng-container>
+          <ng-container card-actions>
             <button mat-raised-button color="accent" (click)="unirseAlGrupo()">Unirse</button>
-          </mat-card-actions>
-        </mat-card>
+          </ng-container>
+        </app-card>
       </div>
-    </mat-card-content>
-  </mat-card>
+    </ng-container>
+  </app-card>
 </div>

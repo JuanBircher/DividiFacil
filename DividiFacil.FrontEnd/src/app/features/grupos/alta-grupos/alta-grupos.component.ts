@@ -17,6 +17,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 // Servicios y Modelos
 import { GrupoService } from '../../../core/services/grupo.service';
 import { GrupoCreacionDto, ModoOperacion } from '../../../core/models/grupo.model';
+import { CardComponent } from '../../../shared/components/card/card.component';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-alta-grupos',
@@ -33,7 +35,9 @@ import { GrupoCreacionDto, ModoOperacion } from '../../../core/models/grupo.mode
     MatSelectModule,
     MatButtonModule,
     MatProgressSpinnerModule,
-    MatIconModule
+    MatIconModule,
+    CardComponent,
+    LoadingSpinnerComponent
   ]
 })
 export class AltaGruposComponent implements OnInit, OnDestroy {

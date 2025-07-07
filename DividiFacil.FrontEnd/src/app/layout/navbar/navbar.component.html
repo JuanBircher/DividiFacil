@@ -1,1 +1,13 @@
-<p>navbar works!</p>
+<mat-toolbar color="primary" role="navigation" [attr.aria-label]="ariaLabel">
+  <button mat-icon-button (click)="toggleMenu.emit()" class="hide-desktop" tabindex="0" aria-label="Abrir menú lateral">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <span class="flex-spacer"></span>
+  <button mat-icon-button (click)="toggleDarkMode()" [attr.aria-label]="darkMode ? 'Desactivar modo oscuro' : 'Activar modo oscuro'" tabindex="0">
+    <mat-icon>{{ darkMode ? 'dark_mode' : 'light_mode' }}</mat-icon>
+  </button>
+  <span *ngIf="nombreUsuario">Hola, {{ nombreUsuario }}</span>
+  <button mat-button color="accent" (click)="logout.emit()" tabindex="0" aria-label="Cerrar sesión">
+    <mat-icon>logout</mat-icon> Cerrar sesión
+  </button>
+</mat-toolbar>

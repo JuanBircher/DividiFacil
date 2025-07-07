@@ -1,155 +1,149 @@
 <div class="editar-container">
-  
-  <!-- HEADER -->
-  <div class="header-section">
-    <button mat-icon-button (click)="cancelar()" class="back-button">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-    <h1>
+  <app-card>
+    <ng-container card-header>
+      <button mat-icon-button (click)="cancelar()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
       <mat-icon>edit</mat-icon>
-      Editar Perfil
-    </h1>
-  </div>
-
-  <!-- LOADING -->
-  <div *ngIf="loading" class="loading-container">
-    <mat-spinner></mat-spinner>
-    <p>Cargando datos del perfil...</p>
-  </div>
-
-  <!-- FORMULARIO -->
-  <div *ngIf="!loading && usuario" class="editar-content">
-    <form [formGroup]="perfilForm" (ngSubmit)="guardarCambios()">
-      
-      <!-- IMAGEN DE PERFIL -->
-      <mat-card class="imagen-card">
-        <mat-card-header>
-          <mat-card-title>
-            <mat-icon>photo_camera</mat-icon>
-            Foto de Perfil
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="imagen-section">
-            <div class="avatar-preview">
-              <div class="avatar" [class.with-image]="imagenPreview">
-                <img 
-                  *ngIf="imagenPreview" 
-                  [src]="imagenPreview" 
-                  alt="Preview">
-                <span *ngIf="!imagenPreview" class="avatar-initials">
-                  {{ obtenerIniciales() }}
-                </span>
+      <span>Editar Perfil</span>
+    </ng-container>
+    <ng-container card-content>
+      <ng-container *ngIf="loading; else editarForm">
+        <app-loading-spinner text="Cargando datos del perfil..."></app-loading-spinner>
+      </ng-container>
+      <ng-template #editarForm>
+        <form [formGroup]="perfilForm" (ngSubmit)="guardarCambios()">
+          <!-- IMAGEN DE PERFIL -->
+          <mat-card class="imagen-card">
+            <mat-card-header>
+              <mat-card-title>
+                <mat-icon>photo_camera</mat-icon>
+                Foto de Perfil
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="imagen-section">
+                <div class="avatar-preview">
+                  <div class="avatar" [class.with-image]="imagenPreview">
+                    <img 
+                      *ngIf="imagenPreview" 
+                      [src]="imagenPreview" 
+                      alt="Preview">
+                    <span *ngIf="!imagenPreview" class="avatar-initials">
+                      {{ obtenerIniciales() }}
+                    </span>
+                    
+                    <div class="avatar-overlay" *ngIf="subiendoImagen">
+                      <app-loading-spinner [diameter]="30"></app-loading-spinner>
+                    </div>
+                  </div>
+                </div>
                 
-                <div class="avatar-overlay" *ngIf="subiendoImagen">
-                  <mat-spinner [diameter]="30"></mat-spinner>
+                <div class="imagen-controls">
+                  <input 
+                    #fileInput 
+                    type="file" 
+                    accept="image/*" 
+                    (change)="onImagenSeleccionada($event)"
+                    style="display: none;">
+                  
+                  <button 
+                    type="button"
+                    mat-raised-button 
+                    color="primary"
+                    (click)="fileInput.click()"
+                    [disabled]="subiendoImagen">
+                    <mat-icon>upload</mat-icon>
+                    Seleccionar Imagen
+                  </button>
+                  
+                  <button 
+                    type="button"
+                    mat-button 
+                    color="warn"
+                    (click)="eliminarImagen()"
+                    [disabled]="!imagenPreview || subiendoImagen">
+                    <mat-icon>delete</mat-icon>
+                    Eliminar
+                  </button>
                 </div>
               </div>
-            </div>
-            
-            <div class="imagen-controls">
-              <input 
-                #fileInput 
-                type="file" 
-                accept="image/*" 
-                (change)="onImagenSeleccionada($event)"
-                style="display: none;">
               
-              <button 
-                type="button"
-                mat-raised-button 
-                color="primary"
-                (click)="fileInput.click()"
-                [disabled]="subiendoImagen">
-                <mat-icon>upload</mat-icon>
-                Seleccionar Imagen
-              </button>
-              
-              <button 
-                type="button"
-                mat-button 
-                color="warn"
-                (click)="eliminarImagen()"
-                [disabled]="!imagenPreview || subiendoImagen">
-                <mat-icon>delete</mat-icon>
-                Eliminar
-              </button>
-            </div>
-          </div>
-          
-          <p class="imagen-help">
-            Selecciona una imagen JPG, PNG o GIF. Tamaño máximo: 5MB
-          </p>
-        </mat-card-content>
-      </mat-card>
+              <p class="imagen-help">
+                Selecciona una imagen JPG, PNG o GIF. Tamaño máximo: 5MB
+              </p>
+            </mat-card-content>
+          </mat-card>
 
-      <!-- DATOS PERSONALES -->
-      <mat-card class="datos-card">
-        <mat-card-header>
-          <mat-card-title>
-            <mat-icon>person</mat-icon>
-            Información Personal
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="form-grid">
-            
-            <!-- Nombre -->
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Nombre completo</mat-label>
-              <input matInput formControlName="nombre" placeholder="Ingresa tu nombre completo">
-              <mat-icon matSuffix>person</mat-icon>
-              <mat-error *ngIf="perfilForm.get('nombre')?.hasError('required')">
-                El nombre es requerido
-              </mat-error>
-              <mat-error *ngIf="perfilForm.get('nombre')?.hasError('minlength')">
-                El nombre debe tener al menos 2 caracteres
-              </mat-error>
-            </mat-form-field>
+          <!-- DATOS PERSONALES -->
+          <mat-card class="datos-card">
+            <mat-card-header>
+              <mat-card-title>
+                <mat-icon>person</mat-icon>
+                Información Personal
+              </mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="form-grid">
+                
+                <!-- Nombre -->
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Nombre completo</mat-label>
+                  <input matInput formControlName="nombre" placeholder="Ingresa tu nombre completo">
+                  <mat-icon matSuffix>person</mat-icon>
+                  <mat-error *ngIf="perfilForm.get('nombre')?.hasError('required')">
+                    El nombre es requerido
+                  </mat-error>
+                  <mat-error *ngIf="perfilForm.get('nombre')?.hasError('minlength')">
+                    El nombre debe tener al menos 2 caracteres
+                  </mat-error>
+                </mat-form-field>
 
-            <!-- Email (solo lectura) -->
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Email</mat-label>
-              <input matInput [value]="usuario.email" readonly>
-              <mat-icon matSuffix>email</mat-icon>
-              <mat-hint>El email no se puede modificar</mat-hint>
-            </mat-form-field>
+                <!-- Email (solo lectura) -->
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Email</mat-label>
+                  <input matInput [value]="usuario?.email" readonly>
+                  <mat-icon matSuffix>email</mat-icon>
+                  <mat-hint>El email no se puede modificar</mat-hint>
+                </mat-form-field>
 
-            <!-- Teléfono -->
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Teléfono</mat-label>
-              <input matInput formControlName="telefono" placeholder="Número de teléfono (opcional)">
-              <mat-icon matSuffix>phone</mat-icon>
-            </mat-form-field>
-          </div>
-        </mat-card-content>
-      </mat-card>
+                <!-- Teléfono -->
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Teléfono</mat-label>
+                  <input matInput formControlName="telefono" placeholder="Número de teléfono (opcional)">
+                  <mat-icon matSuffix>phone</mat-icon>
+                </mat-form-field>
+              </div>
+            </mat-card-content>
+          </mat-card>
 
-      <!-- ACCIONES -->
-      <mat-card class="acciones-card">
-        <mat-card-content>
-          <div class="acciones-grid">
-            <button 
-              type="button"
-              mat-button 
-              (click)="cancelar()"
-              [disabled]="guardando || subiendoImagen">
-              <mat-icon>close</mat-icon>
-              Cancelar
-            </button>
-            
-            <button 
-              type="submit"
-              mat-raised-button 
-              color="primary"
-              [disabled]="!perfilForm.valid || guardando || subiendoImagen">
-              <mat-icon *ngIf="!guardando && !subiendoImagen">save</mat-icon>
-              <mat-icon *ngIf="guardando || subiendoImagen" class="spinning">hourglass_empty</mat-icon>
-              {{ guardando ? 'Guardando...' : (subiendoImagen ? 'Subiendo imagen...' : 'Guardar Cambios') }}
-            </button>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </form>
-  </div>
+          <!-- ACCIONES -->
+          <mat-card class="acciones-card">
+            <mat-card-content>
+              <div class="acciones-grid">
+                <button 
+                  type="button"
+                  mat-button 
+                  (click)="cancelar()"
+                  [disabled]="guardando || subiendoImagen">
+                  <mat-icon>close</mat-icon>
+                  Cancelar
+                </button>
+                
+                <button 
+                  type="submit"
+                  mat-raised-button 
+                  color="primary"
+                  [disabled]="!perfilForm.valid || guardando || subiendoImagen">
+                  <mat-icon *ngIf="!guardando && !subiendoImagen">save</mat-icon>
+                  <mat-icon *ngIf="guardando || subiendoImagen" class="spinning">hourglass_empty</mat-icon>
+                  {{ guardando ? 'Guardando...' : (subiendoImagen ? 'Subiendo imagen...' : 'Guardar Cambios') }}
+                </button>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </form>
+      </ng-template>
+    </ng-container>
+  </app-card>
 </div>

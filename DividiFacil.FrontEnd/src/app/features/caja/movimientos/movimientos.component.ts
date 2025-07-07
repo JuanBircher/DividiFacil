@@ -1,10 +1,17 @@
 import { Component } from '@angular/core';
+import { CardComponent } from '../../../shared/components/card/card.component';
+import { MatIconModule } from '@angular/material/icon';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-movimientos',
-  imports: [],
+  imports: [
+    CommonModule,
+    MatIconModule,
+    CardComponent
+  ],
   templateUrl: './movimientos.component.html',
-  styleUrl: './movimientos.component.scss'
+  styleUrls: ['./movimientos.component.scss']
 })
 export class MovimientosComponent {
 

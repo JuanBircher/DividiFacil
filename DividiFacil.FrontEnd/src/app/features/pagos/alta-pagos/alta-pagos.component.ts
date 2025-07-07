@@ -21,6 +21,8 @@ import { Grupo } from '../../../core/models/grupo.model';
 import { AuthService } from '../../../core/auth.service';
 import { ResponseDto } from '../../../core/models/response.model';
 import { MiembroGrupoDto } from '../../../core/models/miembro.model';
+import { CardComponent } from '../../../shared/components/card/card.component';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-alta-pagos',
@@ -37,7 +39,9 @@ import { MiembroGrupoDto } from '../../../core/models/miembro.model';
     MatSelectModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    CardComponent,
+    LoadingSpinnerComponent
   ]
 })
 export class AltaPagosComponent implements OnInit, OnDestroy {

@@ -1,25 +1,55 @@
 .custom-card {
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(.4,0,.2,1);
   background: white;
   border: 1px solid #e0e0e0;
+  position: relative;
+
+  // Dark mode
+  @media (prefers-color-scheme: dark) {
+    background: #23272f;
+    border: 1px solid #333;
+    color: #f1f1f1;
+  }
+
+  // Variantes de color
+  &.color-primary { border-color: #1976d2; }
+  &.color-accent { border-color: #ff4081; }
+  &.color-warn { border-color: #ff9800; }
+
+  // Variantes de elevación
+  &.variant-elevated { box-shadow: 0 6px 24px rgba(25, 118, 210, 0.12); }
+  &.variant-flat { box-shadow: none; border-width: 0; }
+
+  // Tamaños
+  &.size-sm { font-size: 0.95rem; }
+  &.size-lg { font-size: 1.15rem; }
+
+  // Estados
+  &.state-error { border-color: #e53935; box-shadow: 0 0 0 2px #e5393533; }
+  &.state-success { border-color: #43a047; box-shadow: 0 0 0 2px #43a04733; }
+  &.state-empty { opacity: 0.7; }
 
   &:hover {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px) scale(1.01);
   }
 
   &.clickable {
     cursor: pointer;
-    
     &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 6px 20px rgba(25, 118, 210, 0.18);
+      background: #f5faff;
+      @media (prefers-color-scheme: dark) {
+        background: #263043;
+      }
     }
   }
 
   &.loading {
     opacity: 0.8;
+    pointer-events: none;
   }
 }
 
@@ -116,6 +146,42 @@
       height: 18px;
     }
   }
+}
+
+// Microinteracciones para acciones
+.card-actions .action-button {
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  &:hover {
+    background: #e3f2fd;
+    color: #1976d2;
+    box-shadow: 0 2px 8px #1976d233;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:hover {
+      background: #263043;
+      color: #90caf9;
+    }
+  }
+}
+
+// Estados visuales
+.state-error {
+  color: #e53935;
+  text-align: center;
+  padding: 16px 0;
+  font-weight: 600;
+}
+.state-empty {
+  color: #888;
+  text-align: center;
+  padding: 16px 0;
+  font-style: italic;
+}
+.state-success {
+  color: #43a047;
+  text-align: center;
+  padding: 16px 0;
+  font-weight: 600;
 }
 
 // Animación del skeleton loader

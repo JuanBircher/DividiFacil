@@ -112,4 +112,49 @@ export class GastosTestComponent implements OnInit {
       }
     });
   }
+
+  crearGastoDePrueba(): void {
+    this.loading = true;
+    this.testResult = null;
+
+    // Simular datos de gasto de prueba
+    const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+    const idGrupo = 'ID_GRUPO_PRUEBA'; // Reemplazar por un idGrupo real si es necesario
+    const gasto: GastoCreacionDto = {
+      idGrupo: idGrupo,
+      monto: 100,
+      descripcion: 'Gasto de prueba',
+      categoria: 'Test',
+      fechaGasto: new Date().toISOString(),
+      detalles: [
+        { idMiembroDeudor: usuario.idUsuario, monto: 100 }
+      ]
+    };
+
+    this.gastoService.crearGasto(gasto).subscribe({
+      next: (response) => {
+        this.testResult = {
+          success: response.exito,
+          operation: 'crearGasto',
+          response: response,
+          timestamp: new Date().toISOString()
+        };
+        this.loading = false;
+        console.log('✅ Gasto creado:', response);
+        if (response.exito) {
+          this.probarGastosRecientes();
+        }
+      },
+      error: (error) => {
+        this.testResult = {
+          success: false,
+          operation: 'crearGasto',
+          error: error,
+          timestamp: new Date().toISOString()
+        };
+        this.loading = false;
+        console.error('❌ Error:', error);
+      }
+    });
+  }
 }

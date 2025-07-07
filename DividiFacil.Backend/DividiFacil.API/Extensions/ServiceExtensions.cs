@@ -6,6 +6,7 @@ using DividiFacil.Services.Interfaces;
 using FluentValidation;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace DividiFacil.API.Extensions
 {
@@ -86,12 +87,13 @@ namespace DividiFacil.API.Extensions
 
         public static IServiceCollection ConfigureJsonOptions(this IServiceCollection services)
         {
-            // Configurar JsonSerializerOptions para manejar referencias circulares
+            // Configurar JsonSerializerOptions para manejar referencias circulares y devolver arrays planos
             services.AddControllers()
                 .AddJsonOptions(options =>
                 {
-                    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-                    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+                    options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase; // Cambiado a CamelCase
                 });
 
             return services;

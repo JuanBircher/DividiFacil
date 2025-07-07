@@ -1,9 +1,8 @@
 <div class="detalle-grupo-container" *ngIf="!loading; else loadingTemplate">
-  
-  <!-- 🚨 ERROR STATE -->
-  <div *ngIf="error" class="error-container">
-    <mat-card class="error-card">
-      <mat-card-content>
+  <!-- ERROR STATE -->
+  <ng-container *ngIf="error; else mainContent">
+    <app-card cardClass="error-card">
+      <ng-container card-content>
         <div class="error-content">
           <mat-icon class="error-icon">error</mat-icon>
           <h3>{{ error }}</h3>
@@ -12,20 +11,14 @@
             Intentar de nuevo
           </button>
         </div>
-      </mat-card-content>
-    </mat-card>
-  </div>
-
-  <!-- ✅ MAIN CONTENT -->
-  <div *ngIf="grupo && !error" class="grupo-content">
-    
-    <!-- 🏠 HEADER DEL GRUPO -->
-    <div class="grupo-header">
-      <mat-card class="header-card">
-        <mat-card-content>
+      </ng-container>
+    </app-card>
+  </ng-container>
+  <ng-template #mainContent>
+    <ng-container *ngIf="grupo">
+      <app-card cardClass="header-card">
+        <ng-container card-content>
           <div class="header-content">
-            
-            <!-- Información básica -->
             <div class="grupo-info">
               <div class="grupo-title-section">
                 <h1 class="grupo-nombre">{{ grupo.nombreGrupo }}</h1>
@@ -33,388 +26,370 @@
                   <mat-chip color="accent" selected>
                     {{ grupo.modoOperacion }}
                   </mat-chip>
-                  <mat-chip 
-                    *ngIf="esAdministrador" 
-                    color="primary" 
-                    selected>
+                  <mat-chip *ngIf="esAdministrador" color="primary" selected>
                     <mat-icon matChipAvatar>admin_panel_settings</mat-icon>
                     Administrador
                   </mat-chip>
                 </mat-chip-set>
               </div>
-              
               <p *ngIf="grupo.descripcion" class="grupo-descripcion">
                 {{ grupo.descripcion }}
               </p>
-              
               <div class="grupo-meta">
                 <span class="meta-item">
                   <mat-icon>group</mat-icon>
                   {{ grupo.miembros.length || 0 }} miembros
                 </span>
-
                 <span class="meta-item">
                   <mat-icon>calendar_today</mat-icon>
                   Creado {{ grupo.fechaCreacion | dateFormat }}
                 </span>
                 <span *ngIf="estadisticas.ultimaActividad" class="meta-item">
-                  <mat-icon>schedule</mat-icon>
-                  Última actividad {{ estadisticas.ultimaActividad | dateFormat }}
+                  <mat-icon>history</mat-icon>
+                  Última actividad: {{ estadisticas.ultimaActividad }}
                 </span>
               </div>
             </div>
-
-            <!-- Acciones rápidas -->
-            <div class="acciones-rapidas">
-              <button 
-                mat-fab 
-                color="primary" 
-                matTooltip="Crear gasto"
-                (click)="crearGasto()">
-                <mat-icon>receipt_long</mat-icon>
-              </button>
-              
-              <button 
-                mat-icon-button 
-                [matMenuTriggerFor]="menuAcciones"
-                matTooltip="Más acciones">
-                <mat-icon>more_vert</mat-icon>
-              </button>
-            </div>
           </div>
-        </mat-card-content>
-      </mat-card>
-    </div>
+        </ng-container>
+      </app-card>
 
-    <!-- 📊 ESTADÍSTICAS RÁPIDAS -->
-    <div class="estadisticas-grid">
-      <mat-card class="stat-card">
-        <mat-card-content>
-          <div class="stat-content">
-            <div class="stat-icon primary">
-              <mat-icon>receipt</mat-icon>
-            </div>
-            <div class="stat-info">
-              <h3>{{ estadisticas.totalGastos }}</h3>
-              <p>Total Gastos</p>
-            </div>
-          </div>
-        </mat-card-content>
-      </mat-card>
-
-      <mat-card class="stat-card">
-        <mat-card-content>
-          <div class="stat-content">
-            <div class="stat-icon accent">
-              <mat-icon>account_balance_wallet</mat-icon>
-            </div>
-            <div class="stat-info">
-              <h3>{{ grupo.totalGastos | currencyFormat }}</h3>
-              <p>Monto Total</p>
-            </div>
-          </div>
-        </mat-card-content>
-      </mat-card>
-
-      <mat-card class="stat-card">
-        <mat-card-content>
-          <div class="stat-content">
-            <div class="stat-icon warn">
-              <mat-icon>trending_up</mat-icon>
-            </div>
-            <div class="stat-info">
-              <h3>{{ estadisticas.gastoPromedio | currencyFormat }}</h3>
-              <p>Gasto Promedio</p>
-            </div>
-          </div>
-        </mat-card-content>
-      </mat-card>
-
-      <mat-card class="stat-card">
-        <mat-card-content>
-          <div class="stat-content">
-            <div class="stat-icon success">
-              <mat-icon>check_circle</mat-icon>
-            </div>
-            <div class="stat-info">
-              <h3>{{ estadisticas.gastosEsteMes }}</h3>
-              <p>Este Mes</p>
-            </div>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </div>
-
-    <!-- 📋 CONTENIDO PRINCIPAL CON TABS -->
-    <mat-card class="main-content-card">
-      <mat-tab-group animationDuration="300ms">
-        
-        <!-- 👥 TAB MIEMBROS MEJORADO -->
-        <mat-tab label="Miembros">
-          <ng-template matTabContent>
-            <div class="tab-content">
-              
-              <div class="tab-header">
-                <h2>
-                  <mat-icon>group</mat-icon>
-                  Miembros del Grupo ({{ grupo.miembros.length || 0 }})
-                </h2>
-                
-                <div class="acciones-miembros" *ngIf="esAdministrador">
-                  <button 
-                    mat-raised-button 
-                    color="primary" 
-                    [disabled]="generandoCodigo"
-                    (click)="invitarMiembro()">
-                    <mat-icon *ngIf="!generandoCodigo">qr_code</mat-icon>
-                    <mat-icon *ngIf="generandoCodigo" class="spinning">hourglass_empty</mat-icon>
-                    {{ generandoCodigo ? 'Generando...' : 'Generar Código' }}
-                  </button>
-                  
-                  <button 
-                    mat-stroked-button 
-                    color="accent" 
-                    (click)="toggleFormularioAgregar()">
-                    <mat-icon>person_add</mat-icon>
-                    Agregar por Email
-                  </button>
-                </div>
+      <!-- 📊 ESTADÍSTICAS RÁPIDAS -->
+      <div class="estadisticas-grid">
+        <app-card class="stat-card">
+          <ng-container card-content>
+            <div class="stat-content">
+              <div class="stat-icon primary">
+                <mat-icon>receipt</mat-icon>
               </div>
+              <div class="stat-info">
+                <h3>{{ estadisticas.totalGastos }}</h3>
+                <p>Total Gastos</p>
+              </div>
+            </div>
+          </ng-container>
+        </app-card>
 
-              <!-- 📧 FORMULARIO AGREGAR MIEMBRO -->
-              <mat-card 
-                *ngIf="mostrarFormularioAgregar && esAdministrador" 
-                class="formulario-agregar">
-                <mat-card-content>
-                  <div class="form-row">
-                    <mat-form-field appearance="outline" class="full-width">
-                      <mat-label>Email del usuario</mat-label>
-                      <input 
-                        matInput 
-                        type="email"
-                        [(ngModel)]="emailNuevoMiembro"
-                        placeholder="usuario@ejemplo.com"
-                        [disabled]="procesandoAccion">
-                      <mat-icon matSuffix>email</mat-icon>
-                    </mat-form-field>
-                  </div>
-                  
-                  <div class="form-actions">
-                    <button 
-                      mat-raised-button 
+        <app-card class="stat-card">
+          <ng-container card-content>
+            <div class="stat-content">
+              <div class="stat-icon accent">
+                <mat-icon>account_balance_wallet</mat-icon>
+              </div>
+              <div class="stat-info">
+                <h3>{{ grupo.totalGastos | currencyFormat }}</h3>
+                <p>Monto Total</p>
+              </div>
+            </div>
+          </ng-container>
+        </app-card>
+
+        <app-card class="stat-card">
+          <ng-container card-content>
+            <div class="stat-content">
+              <div class="stat-icon warn">
+                <mat-icon>trending_up</mat-icon>
+              </div>
+              <div class="stat-info">
+                <h3>{{ estadisticas.gastoPromedio | currencyFormat }}</h3>
+                <p>Gasto Promedio</p>
+              </div>
+            </div>
+          </ng-container>
+        </app-card>
+
+        <app-card class="stat-card">
+          <ng-container card-content>
+            <div class="stat-content">
+              <div class="stat-icon success">
+                <mat-icon>check_circle</mat-icon>
+              </div>
+              <div class="stat-info">
+                <h3>{{ estadisticas.gastosEsteMes }}</h3>
+                <p>Este Mes</p>
+              </div>
+            </div>
+          </ng-container>
+        </app-card>
+      </div>
+
+      <!-- 📋 CONTENIDO PRINCIPAL CON TABS -->
+      <app-card class="main-content-card">
+        <mat-tab-group animationDuration="300ms">
+          <!-- 👥 TAB MIEMBROS MEJORADO -->
+          <mat-tab label="Miembros">
+            <ng-template matTabContent>
+              <div class="tab-content">
+                <div class="tab-header">
+                  <h2>
+                    <mat-icon>group</mat-icon>
+                    Miembros del Grupo ({{ grupo.miembros.length || 0 }})
+                  </h2>
+
+                  <div class="acciones-miembros" *ngIf="esAdministrador">
+                    <button
+                      mat-raised-button
                       color="primary"
-                      [disabled]="!emailNuevoMiembro.trim() || procesandoAccion"
-                      (click)="agregarMiembroPorEmail()">
-                      <mat-icon *ngIf="!procesandoAccion">person_add</mat-icon>
-                      <mat-icon *ngIf="procesandoAccion" class="spinning">hourglass_empty</mat-icon>
-                      {{ procesandoAccion ? 'Agregando...' : 'Agregar Miembro' }}
+                      [disabled]="generandoCodigo"
+                      (click)="invitarMiembro()"
+                    >
+                      <mat-icon *ngIf="!generandoCodigo">qr_code</mat-icon>
+                      <mat-icon *ngIf="generandoCodigo" class="spinning">hourglass_empty</mat-icon>
+                      {{ generandoCodigo ? 'Generando...' : 'Generar Código' }}
                     </button>
-                    
-                    <button 
-                      mat-button 
+
+                    <button
+                      mat-stroked-button
+                      color="accent"
                       (click)="toggleFormularioAgregar()"
-                      [disabled]="procesandoAccion">
-                      Cancelar
+                    >
+                      <mat-icon>person_add</mat-icon>
+                      Agregar por Email
                     </button>
                   </div>
-                </mat-card-content>
-              </mat-card>
+                </div>
 
-              <!-- 👥 LISTA DE MIEMBROS -->
-              <div class="miembros-grid">
-                <mat-card 
-                  *ngFor="let miembro of grupo.miembros; trackBy: trackByMiembroId" 
-                  class="miembro-card">
+                <!-- 📧 FORMULARIO AGREGAR MIEMBRO -->
+                <mat-card
+                  *ngIf="mostrarFormularioAgregar && esAdministrador"
+                  class="formulario-agregar"
+                >
                   <mat-card-content>
-                    <div class="miembro-content">
-                      
-                      <!-- Avatar -->
-                      <div class="miembro-avatar">
-                        <mat-icon class="avatar-icon">person</mat-icon>
-                      </div>
+                    <div class="form-row">
+                      <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Email del usuario</mat-label>
+                        <input
+                          matInput
+                          type="email"
+                          [(ngModel)]="emailNuevoMiembro"
+                          placeholder="usuario@ejemplo.com"
+                          [disabled]="procesandoAccion"
+                        />
+                        <mat-icon matSuffix>email</mat-icon>
+                      </mat-form-field>
+                    </div>
 
-                      <!-- Información del miembro -->
-                      <div class="miembro-info">
-                        <h4>{{ miembro.nombreUsuario }}</h4>
-                        <p class="email">{{ miembro.emailUsuario }}</p>
-                        <p class="fecha-union">
-                          <mat-icon class="small-icon">schedule</mat-icon>
-                          Unido {{ miembro.fechaUnion | dateFormat }}
-                        </p>
-                      </div>
+                    <div class="form-actions">
+                      <button
+                        mat-raised-button
+                        color="primary"
+                        [disabled]="!emailNuevoMiembro.trim() || procesandoAccion"
+                        (click)="agregarMiembroPorEmail()"
+                      >
+                        <mat-icon *ngIf="!procesandoAccion">person_add</mat-icon>
+                        <mat-icon *ngIf="procesandoAccion" class="spinning">hourglass_empty</mat-icon>
+                        {{ procesandoAccion ? 'Agregando...' : 'Agregar Miembro' }}
+                      </button>
 
-                      <!-- Rol -->
-                      <div class="miembro-rol">
-                        <mat-chip 
-                          [color]="getRolColor(miembro.rol)" 
-                          selected>
-                          <mat-icon matChipAvatar>{{ getRolIcon(miembro.rol) }}</mat-icon>
-                          {{ miembro.rol }}
-                        </mat-chip>
-                      </div>
-
-                      <!-- Acciones (solo para administradores) -->
-                      <div class="miembro-acciones" *ngIf="esAdministrador && miembro.rol !== 'Admin'">
-                        <button 
-                          mat-icon-button 
-                          [matMenuTriggerFor]="menuMiembro"
-                          matTooltip="Gestionar miembro">
-                          <mat-icon>more_vert</mat-icon>
-                        </button>
-                        
-                        <mat-menu #menuMiembro="matMenu">
-                          <button 
-                            mat-menu-item 
-                            (click)="cambiarRol(miembro.idMiembro, 'Admin')">
-                            <mat-icon>admin_panel_settings</mat-icon>
-                            Hacer Administrador
-                          </button>
-                          <mat-divider></mat-divider>
-                          <button 
-                            mat-menu-item 
-                            (click)="eliminarMiembro(miembro.idMiembro)"
-                            class="danger-item">
-                            <mat-icon>remove_circle</mat-icon>
-                            Eliminar del Grupo
-                          </button>
-                        </mat-menu>
-                      </div>
-
-                      <!-- Indicador de usuario actual -->
-                      <div class="usuario-actual" *ngIf="miembro.idUsuario === usuarioActual?.idUsuario">
-                        <mat-chip color="accent" selected>
-                          <mat-icon matChipAvatar>star</mat-icon>
-                          Tú
-                        </mat-chip>
-                      </div>
+                      <button
+                        mat-button
+                        (click)="toggleFormularioAgregar()"
+                        [disabled]="procesandoAccion"
+                      >
+                        Cancelar
+                      </button>
                     </div>
                   </mat-card-content>
                 </mat-card>
-              </div>
 
-              <!-- 📊 ESTADÍSTICAS DE MIEMBROS -->
-              <div class="estadisticas-miembros" *ngIf="grupo.miembros?.length">
-                <mat-card>
-                  <mat-card-header>
-                    <mat-card-title>
-                      <mat-icon>analytics</mat-icon>
-                      Estadísticas de Miembros
-                    </mat-card-title>
-                  </mat-card-header>
-                  <mat-card-content>
-                    <div class="stats-grid">
-                      <div class="stat-item">
-                        <div class="stat-number">{{ grupo.miembros.length }}</div>
-                        <div class="stat-label">Total Miembros</div>
-                      </div>
-                      <div class="stat-item">
-                        <div class="stat-number">
-                          {{ contarMiembrosPorRol('Admin') }}
+                <!-- 👥 LISTA DE MIEMBROS -->
+                <div class="miembros-grid">
+                  <mat-card
+                    *ngFor="let miembro of grupo.miembros; trackBy: trackByMiembroId"
+                    class="miembro-card"
+                  >
+                    <mat-card-content>
+                      <div class="miembro-content">
+                        <!-- Avatar -->
+                        <div class="miembro-avatar">
+                          <mat-icon class="avatar-icon">person</mat-icon>
                         </div>
-                        <div class="stat-label">Administradores</div>
-                      </div>
-                      <div class="stat-item">
-                        <div class="stat-number">
-                          {{ contarMiembrosPorRol('Miembro') }}
+
+                        <!-- Información del miembro -->
+                        <div class="miembro-info">
+                          <h4>{{ miembro.nombreUsuario }}</h4>
+                          <p class="email">{{ miembro.emailUsuario }}</p>
+                          <p class="fecha-union">
+                            <mat-icon class="small-icon">schedule</mat-icon>
+                            Unido {{ miembro.fechaUnion | dateFormat }}
+                          </p>
                         </div>
-                        <div class="stat-label">Miembros</div>
+
+                        <!-- Rol -->
+                        <div class="miembro-rol">
+                          <mat-chip
+                            [color]="getRolColor(miembro.rol)"
+                            selected
+                          >
+                            <mat-icon matChipAvatar>{{ getRolIcon(miembro.rol) }}</mat-icon>
+                            {{ miembro.rol }}
+                          </mat-chip>
+                        </div>
+
+                        <!-- Acciones (solo para administradores) -->
+                        <div class="miembro-acciones" *ngIf="esAdministrador && miembro.rol !== 'Admin'">
+                          <button
+                            mat-icon-button
+                            [matMenuTriggerFor]="menuMiembro"
+                            matTooltip="Gestionar miembro"
+                          >
+                            <mat-icon>more_vert</mat-icon>
+                          </button>
+
+                          <mat-menu #menuMiembro="matMenu">
+                            <button
+                              mat-menu-item
+                              (click)="cambiarRol(miembro.idMiembro, 'Admin')"
+                            >
+                              <mat-icon>admin_panel_settings</mat-icon>
+                              Hacer Administrador
+                            </button>
+                            <mat-divider></mat-divider>
+                            <button
+                              mat-menu-item
+                              (click)="eliminarMiembro(miembro.idMiembro)"
+                              class="danger-item"
+                            >
+                              <mat-icon>remove_circle</mat-icon>
+                              Eliminar del Grupo
+                            </button>
+                          </mat-menu>
+                        </div>
+
+                        <!-- Indicador de usuario actual -->
+                        <div class="usuario-actual" *ngIf="miembro.idUsuario === usuarioActual?.idUsuario">
+                          <mat-chip color="accent" selected>
+                            <mat-icon matChipAvatar>star</mat-icon>
+                            Tú
+                          </mat-chip>
+                        </div>
                       </div>
-                    </div>
-                  </mat-card-content>
-                </mat-card>
-              </div>
+                    </mat-card-content>
+                  </mat-card>
+                </div>
 
-              <!-- 💡 AYUDA PARA CÓDIGO DE ACCESO -->
-              <div class="ayuda-codigo" *ngIf="esAdministrador">
-                <mat-card>
-                  <mat-card-content>
-                    <div class="ayuda-content">
-                      <mat-icon color="primary">info</mat-icon>
-                      <div class="ayuda-texto">
-                        <h4>¿Cómo agregar miembros?</h4>
-                        <p><strong>Opción 1:</strong> Genera un código de acceso y compártelo</p>
-                        <p><strong>Opción 2:</strong> Agrega directamente por email si ya tienen cuenta</p>
+                <!-- 📊 ESTADÍSTICAS DE MIEMBROS -->
+                <div class="estadisticas-miembros" *ngIf="grupo.miembros?.length">
+                  <mat-card>
+                    <mat-card-header>
+                      <mat-card-title>
+                        <mat-icon>analytics</mat-icon>
+                        Estadísticas de Miembros
+                      </mat-card-title>
+                    </mat-card-header>
+                    <mat-card-content>
+                      <div class="stats-grid">
+                        <div class="stat-item">
+                          <div class="stat-number">{{ grupo.miembros.length }}</div>
+                          <div class="stat-label">Total Miembros</div>
+                        </div>
+                        <div class="stat-item">
+                          <div class="stat-number">
+                            {{ contarMiembrosPorRol('Admin') }}
+                          </div>
+                          <div class="stat-label">Administradores</div>
+                        </div>
+                        <div class="stat-item">
+                          <div class="stat-number">
+                            {{ contarMiembrosPorRol('Miembro') }}
+                          </div>
+                          <div class="stat-label">Miembros</div>
+                        </div>
                       </div>
-                    </div>
-                  </mat-card-content>
-                </mat-card>
-              </div>
-            </div>
-          </ng-template>
-        </mat-tab>
+                    </mat-card-content>
+                  </mat-card>
+                </div>
 
-        <!-- 📈 TAB ACTIVIDAD -->
-        <mat-tab label="Actividad Reciente">
-          <ng-template matTabContent>
-            <div class="tab-content">
-              
-              <div class="tab-header">
-                <h2>
-                  <mat-icon>timeline</mat-icon>
-                  Actividad Reciente
-                </h2>
-              </div>
-
-              <div class="actividad-timeline" *ngIf="actividadReciente.length > 0; else noActividad">
-                <div 
-                  *ngFor="let actividad of actividadReciente; trackBy: trackByActividadId" 
-                  class="actividad-item">
-                  
-                  <div class="actividad-icon" [ngClass]="actividad.color">
-                    <mat-icon>{{ actividad.icono }}</mat-icon>
-                  </div>
-                  
-                  <div class="actividad-content">
-                    <div class="actividad-header">
-                      <h4>{{ actividad.descripcion }}</h4>
-                      <span class="actividad-monto" *ngIf="actividad.monto">
-                        {{ actividad.monto | currencyFormat }}
-                      </span>
-                    </div>
-                    <p class="actividad-meta">
-                      {{ actividad.usuario }} • {{ actividad.fecha | dateFormat }}
-                    </p>
-                  </div>
+                <!-- 💡 AYUDA PARA CÓDIGO DE ACCESO -->
+                <div class="ayuda-codigo" *ngIf="esAdministrador">
+                  <mat-card>
+                    <mat-card-content>
+                      <div class="ayuda-content">
+                        <mat-icon color="primary">info</mat-icon>
+                        <div class="ayuda-texto">
+                          <h4>¿Cómo agregar miembros?</h4>
+                          <p><strong>Opción 1:</strong> Genera un código de acceso y compártelo</p>
+                          <p><strong>Opción 2:</strong> Agrega directamente por email si ya tienen cuenta</p>
+                        </div>
+                      </div>
+                    </mat-card-content>
+                  </mat-card>
                 </div>
               </div>
+            </ng-template>
+          </mat-tab>
 
-              <ng-template #noActividad>
-                <div class="no-actividad">
-                  <mat-icon>timeline</mat-icon>
-                  <h3>No hay actividad reciente</h3>
-                  <p>Cuando se realicen gastos aparecerán aquí</p>
+          <!-- 📈 TAB ACTIVIDAD -->
+          <mat-tab label="Actividad Reciente">
+            <ng-template matTabContent>
+              <div class="tab-content">
+                <div class="tab-header">
+                  <h2>
+                    <mat-icon>timeline</mat-icon>
+                    Actividad Reciente
+                  </h2>
                 </div>
-              </ng-template>
 
-              <div class="tab-actions">
-                <button mat-stroked-button (click)="verHistorialGastos()">
-                  <mat-icon>receipt</mat-icon>
-                  Ver Todos los Gastos
-                </button>
+                <div class="actividad-timeline" *ngIf="actividadReciente.length > 0; else noActividad">
+                  <div
+                    *ngFor="let actividad of actividadReciente; trackBy: trackByActividadId"
+                    class="actividad-item"
+                  >
+                    <div class="actividad-icon" [ngClass]="actividad.color">
+                      <mat-icon>{{ actividad.icono }}</mat-icon>
+                    </div>
+
+                    <div class="actividad-content">
+                      <div class="actividad-header">
+                        <h4>{{ actividad.descripcion }}</h4>
+                        <span class="actividad-monto" *ngIf="actividad.monto">
+                          {{ actividad.monto | currencyFormat }}
+                        </span>
+                      </div>
+                      <p class="actividad-meta">
+                        {{ actividad.usuario }} • {{ actividad.fecha | dateFormat }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <ng-template #noActividad>
+                  <div class="no-actividad">
+                    <mat-icon>timeline</mat-icon>
+                    <h3>No hay actividad reciente</h3>
+                    <p>Cuando se realicen gastos aparecerán aquí</p>
+                  </div>
+                </ng-template>
+
+                <div class="tab-actions">
+                  <button mat-stroked-button (click)="verHistorialGastos()">
+                    <mat-icon>receipt</mat-icon>
+                    Ver Todos los Gastos
+                  </button>
+                </div>
               </div>
-            </div>
-          </ng-template>
-        </mat-tab>
+            </ng-template>
+          </mat-tab>
 
-        <!-- ⚙️ TAB CONFIGURACIÓN -->
-        <mat-tab label="Configuración">
-          <ng-template matTabContent>
-            <app-configuraciones
-              [grupo]="grupo"
-              [esAdministrador]="esAdministrador">
-            </app-configuraciones>
-          </ng-template>
-        </mat-tab>
-      </mat-tab-group>
-    </mat-card>
-  </div>
+          <!-- ⚙️ TAB CONFIGURACIÓN -->
+          <mat-tab label="Configuración">
+            <ng-template matTabContent>
+              <app-configuraciones
+                [grupo]="grupo"
+                [esAdministrador]="esAdministrador"
+              >
+              </app-configuraciones>
+            </ng-template>
+          </mat-tab>
+        </mat-tab-group>
+      </app-card>
+    </ng-container>
+  </ng-template>
 </div>
 
 <!-- 🔄 LOADING TEMPLATE -->
 <ng-template #loadingTemplate>
-  <div class="loading-container">
-    <app-loading-spinner message="Cargando información del grupo..."></app-loading-spinner>
-  </div>
+  <app-loading-spinner text="Cargando grupo..."></app-loading-spinner>
 </ng-template>
 
 <!-- 📱 MENU DE ACCIONES -->
@@ -446,7 +421,7 @@
         <mat-icon>close</mat-icon>
       </button>
     </div>
-    
+
     <div class="modal-body">
       <div class="codigo-display">
         <div class="codigo-titulo">Tu código de acceso:</div>
@@ -456,7 +431,7 @@
           Comparte este código para que otros puedan unirse al grupo
         </div>
       </div>
-      
+
       <div class="codigo-instrucciones">
         <h4>¿Cómo funciona?</h4>
         <ol>
@@ -466,7 +441,7 @@
         </ol>
       </div>
     </div>
-    
+
     <div class="modal-actions">
       <button mat-button (click)="cerrarModalCodigo()">
         Cerrar

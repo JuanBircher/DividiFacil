@@ -1,13 +1,11 @@
 <div class="perfil-container">
   
   <!-- HEADER -->
-  <div class="header-section">
-    <h1>
+  <app-card>
+    <ng-container card-header>
       <mat-icon>account_circle</mat-icon>
-      Mi Perfil
-    </h1>
-    
-    <div class="header-actions">
+      <span>Mi Perfil</span>
+      
       <button 
         mat-button 
         (click)="recargar()" 
@@ -24,194 +22,179 @@
         <mat-icon>edit</mat-icon>
         Editar Perfil
       </button>
-    </div>
-  </div>
-
-  <!-- LOADING -->
-  <div *ngIf="loading" class="loading-container">
-    <mat-spinner></mat-spinner>
-    <p>Cargando perfil...</p>
-  </div>
-
-  <!-- CONTENIDO DEL PERFIL -->
-  <div *ngIf="!loading && usuario" class="perfil-content">
+    </ng-container>
     
-    <!-- INFORMACIÓN PRINCIPAL -->
-    <mat-card class="perfil-principal-card">
-      <mat-card-content>
-        <div class="perfil-header">
-          <div class="avatar-section">
-            <div class="avatar" [class.with-image]="usuario.urlImagen">
-              <img 
-                *ngIf="usuario.urlImagen" 
-                [src]="usuario.urlImagen" 
-                [alt]="usuario.nombre"
-                (error)="onImageError($event)">
-              <span *ngIf="!usuario.urlImagen" class="avatar-initials">
-                {{ obtenerIniciales() }}
-              </span>
+    <ng-container card-content>
+      <!-- LOADING -->
+      <ng-container *ngIf="loading; else perfilContent">
+        <app-loading-spinner text="Cargando perfil..."></app-loading-spinner>
+      </ng-container>
+
+      <!-- CONTENIDO DEL PERFIL -->
+      <ng-template #perfilContent>
+        <ng-container *ngIf="usuario; else emptyState">
+          <!-- INFORMACIÓN PRINCIPAL -->
+          <div class="perfil-header">
+            <div class="avatar-section">
+              <div class="avatar" [class.with-image]="usuario.urlImagen">
+                <img 
+                  *ngIf="usuario.urlImagen" 
+                  [src]="usuario.urlImagen" 
+                  [alt]="usuario.nombre"
+                  (error)="onImageError($event)">
+                <span *ngIf="!usuario.urlImagen" class="avatar-iniciales">
+                  {{ obtenerIniciales() }}
+                </span>
+              </div>
+              
+              <button 
+                mat-icon-button 
+                class="avatar-edit-btn"
+                (click)="editarPerfil()"
+                title="Cambiar foto">
+                <mat-icon>photo_camera</mat-icon>
+              </button>
             </div>
+            
+            <div class="info-section">
+              <h2>{{ usuario.nombre }}</h2>
+              <p>{{ usuario.email }}</p>
+              
+              <div class="usuario-meta">
+                <mat-chip [color]="obtenerEstadoUsuario().color">
+                  {{ obtenerEstadoUsuario().texto }}
+                </mat-chip>
+                
+                <span class="fecha-registro">
+                  <mat-icon>schedule</mat-icon>
+                  Registrado el {{ usuario.fechaRegistro | dateFormat }}
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- INFORMACIÓN DETALLADA -->
+          <div class="perfil-details">
+            
+            <!-- DATOS PERSONALES -->
+            <mat-card class="datos-card">
+              <mat-card-header>
+                <mat-card-title>
+                  <mat-icon>person</mat-icon>
+                  Datos Personales
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="datos-grid">
+                  <div class="dato-item">
+                    <mat-icon>email</mat-icon>
+                    <div class="dato-content">
+                      <span class="dato-label">Email</span>
+                      <span class="dato-value">{{ usuario.email }}</span>
+                    </div>
+                  </div>
+                  
+                  <div class="dato-item" *ngIf="usuario.telefono">
+                    <mat-icon>phone</mat-icon>
+                    <div class="dato-content">
+                      <span class="dato-label">Teléfono</span>
+                      <span class="dato-value">{{ usuario.telefono }}</span>
+                    </div>
+                  </div>
+                  
+                  <div class="dato-item">
+                    <mat-icon>today</mat-icon>
+                    <div class="dato-content">
+                      <span class="dato-label">Fecha de Registro</span>
+                      <span class="dato-value">{{ usuario.fechaRegistro | dateFormat }}</span>
+                    </div>
+                  </div>
+                  
+                  <div class="dato-item">
+                    <mat-icon>verified_user</mat-icon>
+                    <div class="dato-content">
+                      <span class="dato-label">Estado</span>
+                      <span class="dato-value">{{ obtenerEstadoUsuario().texto }}</span>
+                    </div>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+
+            <!-- ESTADÍSTICAS -->
+            <mat-card class="estadisticas-card">
+              <mat-card-header>
+                <mat-card-title>
+                  <mat-icon>analytics</mat-icon>
+                  Estadísticas
+                </mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="stats-grid">
+                  <div class="stat-item">
+                    <mat-icon color="primary">group</mat-icon>
+                    <div class="stat-content">
+                      <span class="stat-number">{{ estadisticasUsuario.gruposActivos }}</span>
+                      <span class="stat-label">Grupos Activos</span>
+                    </div>
+                  </div>
+                  
+                  <div class="stat-item">
+                    <mat-icon color="accent">receipt</mat-icon>
+                    <div class="stat-content">
+                      <span class="stat-number">{{ estadisticasUsuario.gastosRegistrados }}</span>
+                      <span class="stat-label">Gastos Registrados</span>
+                    </div>
+                  </div>
+                  
+                  <div class="stat-item">
+                    <mat-icon color="warn">schedule</mat-icon>
+                    <div class="stat-content">
+                      <span class="stat-number">{{ estadisticasUsuario.diasRegistrado }}</span>
+                      <span class="stat-label">Días Registrado</span>
+                    </div>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+
+          <!-- ACCIONES -->
+          <div class="acciones-grid">
+            <button 
+              mat-raised-button 
+              color="primary"
+              (click)="editarPerfil()">
+              <mat-icon>edit</mat-icon>
+              Editar Información
+            </button>
             
             <button 
-              mat-icon-button 
-              class="avatar-edit-btn"
-              (click)="editarPerfil()"
-              title="Cambiar foto">
-              <mat-icon>photo_camera</mat-icon>
+              mat-stroked-button 
+              color="primary"
+              routerLink="/notificaciones">
+              <mat-icon>notifications</mat-icon>
+              Configurar Notificaciones
+            </button>
+            
+            <button 
+              mat-stroked-button 
+              color="warn"
+              (click)="cerrarSesion()">
+              <mat-icon>logout</mat-icon>
+              Cerrar Sesión
             </button>
           </div>
-          
-          <div class="perfil-info">
-            <h2 class="nombre-usuario">{{ usuario.nombre }}</h2>
-            <p class="email-usuario">{{ usuario.email }}</p>
-            
-            <div class="usuario-meta">
-              <mat-chip [color]="obtenerEstadoUsuario().color">
-                {{ obtenerEstadoUsuario().texto }}
-              </mat-chip>
-              
-              <span class="fecha-registro">
-                <mat-icon>schedule</mat-icon>
-                Registrado el {{ usuario.fechaRegistro | dateFormat }}
-              </span>
-            </div>
+        </ng-container>
+        
+        <!-- EMPTY STATE -->
+        <ng-template #emptyState>
+          <div class="empty-state">
+            <mat-icon>person_off</mat-icon>
+            <h2>No se encontró el perfil</h2>
           </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
-
-    <!-- INFORMACIÓN DETALLADA -->
-    <div class="perfil-details">
-      
-      <!-- DATOS PERSONALES -->
-      <mat-card class="datos-card">
-        <mat-card-header>
-          <mat-card-title>
-            <mat-icon>person</mat-icon>
-            Datos Personales
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="datos-grid">
-            <div class="dato-item">
-              <mat-icon>email</mat-icon>
-              <div class="dato-content">
-                <span class="dato-label">Email</span>
-                <span class="dato-value">{{ usuario.email }}</span>
-              </div>
-            </div>
-            
-            <div class="dato-item" *ngIf="usuario.telefono">
-              <mat-icon>phone</mat-icon>
-              <div class="dato-content">
-                <span class="dato-label">Teléfono</span>
-                <span class="dato-value">{{ usuario.telefono }}</span>
-              </div>
-            </div>
-            
-            <div class="dato-item">
-              <mat-icon>today</mat-icon>
-              <div class="dato-content">
-                <span class="dato-label">Fecha de Registro</span>
-                <span class="dato-value">{{ usuario.fechaRegistro | dateFormat }}</span>
-              </div>
-            </div>
-            
-            <div class="dato-item">
-              <mat-icon>verified_user</mat-icon>
-              <div class="dato-content">
-                <span class="dato-label">Estado</span>
-                <span class="dato-value">{{ obtenerEstadoUsuario().texto }}</span>
-              </div>
-            </div>
-          </div>
-        </mat-card-content>
-      </mat-card>
-
-      <!-- ESTADÍSTICAS -->
-      <mat-card class="estadisticas-card">
-        <mat-card-header>
-          <mat-card-title>
-            <mat-icon>analytics</mat-icon>
-            Estadísticas
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="stats-grid">
-            <div class="stat-item">
-              <mat-icon color="primary">group</mat-icon>
-              <div class="stat-content">
-                <span class="stat-number">{{ estadisticasUsuario.gruposActivos }}</span>
-                <span class="stat-label">Grupos Activos</span>
-              </div>
-            </div>
-            
-            <div class="stat-item">
-              <mat-icon color="accent">receipt</mat-icon>
-              <div class="stat-content">
-                <span class="stat-number">{{ estadisticasUsuario.gastosRegistrados }}</span>
-                <span class="stat-label">Gastos Registrados</span>
-              </div>
-            </div>
-            
-            <div class="stat-item">
-              <mat-icon color="warn">schedule</mat-icon>
-              <div class="stat-content">
-                <span class="stat-number">{{ estadisticasUsuario.diasRegistrado }}</span>
-                <span class="stat-label">Días Registrado</span>
-              </div>
-            </div>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </div>
-
-    <!-- ACCIONES -->
-    <mat-card class="acciones-card">
-      <mat-card-content>
-        <div class="acciones-grid">
-          <button 
-            mat-raised-button 
-            color="primary"
-            (click)="editarPerfil()">
-            <mat-icon>edit</mat-icon>
-            Editar Información
-          </button>
-          
-          <button 
-            mat-stroked-button 
-            color="primary"
-            routerLink="/notificaciones">
-            <mat-icon>notifications</mat-icon>
-            Configurar Notificaciones
-          </button>
-          
-          <button 
-            mat-stroked-button 
-            color="warn"
-            (click)="cerrarSesion()">
-            <mat-icon>logout</mat-icon>
-            Cerrar Sesión
-          </button>
-        </div>
-      </mat-card-content>
-    </mat-card>
-  </div>
-
-  <!-- ERROR STATE -->
-  <div *ngIf="!loading && !usuario" class="error-state">
-    <mat-card>
-      <mat-card-content>
-        <div class="error-content">
-          <mat-icon color="warn">error</mat-icon>
-          <h3>Error al cargar perfil</h3>
-          <p>No se pudo cargar la información del usuario</p>
-          <button mat-raised-button color="primary" (click)="recargar()">
-            <mat-icon>refresh</mat-icon>
-            Reintentar
-          </button>
-        </div>
-      </mat-card-content>
-    </mat-card>
-  </div>
+        </ng-template>
+      </ng-template>
+    </ng-container>
+  </app-card>
 </div>

@@ -21,6 +21,7 @@ export class GastoService {
 
   // ✅ MÉTODO 1: CrearGastoAsync
   crearGasto(gastoCreacion: GastoCreacionDto): Observable<ResponseDto<GastoDto>> {
+    console.log('[GastoService] crearGasto', { gastoCreacion });
     return this.http.post<ResponseDto<GastoDto>>(this.apiUrl, gastoCreacion)
       .pipe(
         catchError(error => {
@@ -36,6 +37,7 @@ export class GastoService {
 
   // ✅ MÉTODO 2: GetByIdAsync
   obtenerGasto(idGasto: string): Observable<ResponseDto<GastoDto>> {
+    console.log('[GastoService] obtenerGasto', { idGasto });
     return this.http.get<ResponseDto<GastoDto>>(`${this.apiUrl}/${idGasto}`)
       .pipe(
         catchError(error => {
@@ -51,6 +53,7 @@ export class GastoService {
 
   // ✅ MÉTODO 3: GetByGrupoAsync - CORREGIDO CON PARÁMETROS
   obtenerGastosPorGrupo(idGrupo: string): Observable<ResponseDto<GastoDto[]>> {
+    console.log('[GastoService] obtenerGastosPorGrupo', { idGrupo });
     return this.http.get<ResponseDto<GastoDto[]>>(`${this.apiUrl}/grupo/${idGrupo}`)
       .pipe(
         map(response => ({
@@ -71,6 +74,7 @@ export class GastoService {
 
   // ✅ MÉTODO 4: GetRecientesAsync
   obtenerRecientes(cantidad: number = 10): Observable<ResponseDto<GastoDto[]>> {
+    console.log('[GastoService] obtenerRecientes', { cantidad });
     const params = new HttpParams().set('cantidad', cantidad.toString());
     
     return this.http.get<ResponseDto<GastoDto[]>>(`${this.apiUrl}/recientes`, { params })
@@ -93,6 +97,7 @@ export class GastoService {
 
   // ✅ MÉTODO 5: GetSaldosGrupoAsync - NUEVO
   obtenerSaldosGrupo(idGrupo: string): Observable<ResponseDto<SaldoUsuarioDto[]>> {
+    console.log('[GastoService] obtenerSaldosGrupo', { idGrupo });
     return this.http.get<ResponseDto<SaldoUsuarioDto[]>>(`${this.apiUrl}/saldos/grupo/${idGrupo}`)
       .pipe(
         map(response => ({
@@ -113,6 +118,7 @@ export class GastoService {
 
   // ✅ MÉTODO 6: GetSaldosUsuarioAsync - NUEVO
   obtenerSaldosUsuario(): Observable<ResponseDto<SaldoUsuarioDto[]>> {
+    console.log('[GastoService] obtenerSaldosUsuario');
     return this.http.get<ResponseDto<SaldoUsuarioDto[]>>(`${this.apiUrl}/saldos/usuario`)
       .pipe(
         map(response => ({
@@ -133,6 +139,7 @@ export class GastoService {
 
   // ✅ MÉTODO 7: MarcarComoPagadoAsync
   marcarComoPagado(idGasto: string, idDetalle: string): Observable<ResponseDto<void>> {
+    console.log('[GastoService] marcarComoPagado', { idGasto, idDetalle });
     return this.http.put<ResponseDto<void>>(`${this.apiUrl}/${idGasto}/detalle/${idDetalle}/pagado`, {})
       .pipe(
         catchError(error => {
@@ -148,6 +155,7 @@ export class GastoService {
 
   // ✅ MÉTODO 8: EliminarGastoAsync
   eliminarGasto(idGasto: string): Observable<ResponseDto<void>> {
+    console.log('[GastoService] eliminarGasto', { idGasto });
     return this.http.delete<ResponseDto<void>>(`${this.apiUrl}/${idGasto}`)
       .pipe(
         catchError(error => {
@@ -167,6 +175,7 @@ export class GastoService {
     pagina: number = 1, 
     limite: number = 10
   ): Observable<PaginatedResponse<GastoDto>> {
+    console.log('[GastoService] obtenerGastosPaginados', { idGrupo, pagina, limite });
     const params = new HttpParams()
       .set('pagina', pagina.toString())
       .set('limite', limite.toString());
@@ -190,6 +199,7 @@ export class GastoService {
 
   // ✅ MÉTODOS AUXILIARES: Para mantener compatibilidad con código existente
   obtenerGastos(): Observable<ResponseDto<GastoDto[]>> {
+    console.log('[GastoService] obtenerGastos');
     return this.http.get<ResponseDto<GastoDto[]>>(`${this.apiUrl}`)
       .pipe(
         map(response => ({
@@ -209,11 +219,13 @@ export class GastoService {
   }
 
   obtenerMisGastos(): Observable<ResponseDto<GastoDto[]>> {
+    console.log('[GastoService] obtenerMisGastos');
     return this.obtenerRecientes(100); // Obtener los últimos 100 gastos del usuario
   }
 
   // ✅ MÉTODO AUXILIAR: Para estadísticas
   obtenerEstadisticasGastos(): Observable<ResponseDto<any>> {
+    console.log('[GastoService] obtenerEstadisticasGastos');
     return this.http.get<ResponseDto<any>>(`${this.apiUrl}/estadisticas`)
       .pipe(
         catchError(error => {
@@ -229,6 +241,7 @@ export class GastoService {
 
   // ✅ MÉTODO AUXILIAR: Para validar gasto antes de crear
   validarGasto(gastoCreacion: GastoCreacionDto): boolean {
+    console.log('[GastoService] validarGasto', { gastoCreacion });
     if (!gastoCreacion.idGrupo || !gastoCreacion.descripcion || gastoCreacion.monto <= 0) {
       return false;
     }
@@ -242,6 +255,7 @@ export class GastoService {
   }
 
   actualizarGasto(idGasto: string, gasto: GastoCreacionDto): Observable<any> {
+    console.log('[GastoService] actualizarGasto', { idGasto, gasto });
     return this.http.put<any>(`/api/gastos/${idGasto}`, gasto);
   }
 }

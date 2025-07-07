@@ -22,6 +22,7 @@ import { Inject } from '@angular/core';
 
 // Pipes
 import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
+import { CardComponent } from '../../../shared/components/card/card.component';
 import { LoadingSpinnerComponent } from "../../../shared/components/loading-spinner/loading-spinner.component";
 
 @Component({
@@ -41,6 +42,7 @@ import { LoadingSpinnerComponent } from "../../../shared/components/loading-spin
     MatProgressSpinnerModule,
     MatDividerModule,
     DateFormatPipe,
+    CardComponent,
     LoadingSpinnerComponent
   ]
 })

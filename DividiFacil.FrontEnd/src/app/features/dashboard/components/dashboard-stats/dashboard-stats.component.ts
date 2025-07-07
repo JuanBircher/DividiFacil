@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,6 +12,8 @@ import { GrupoService } from '../../../../core/services/grupo.service';
 
 // ✅ PIPES CORRECTOS
 import { CurrencyFormatPipe } from '../../../../shared/pipes/currency-format.pipe';
+import { CardComponent } from '../../../../shared/components/card/card.component';
+import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
 
 interface EstadisticaDashboard {
   titulo: string;
@@ -30,6 +32,8 @@ interface EstadisticaDashboard {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    CardComponent,
+    LoadingSpinnerComponent,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
@@ -37,6 +41,7 @@ interface EstadisticaDashboard {
   ]
 })
 export class DashboardStatsComponent implements OnInit, OnDestroy {
+  @Input() idUsuario: string = '';
   estadisticas: EstadisticaDashboard[] = [];
   cargando = false;
   loading = false;
@@ -51,7 +56,9 @@ export class DashboardStatsComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.cargarEstadisticas();
+    if (this.idUsuario) {
+      this.cargarEstadisticas();
+    }
   }
 
   ngOnDestroy(): void {

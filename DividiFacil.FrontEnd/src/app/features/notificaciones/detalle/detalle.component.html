@@ -1,1 +1,29 @@
-<p>detalle works!</p>
+<app-card>
+  <ng-container card-header>
+    <mat-icon>notifications</mat-icon>
+    <span>Detalle de Notificación</span>
+  </ng-container>
+  <ng-container card-content>
+    <ng-container *ngIf="loading; else detalleContent">
+      <app-loading-spinner text="Cargando notificación..."></app-loading-spinner>
+    </ng-container>
+    <ng-template #detalleContent>
+      <ng-container *ngIf="notificacion; else emptyState">
+        <div class="detalle-notificacion">
+          <h2>{{ notificacion.tipo }}</h2>
+          <p>{{ notificacion.mensaje }}</p>
+          <div class="fecha">
+            <mat-icon>schedule</mat-icon>
+            {{ notificacion.fechaCreacion | date:'short' }}
+          </div>
+        </div>
+      </ng-container>
+      <ng-template #emptyState>
+        <div class="empty-state">
+          <mat-icon>notifications_off</mat-icon>
+          <h3>No se encontró la notificación</h3>
+        </div>
+      </ng-template>
+    </ng-template>
+  </ng-container>
+</app-card>

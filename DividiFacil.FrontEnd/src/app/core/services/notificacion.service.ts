@@ -29,6 +29,7 @@ export class NotificacionService {
   constructor(private http: HttpClient) {}
 
   obtenerPendientes(idUsuario: string): Observable<ResponseDto<NotificacionDto[]>> {
+    console.log('[NotificacionService] obtenerPendientes', { idUsuario });
     return this.http.get<ResponseDto<NotificacionDto[]>>(`${this.apiUrl}/pendientes/${idUsuario}`)
       .pipe(
         tap(response => {
@@ -39,24 +40,28 @@ export class NotificacionService {
         }),
         catchError(error => {
           console.error('Error al obtener notificaciones pendientes:', error);
-          return of({ exito: false, data: [], mensaje: 'Error al obtener notificaciones' });
+          return of({ exito: false, data: undefined, mensaje: 'Error al obtener notificaciones' });
         })
       );
   }
 
   marcarComoLeida(idNotificacion: string, idUsuario: string): Observable<ResponseDto<void>> {
+    console.log('[NotificacionService] marcarComoLeida', { idNotificacion, idUsuario });
     return this.http.put<ResponseDto<void>>(`${this.apiUrl}/${idNotificacion}/marcar-enviada`, { idUsuario });
   }
 
   obtenerConfiguracion(idUsuario: string): Observable<ResponseDto<ConfiguracionNotificacionesDto>> {
+    console.log('[NotificacionService] obtenerConfiguracion', { idUsuario });
     return this.http.get<ResponseDto<ConfiguracionNotificacionesDto>>(`${this.apiUrl}/configuracion/${idUsuario}`);
   }
 
   actualizarConfiguracion(configuracion: ConfiguracionNotificacionesDto, idUsuarioAdmin: string): Observable<ResponseDto<void>> {
+    console.log('[NotificacionService] actualizarConfiguracion', { configuracion, idUsuarioAdmin });
     return this.http.put<ResponseDto<void>>(`${this.apiUrl}/configuracion/${idUsuarioAdmin}`, configuracion);
   }
 
   obtenerPorGrupo(idGrupo: string, idUsuario: string): Observable<ResponseDto<NotificacionDto[]>> {
+    console.log('[NotificacionService] obtenerPorGrupo', { idGrupo, idUsuario });
     return this.http.get<ResponseDto<NotificacionDto[]>>(`${this.apiUrl}/grupo/${idGrupo}?idUsuario=${idUsuario}`);
   }
 }

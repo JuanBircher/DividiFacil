@@ -17,6 +17,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { AuthService } from '../../../core/auth.service';
 import { UsuarioService } from '../../../core/services/usuario.service';
 import { Usuario, UsuarioActualizacionDto } from '../../../core/models/usuario.model';
+import { CardComponent } from '../../../shared/components/card/card.component';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-editar',
@@ -32,7 +34,9 @@ import { Usuario, UsuarioActualizacionDto } from '../../../core/models/usuario.m
     MatInputModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
-    MatDividerModule
+    MatDividerModule,
+    CardComponent,
+    LoadingSpinnerComponent
   ]
 })
 export class EditarComponent implements OnInit, OnDestroy {

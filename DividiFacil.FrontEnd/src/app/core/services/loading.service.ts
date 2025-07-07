@@ -11,6 +11,7 @@ export class LoadingService {
   public loading$ = this.loadingSubject.asObservable();
 
   show(): void {
+    console.log('[LoadingService] show');
     this.loadingCount++;
     if (this.loadingCount === 1) {
       this.loadingSubject.next(true);
@@ -18,6 +19,7 @@ export class LoadingService {
   }
 
   hide(): void {
+    console.log('[LoadingService] hide');
     this.loadingCount--;
     if (this.loadingCount <= 0) {
       this.loadingCount = 0;
@@ -26,6 +28,7 @@ export class LoadingService {
   }
 
   isLoading(): boolean {
+    console.log('[LoadingService] isLoading');
     return this.loadingSubject.value;
   }
 }

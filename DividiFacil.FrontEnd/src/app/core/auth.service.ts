@@ -27,6 +27,7 @@ export class AuthService {
     private http: HttpClient,
     private router: Router
   ) {
+    console.log('AuthService inicializado');
     this.inicializarUsuario();
   }
 
@@ -47,8 +48,11 @@ export class AuthService {
     return this.http.post<ApiResponse<LoginResponseDto>>(`${this.apiUrl}/login`, credenciales)
       .pipe(
         tap(response => {
-          if (response.exito && response.data) {
-            this.guardarSesion(response.data);
+          console.log('[AuthService] Respuesta login:', response);
+          const exito = response.exito;
+          const data = response.data;
+          if (exito && data) {
+            this.guardarSesion(data);
           }
         }),
         catchError(error => {
@@ -62,8 +66,10 @@ export class AuthService {
     return this.http.post<ApiResponse<LoginResponseDto>>(`${this.apiUrl}/registro`, registro)
       .pipe(
         tap(response => {
-          if (response.exito && response.data) {
-            this.guardarSesion(response.data);
+          const exito = response.exito;
+          const data = response.data;
+          if (exito && data) {
+            this.guardarSesion(data);
           }
         }),
         catchError(error => {
@@ -87,11 +93,13 @@ export class AuthService {
 
   refreshToken(): Observable<ApiResponse<LoginResponseDto>> {
     const refreshToken = localStorage.getItem('refreshToken');
-    return this.http.post<ApiResponse<LoginResponseDto>>(`${this.apiUrl}/refresh`, { refreshToken })
+    return this.http.post<ApiResponse<LoginResponseDto>>(`${this.apiUrl}/refresh-token`, { refreshToken })
       .pipe(
         tap(response => {
-          if (response.exito && response.data) {
-            this.guardarSesion(response.data);
+          const exito = response.exito;
+          const data = response.data;
+          if (exito && data) {
+            this.guardarSesion(data);
           }
         }),
         catchError(error => {
@@ -105,6 +113,13 @@ export class AuthService {
     localStorage.setItem('token', data.token);
     localStorage.setItem('refreshToken', data.refreshToken);
     localStorage.setItem('usuario', JSON.stringify(data.usuario));
+    // Guardar idUsuario y nombreUsuario por compatibilidad con el layout
+    if (data.usuario?.idUsuario) {
+      localStorage.setItem('idUsuario', data.usuario.idUsuario);
+    }
+    if (data.usuario?.nombre) {
+      localStorage.setItem('nombreUsuario', data.usuario.nombre);
+    }
     this.usuarioActualSubject.next(data.usuario);
   }
 
@@ -112,6 +127,8 @@ export class AuthService {
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('usuario');
+    localStorage.removeItem('idUsuario');
+    localStorage.removeItem('nombreUsuario');
     this.usuarioActualSubject.next(null);
   }
 

@@ -1,0 +1,33 @@
+// Mixins reutilizables para DividiFácil
+
+@mixin card-shadow {
+  box-shadow: $box-shadow;
+}
+
+@mixin card-base {
+  border-radius: $border-radius;
+  border: $border-width solid $color-border;
+  background: $color-surface;
+  font-family: $font-family-base;
+  @include card-shadow;
+}
+
+@mixin section-title {
+  font-size: $font-size-title;
+  font-weight: 500;
+  color: $color-primary;
+  margin-bottom: $spacing-sm;
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin responsive-padding {
+  padding: $spacing-sm;
+  @media (min-width: $breakpoint-md) {
+    padding: $spacing-md;
+  }
+}

@@ -1,17 +1,13 @@
-<mat-card class="recent-groups-card">
-  <mat-card-header>
-    <mat-card-title>
-      <mat-icon color="primary">group</mat-icon>
-      Grupos Recientes
-    </mat-card-title>
-    <mat-card-subtitle>Últimos grupos donde has participado</mat-card-subtitle>
-  </mat-card-header>
-
-  <mat-card-content>
+<app-card cardClass="recent-groups-card">
+  <ng-container card-header>
+    <mat-icon color="primary">group</mat-icon>
+    <span>Grupos Recientes</span>
+    <span class="subtitle">Últimos grupos donde has participado</span>
+  </ng-container>
+  <ng-container card-content>
     <!-- Loading State -->
     <div *ngIf="cargando" class="loading-container">
-      <mat-spinner diameter="30"></mat-spinner>
-      <p class="loading-text">Cargando grupos...</p>
+      <app-loading-spinner text="Cargando grupos..."></app-loading-spinner>
     </div>
 
     <!-- Error State -->
@@ -85,22 +81,5 @@
         </div>
       </div>
     </div>
-  </mat-card-content>
-
-  <mat-card-actions class="action-buttons">
-    <button 
-      mat-button 
-      color="primary" 
-      (click)="verTodosLosGrupos()">
-      <mat-icon>visibility</mat-icon>
-      Ver todos
-    </button>
-    <button 
-      mat-raised-button 
-      color="primary" 
-      (click)="crearGrupo()">
-      <mat-icon>add</mat-icon>
-      Crear Grupo
-    </button>
-  </mat-card-actions>
-</mat-card>
+  </ng-container>
+</app-card>

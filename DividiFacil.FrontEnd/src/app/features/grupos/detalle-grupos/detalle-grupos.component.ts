@@ -16,6 +16,7 @@ import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
+import { CardComponent } from '../../../shared/components/card/card.component';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 
 // 🔧 USAR TUS SERVICIOS CORREGIDOS
@@ -74,6 +75,7 @@ interface ActividadReciente {
     MatTooltipModule,
     MatFormFieldModule,
     MatInputModule,
+    CardComponent,
     LoadingSpinnerComponent,
     DateFormatPipe,
     CurrencyFormatPipe,

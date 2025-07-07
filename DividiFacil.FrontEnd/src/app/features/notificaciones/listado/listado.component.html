@@ -1,17 +1,15 @@
 <div class="notificaciones-container">
   
   <!-- HEADER -->
-  <div class="header-section">
-    <h1>
+  <app-card>
+    <ng-container card-header>
       <mat-icon>notifications</mat-icon>
-      Notificaciones
+      <span>Notificaciones</span>
       <span class="contador" *ngIf="notificacionesNoLeidas.length > 0" 
             [matBadge]="notificacionesNoLeidas.length" 
             matBadgeColor="warn">
       </span>
-    </h1>
-    
-    <div class="header-actions">
+      
       <button 
         mat-button 
         (click)="recargar()" 
@@ -28,127 +26,124 @@
         <mat-icon>done_all</mat-icon>
         Marcar Todas Leídas
       </button>
-    </div>
-  </div>
+    </ng-container>
 
-  <!-- LOADING -->
-  <app-loading-spinner 
-    *ngIf="loading" 
-    message="Cargando notificaciones...">
-  </app-loading-spinner>
-
-  <!-- CONTENIDO -->
-  <div *ngIf="!loading" class="notificaciones-content">
-    
-    <!-- SIN NOTIFICACIONES -->
-    <mat-card *ngIf="notificaciones.length === 0" class="empty-state">
-      <mat-card-content>
-        <div class="empty-content">
-          <mat-icon>notifications_none</mat-icon>
-          <h2>No tienes notificaciones</h2>
-          <p>Cuando tengas actividad en tus grupos, las notificaciones aparecerán aquí</p>
-        </div>
-      </mat-card-content>
-    </mat-card>
-
-    <!-- NOTIFICACIONES NO LEÍDAS -->
-    <mat-card *ngIf="notificacionesNoLeidas.length > 0" class="notificaciones-section">
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon color="warn">circle</mat-icon>
-          No Leídas ({{ notificacionesNoLeidas.length }})
-        </mat-card-title>
-      </mat-card-header>
+    <!-- LOADING & CONTENIDO -->
+    <ng-container card-content>
+      <ng-container *ngIf="loading; else notificacionesContent">
+        <app-loading-spinner 
+          text="Cargando notificaciones...">
+        </app-loading-spinner>
+      </ng-container>
       
-      <mat-card-content>
-        <mat-list class="notificaciones-list">
-          <mat-list-item 
-            *ngFor="let notificacion of notificacionesNoLeidas; trackBy: trackByNotificacion"
-            class="notificacion-item no-leida"
-            (click)="verDetalle(notificacion)">
-            
-            <div class="notificacion-content">
-              <div class="notificacion-icon">
-                <mat-icon [color]="obtenerColor(notificacion.tipo)">
-                  {{ obtenerIcono(notificacion.tipo) }}
-                </mat-icon>
-              </div>
-              
-              <div class="notificacion-info">
-                <div class="notificacion-header">
-                  <h3>{{ obtenerTitulo(notificacion) }}</h3>
-                  <span class="fecha">{{ notificacion.fechaCreacion | dateFormat }}</span>
-                </div>
-                
-                <p class="mensaje">{{ notificacion.mensaje }}</p>
-                
-                <div class="notificacion-meta">
-                  <mat-chip [color]="obtenerColor(notificacion.tipo)">
-                    {{ notificacion.tipo.replace('_', ' ') }}
-                  </mat-chip>
-                </div>
-              </div>
-              
-              <div class="notificacion-actions">
-                <button 
-                  mat-icon-button 
-                  (click)="marcarComoLeida(notificacion); $event.stopPropagation()"
-                  [disabled]="procesando"
-                  title="Marcar como leída">
-                  <mat-icon>done</mat-icon>
-                </button>
-              </div>
+      <ng-template #notificacionesContent>
+        <ng-container *ngIf="notificaciones.length === 0; else listaNotificaciones">
+          <!-- SIN NOTIFICACIONES -->
+          <div class="empty-state">
+            <mat-icon>notifications_none</mat-icon>
+            <h2>No tienes notificaciones</h2>
+            <p>Cuando tengas actividad en tus grupos, las notificaciones aparecerán aquí</p>
+          </div>
+        </ng-container>
+        
+        <ng-template #listaNotificaciones>
+          <!-- NOTIFICACIONES NO LEÍDAS -->
+          <div class="notificaciones-section" *ngIf="notificacionesNoLeidas.length > 0">
+            <div class="section-header">
+              <mat-icon color="warn">circle</mat-icon>
+              No Leídas ({{ notificacionesNoLeidas.length }})
             </div>
             
-            <mat-divider></mat-divider>
-          </mat-list-item>
-        </mat-list>
-      </mat-card-content>
-    </mat-card>
+            <div class="section-content">
+              <mat-list class="notificaciones-list">
+                <mat-list-item 
+                  *ngFor="let notificacion of notificacionesNoLeidas; trackBy: trackByNotificacion"
+                  class="notificacion-item no-leida"
+                  (click)="verDetalle(notificacion)">
+                  
+                  <div class="notificacion-content">
+                    <div class="notificacion-icon">
+                      <mat-icon [color]="obtenerColor(notificacion.tipo)">
+                        {{ obtenerIcono(notificacion.tipo) }}
+                      </mat-icon>
+                    </div>
+                    
+                    <div class="notificacion-info">
+                      <div class="notificacion-header">
+                        <h3>{{ obtenerTitulo(notificacion) }}</h3>
+                        <span class="fecha">{{ notificacion.fechaCreacion | dateFormat }}</span>
+                      </div>
+                      
+                      <p class="mensaje">{{ notificacion.mensaje }}</p>
+                      
+                      <div class="notificacion-meta">
+                        <mat-chip [color]="obtenerColor(notificacion.tipo)">
+                          {{ notificacion.tipo.replace('_', ' ') }}
+                        </mat-chip>
+                      </div>
+                    </div>
+                    
+                    <div class="notificacion-actions">
+                      <button 
+                        mat-icon-button 
+                        (click)="marcarComoLeida(notificacion); $event.stopPropagation()"
+                        [disabled]="procesando"
+                        title="Marcar como leída">
+                        <mat-icon>done</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                  
+                  <mat-divider></mat-divider>
+                </mat-list-item>
+              </mat-list>
+            </div>
+          </div>
 
-    <!-- NOTIFICACIONES LEÍDAS -->
-    <mat-card *ngIf="notificacionesLeidas.length > 0" class="notificaciones-section">
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon color="primary">check_circle</mat-icon>
-          Leídas ({{ notificacionesLeidas.length }})
-        </mat-card-title>
-      </mat-card-header>
-      
-      <mat-card-content>
-        <mat-list class="notificaciones-list">
-          <mat-list-item 
-            *ngFor="let notificacion of notificacionesLeidas; trackBy: trackByNotificacion"
-            class="notificacion-item leida"
-            (click)="verDetalle(notificacion)">
-            
-            <div class="notificacion-content">
-              <div class="notificacion-icon">
-                <mat-icon color="disabled">
-                  {{ obtenerIcono(notificacion.tipo) }}
-                </mat-icon>
-              </div>
-              
-              <div class="notificacion-info">
-                <div class="notificacion-header">
-                  <h3>{{ obtenerTitulo(notificacion) }}</h3>
-                  <span class="fecha">{{ notificacion.fechaCreacion | dateFormat }}</span>
-                </div>
-                
-                <p class="mensaje">{{ notificacion.mensaje }}</p>
-                
-                <div class="notificacion-meta">
-                  <mat-chip color="primary" disabled>
-                    {{ notificacion.tipo.replace('_', ' ') }}
-                  </mat-chip>
-                </div>
-              </div>
+          <!-- NOTIFICACIONES LEÍDAS -->
+          <div class="notificaciones-section" *ngIf="notificacionesLeidas.length > 0">
+            <div class="section-header">
+              <mat-icon>done</mat-icon>
+              Leídas ({{ notificacionesLeidas.length }})
             </div>
             
-            <mat-divider></mat-divider>
-          </mat-list-item>
-        </mat-list>
-      </mat-card-content>
-    </mat-card>
-  </div>
+            <div class="section-content">
+              <mat-list class="notificaciones-list">
+                <mat-list-item 
+                  *ngFor="let notificacion of notificacionesLeidas; trackBy: trackByNotificacion"
+                  class="notificacion-item leida"
+                  (click)="verDetalle(notificacion)">
+                  
+                  <div class="notificacion-content">
+                    <div class="notificacion-icon">
+                      <mat-icon color="disabled">
+                        {{ obtenerIcono(notificacion.tipo) }}
+                      </mat-icon>
+                    </div>
+                    
+                    <div class="notificacion-info">
+                      <div class="notificacion-header">
+                        <h3>{{ obtenerTitulo(notificacion) }}</h3>
+                        <span class="fecha">{{ notificacion.fechaCreacion | dateFormat }}</span>
+                      </div>
+                      
+                      <p class="mensaje">{{ notificacion.mensaje }}</p>
+                      
+                      <div class="notificacion-meta">
+                        <mat-chip color="primary" disabled>
+                          {{ notificacion.tipo.replace('_', ' ') }}
+                        </mat-chip>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <mat-divider></mat-divider>
+                </mat-list-item>
+              </mat-list>
+            </div>
+          </div>
+        </ng-template>
+      </ng-template>
+    </ng-container>
+  </app-card>
 </div>

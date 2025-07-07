@@ -18,6 +18,7 @@ import { GrupoCreacionDto } from '../../../core/models/grupo.model'; // 🔧 IMP
 import { NotificacionService, ConfiguracionNotificacionesDto } from '../../../core/services/notificacion.service';
 import { AuthService } from '../../../core/auth.service';
 import { GrupoConMiembrosDto } from '../../../core/models/grupo.model';
+import { CardComponent } from '../../../shared/components/card/card.component';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 
 interface ModoOperacionInfo {
@@ -43,6 +44,7 @@ interface ModoOperacionInfo {
     MatSelectModule,
     MatSlideToggleModule,
     MatDividerModule,
+    CardComponent,
     LoadingSpinnerComponent
   ]
 })
@@ -185,7 +187,7 @@ export class ConfiguracionesComponent implements OnInit, OnDestroy {
         next: (response) => {
           this.guardandoGrupo = false;
           this.guardando = false;
-          
+
           if (response.exito) {
             this.snackBar.open('Configuración del grupo actualizada correctamente', 'Cerrar', { 
               duration: 3000,

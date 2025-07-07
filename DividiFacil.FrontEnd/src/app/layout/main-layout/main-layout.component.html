@@ -1,50 +1,13 @@
 <mat-sidenav-container class="sidenav-container">
   <mat-sidenav #drawer mode="side" opened>
-    <mat-toolbar color="primary">DividiFácil</mat-toolbar>
-    <mat-nav-list>
-      <a mat-list-item routerLink="/dashboard" routerLinkActive="active-link">Dashboard</a>
-      <!-- Submenú Grupos -->
-      <div>
-        <a mat-list-item (click)="toggleGruposMenu()" style="cursor:pointer;">
-          Grupos
-          <mat-icon style="float:right;">{{ gruposMenuAbierto ? 'expand_less' : 'expand_more' }}</mat-icon>
-        </a>
-        <div *ngIf="gruposMenuAbierto" style="padding-left: 16px;">
-          <a mat-list-item routerLink="/grupos" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact:true}">
-            Ver Grupos
-          </a>
-          <a mat-list-item routerLink="/grupos/alta" routerLinkActive="active-link">Alta Grupos</a>
-        </div>
-      </div>
-      <a mat-list-item routerLink="/gastos" routerLinkActive="active-link">Gastos</a>
-      <a mat-list-item routerLink="/pagos" routerLinkActive="active-link">Pagos</a>
-      <a mat-list-item routerLink="/caja" routerLinkActive="active-link">Caja Común</a>
-      <a mat-list-item 
-         routerLink="/notificaciones" 
-         routerLinkActive="active-link"
-         [matBadge]="contadorNotificaciones$ | async"
-         [matBadgeHidden]="(contadorNotificaciones$ | async) === 0"
-         matBadgeColor="warn"
-         matBadgeSize="small">
-        Notificaciones
-      </a>
-      <a mat-list-item routerLink="/perfil" routerLinkActive="active-link">Mi Perfil</a>
-    </mat-nav-list>
+    <app-sidebar [gruposMenuAbierto]="gruposMenuAbierto" (toggleGruposMenu)="toggleGruposMenu()" [contadorNotificaciones]="(contadorNotificaciones$ | async) ?? 0"></app-sidebar>
   </mat-sidenav>
   <mat-sidenav-content>
-    <mat-toolbar color="primary">
-      <button mat-icon-button (click)="drawer.toggle()" class="hide-desktop">
-        <mat-icon>menu</mat-icon>
-      </button>
-      <span class="flex-spacer"></span>
-      <span *ngIf="nombreUsuario">Hola, {{ nombreUsuario }}</span>
-      <button mat-button color="accent" (click)="logout()">
-        <mat-icon>logout</mat-icon> Cerrar sesión
-      </button>
-    </mat-toolbar>
+    <app-navbar [nombreUsuario]="nombreUsuario" (logout)="logout()" (toggleMenu)="drawer.toggle()"></app-navbar>
     <div class="content">
       <!-- SOLO este router-outlet -->
       <router-outlet></router-outlet>
     </div>
+    <app-footer></app-footer>
   </mat-sidenav-content>
 </mat-sidenav-container>

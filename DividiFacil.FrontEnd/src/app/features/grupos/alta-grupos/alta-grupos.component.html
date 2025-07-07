@@ -1,27 +1,34 @@
-<div class="alta-grupo-container">
-  <h2>Alta de Grupo</h2>
-  <form [formGroup]="grupoForm" (ngSubmit)="submit()">
-    <div>
-      <label for="NombreGrupo">Nombre del Grupo</label>
-      <input id="NombreGrupo" formControlName="NombreGrupo" type="text" maxlength="50" />
-      <div *ngIf="grupoForm.get('NombreGrupo')?.touched && grupoForm.get('NombreGrupo')?.invalid" class="error">
-        Nombre es requerido y debe tener máximo 50 caracteres.
+<app-card>
+  <ng-container card-header>
+    <mat-icon>group_add</mat-icon>
+    <span>Alta de Grupo</span>
+  </ng-container>
+  <ng-container card-content>
+    <form [formGroup]="grupoForm" (ngSubmit)="submit()">
+      <div>
+        <label for="NombreGrupo">Nombre del Grupo</label>
+        <input id="NombreGrupo" formControlName="NombreGrupo" type="text" maxlength="50" />
+        <div *ngIf="grupoForm.get('NombreGrupo')?.touched && grupoForm.get('NombreGrupo')?.invalid" class="error">
+          Nombre es requerido y debe tener máximo 50 caracteres.
+        </div>
       </div>
-    </div>
 
-    <div>
-      <label for="Descripcion">Descripción</label>
-      <textarea id="Descripcion" formControlName="Descripcion" maxlength="200"></textarea>
-      <div *ngIf="grupoForm.get('Descripcion')?.touched && grupoForm.get('Descripcion')?.invalid" class="error">
-        Máximo 200 caracteres.
+      <div>
+        <label for="Descripcion">Descripción</label>
+        <textarea id="Descripcion" formControlName="Descripcion" maxlength="200"></textarea>
+        <div *ngIf="grupoForm.get('Descripcion')?.touched && grupoForm.get('Descripcion')?.invalid" class="error">
+          Máximo 200 caracteres.
+        </div>
       </div>
-    </div>
 
-    <!-- ModoOperacion podría ser un select si quieres variar el valor -->
-    <input type="hidden" formControlName="ModoOperacion" />
+      <!-- ModoOperacion podría ser un select si quieres variar el valor -->
+      <input type="hidden" formControlName="ModoOperacion" />
 
-    <button type="submit" [disabled]="loading">Crear Grupo</button>
-    <div *ngIf="loading">Creando grupo...</div>
-    <div *ngIf="error" class="error">{{ error }}</div>
-  </form>
-</div>
+      <button type="submit" [disabled]="loading">Crear Grupo</button>
+      <div *ngIf="loading">
+        <app-loading-spinner text="Creando grupo..."></app-loading-spinner>
+      </div>
+      <div *ngIf="error" class="error">{{ error }}</div>
+    </form>
+  </ng-container>
+</app-card>

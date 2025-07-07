@@ -1,126 +1,113 @@
 <div class="balance-usuario-container">
   
   <!-- HEADER -->
-  <div class="header-section">
-    <button mat-icon-button (click)="volverAlBalanceGrupo()" class="back-button">
-      <mat-icon>arrow_back</mat-icon>
-    </button>
-    <h1>
+  <app-card>
+    <ng-container card-header>
+      <button mat-icon-button (click)="volverAlBalanceGrupo()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
       <mat-icon>person</mat-icon>
-      Balance Personal
-    </h1>
-    <div class="header-actions">
+      <span>Balance Personal</span>
       <button mat-button (click)="cargarBalanceUsuario()" [disabled]="loading">
         <mat-icon>refresh</mat-icon>
         Actualizar
       </button>
-    </div>
-  </div>
-
-  <!-- LOADING -->
-  <div *ngIf="loading" class="loading-container">
-    <mat-spinner></mat-spinner>
-    <p>Cargando balance personal...</p>
-  </div>
-
-  <!-- CONTENIDO -->
-  <div *ngIf="!loading && balanceUsuario" class="balance-content">
-    
-    <!-- RESUMEN PERSONAL -->
-    <mat-card class="resumen-personal-card">
-      <mat-card-header>
-        <mat-card-title>{{ balanceUsuario.nombreUsuario }}</mat-card-title>
-        <mat-card-subtitle>Balance Personal</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="balance-overview">
-          <div class="balance-stat">
-            <mat-icon>payment</mat-icon>
-            <div class="stat-info">
-              <span class="label">Total Pagado</span>
-              <span class="value pagado">{{ balanceUsuario.totalPagado | currencyFormat }}</span>
-            </div>
-          </div>
-          
-          <div class="balance-stat">
-            <mat-icon>account_balance_wallet</mat-icon>
-            <div class="stat-info">
-              <span class="label">Debería Haber Pagado</span>
-              <span class="value">{{ balanceUsuario.deberiaHaberPagado | currencyFormat }}</span>
-            </div>
-          </div>
-          
-          <div class="balance-stat">
-            <mat-icon [class]="'balance-' + obtenerColorBalance(balanceUsuario.balance)">
-              account_balance
-            </mat-icon>
-            <div class="stat-info">
-              <span class="label">Balance Final</span>
-              <span class="value" [class]="'balance-' + obtenerColorBalance(balanceUsuario.balance)">
-                {{ balanceUsuario.balance | currencyFormat }}
-              </span>
-              <span class="status">{{ obtenerEstadoBalance(balanceUsuario.balance) }}</span>
-            </div>
-          </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
-
-    <!-- DETALLE DEUDAS -->
-    <mat-card class="detalles-card">
-      <mat-card-title>Deudas Detalladas</mat-card-title>
-      <mat-card-content>
-        <div *ngIf="!balanceUsuario.deudasDetalladas || balanceUsuario.deudasDetalladas.length === 0" class="empty-tab">
-          <mat-icon>check_circle</mat-icon>
-          <h3>¡No tienes deudas pendientes!</h3>
-          <p>Todas tus deudas están al día</p>
-        </div>
-        <div *ngIf="balanceUsuario.deudasDetalladas && balanceUsuario.deudasDetalladas.length > 0">
-          <mat-accordion>
-            <mat-expansion-panel *ngFor="let deuda of balanceUsuario.deudasDetalladas; trackBy: trackByDeuda">
-              <mat-expansion-panel-header>
-                <mat-panel-title>
-                  <mat-icon>receipt</mat-icon>
-                  {{ deuda.origenes.length > 0 ? deuda.origenes[0].descripcionGasto : 'Deuda' }}
-                </mat-panel-title>
-                <mat-panel-description>
-                  <mat-chip color="warn">
-                    Debes: {{ deuda.monto | currencyFormat }}
-                  </mat-chip>
-                </mat-panel-description>
-              </mat-expansion-panel-header>
-              
-              <div class="deuda-detalle">
-                <div class="deuda-info">
-                  <div class="info-row">
-                    <span class="label">Acreedor:</span>
-                    <span>{{ deuda.nombreUsuarioAcreedor }}</span>
-                  </div>
-                  <div class="info-row">
-                    <span class="label">Monto:</span>
-                    <span>{{ deuda.monto | currencyFormat }}</span>
-                  </div>
-                  <div class="info-row">
-                    <span class="label">Origenes:</span>
-                    <span>
-                      <ng-container *ngFor="let origen of deuda.origenes">
-                        {{ origen.descripcionGasto }} ({{ origen.montoOriginal | currencyFormat }})<br />
-                      </ng-container>
-                    </span>
-                  </div>
-                </div>
-                
-                <div class="deuda-acciones">
-                  <button mat-raised-button color="primary" (click)="crearPagoDesdeDeuda(deuda)">
-                    <mat-icon>payment</mat-icon>
-                    Crear Pago
-                  </button>
-                </div>
+    </ng-container>
+    <ng-container card-content>
+      <ng-container *ngIf="loading; else balanceUsuarioContent">
+        <app-loading-spinner text="Cargando balance personal..."></app-loading-spinner>
+      </ng-container>
+      <ng-template #balanceUsuarioContent>
+        <ng-container *ngIf="balanceUsuario; else emptyState">
+          <div class="balance-overview">
+            <div class="balance-stat">
+              <mat-icon>payment</mat-icon>
+              <div class="stat-info">
+                <span class="label">Total Pagado</span>
+                <span class="value pagado">{{ balanceUsuario.totalPagado | currencyFormat }}</span>
               </div>
-            </mat-expansion-panel>
-          </mat-accordion>
-        </div>
-      </mat-card-content>
-    </mat-card>
-  </div>
+            </div>
+            <div class="balance-stat">
+              <mat-icon>account_balance_wallet</mat-icon>
+              <div class="stat-info">
+                <span class="label">Debería Haber Pagado</span>
+                <span class="value">{{ balanceUsuario.deberiaHaberPagado | currencyFormat }}</span>
+              </div>
+            </div>
+            <div class="balance-stat">
+              <mat-icon [class]="'balance-' + obtenerColorBalance(balanceUsuario.balance)">
+                account_balance
+              </mat-icon>
+              <div class="stat-info">
+                <span class="label">Balance Final</span>
+                <span class="value" [class]="'balance-' + obtenerColorBalance(balanceUsuario.balance)">
+                  {{ balanceUsuario.balance | currencyFormat }}
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- DETALLE DEUDAS -->
+          <div class="detalles-deudas">
+            <div *ngIf="!balanceUsuario.deudasDetalladas || balanceUsuario.deudasDetalladas.length === 0" class="empty-tab">
+              <mat-icon>check_circle</mat-icon>
+              <h3>¡No tienes deudas pendientes!</h3>
+              <p>Todas tus deudas están al día</p>
+            </div>
+            <div *ngIf="balanceUsuario.deudasDetalladas && balanceUsuario.deudasDetalladas.length > 0">
+              <mat-accordion>
+                <mat-expansion-panel *ngFor="let deuda of balanceUsuario.deudasDetalladas; trackBy: trackByDeuda">
+                  <mat-expansion-panel-header>
+                    <mat-panel-title>
+                      <mat-icon>receipt</mat-icon>
+                      {{ deuda.origenes.length > 0 ? deuda.origenes[0].descripcionGasto : 'Deuda' }}
+                    </mat-panel-title>
+                    <mat-panel-description>
+                      <mat-chip color="warn">
+                        Debes: {{ deuda.monto | currencyFormat }}
+                      </mat-chip>
+                    </mat-panel-description>
+                  </mat-expansion-panel-header>
+                  
+                  <div class="deuda-detalle">
+                    <div class="deuda-info">
+                      <div class="info-row">
+                        <span class="label">Acreedor:</span>
+                        <span>{{ deuda.nombreUsuarioAcreedor }}</span>
+                      </div>
+                      <div class="info-row">
+                        <span class="label">Monto:</span>
+                        <span>{{ deuda.monto | currencyFormat }}</span>
+                      </div>
+                      <div class="info-row">
+                        <span class="label">Origenes:</span>
+                        <span>
+                          <ng-container *ngFor="let origen of deuda.origenes">
+                            {{ origen.descripcionGasto }} ({{ origen.montoOriginal | currencyFormat }})<br />
+                          </ng-container>
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div class="deuda-acciones">
+                      <button mat-raised-button color="primary" (click)="crearPagoDesdeDeuda(deuda)">
+                        <mat-icon>payment</mat-icon>
+                        Crear Pago
+                      </button>
+                    </div>
+                  </div>
+                </mat-expansion-panel>
+              </mat-accordion>
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #emptyState>
+          <div class="empty-state">
+            <mat-icon>account_balance_wallet</mat-icon>
+            <h2>No hay datos de balance personal</h2>
+          </div>
+        </ng-template>
+      </ng-template>
+    </ng-container>
+  </app-card>
 </div>

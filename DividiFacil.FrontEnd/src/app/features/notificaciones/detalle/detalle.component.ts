@@ -7,13 +7,23 @@ import { AuthService } from '../../../core/auth.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ResponseDto } from '../../../core/models/response.model';
+import { CardComponent } from '../../../shared/components/card/card.component';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-detalle',
   standalone: true,
   templateUrl: './detalle.component.html',
   styleUrl: './detalle.component.scss',
-  imports: [CommonModule, MatCardModule, MatProgressSpinnerModule]
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatProgressSpinnerModule,
+    CardComponent,
+    MatIconModule,
+    LoadingSpinnerComponent
+  ]
 })
 export class DetalleComponent implements OnInit {
   notificacion: NotificacionDto | null = null;

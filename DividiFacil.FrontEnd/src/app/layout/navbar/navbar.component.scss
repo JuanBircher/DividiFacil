@@ -1,0 +1,44 @@
+@use '../../shared/styles/variables' as *;
+
+// Estilos para navbar accesible, dark mode y animaciones sutiles
+mat-toolbar {
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: 0.5px;
+  background: $color-primary;
+  color: #fff;
+  transition: background 0.3s, color 0.3s;
+}
+body.dark-mode mat-toolbar {
+  background: $color-primary-darkmode;
+  color: $color-text-dark;
+}
+button[mat-button], button[mat-icon-button] {
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  border-radius: 6px;
+  &:hover, &:focus-visible {
+    background: #e3f2fd;
+    color: $color-primary;
+    outline: 2px solid $color-primary;
+    box-shadow: 0 2px 8px #1976d233;
+  }
+}
+body.dark-mode button[mat-button],
+body.dark-mode button[mat-icon-button] {
+  &:hover, &:focus-visible {
+    background: #263043;
+    color: $color-primary-darkmode;
+    outline: 2px solid $color-primary-darkmode;
+  }
+}
+.flex-spacer {
+  flex: 1 1 auto;
+}
+.hide-desktop {
+  display: none;
+}
+@media (max-width: 800px) {
+  .hide-desktop {
+    display: inline-flex;
+  }
+}

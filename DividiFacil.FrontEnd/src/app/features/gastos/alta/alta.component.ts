@@ -20,6 +20,7 @@ import { GastoService } from '../../../core/services/gasto.service';
 import { GrupoService } from '../../../core/services/grupo.service';
 import { GastoCreacionDto, DetalleGastoCreacionDto, GastoDto } from '../../../core/models/gasto.model';
 import { GrupoConMiembrosDto, MiembroGrupoDto, MiembroGrupoSimpleDto } from '../../../core/models/grupo.model';
+import { CardComponent } from '../../../shared/components/card/card.component';
 
 interface ParticipanteGasto {
   miembro: MiembroGrupoSimpleDto;
@@ -48,7 +49,8 @@ interface ParticipanteGasto {
     MatTooltipModule,
     MatChipsModule,
     
-    MatCheckboxModule
+    MatCheckboxModule,
+    CardComponent // <-- Importar CardComponent para <app-card>
   ]
 })
 export class AltaGastosComponent implements OnInit, OnDestroy {

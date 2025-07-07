@@ -1,3 +1,5 @@
+@use '../../shared/styles/variables' as *;
+
 .sidenav-container {
   height: 100vh;
 }
@@ -21,4 +23,21 @@
 .active-link {
   font-weight: bold;
   color: #1976d2;
+}
+body.dark-mode .sidenav-container {
+  background: $color-background-dark;
+}
+body.dark-mode .content {
+  background: $color-background-dark;
+  color: $color-text-dark;
+}
+.active-link {
+  font-weight: bold;
+  color: $color-primary;
+}
+body.dark-mode .active-link {
+  color: $color-primary-darkmode;
+}
+.sidenav-container, .content {
+  transition: background 0.3s, color 0.3s;
 }

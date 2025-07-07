@@ -13,6 +13,8 @@ import { GrupoService } from '../../../../core/services/grupo.service';
 
 // Modelos
 import { GrupoDto } from '../../../../core/models/grupo.model';
+import { CardComponent } from '../../../../shared/components/card/card.component';
+import { LoadingSpinnerComponent } from '../../../../shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-recent-groups',
@@ -26,7 +28,9 @@ import { GrupoDto } from '../../../../core/models/grupo.model';
     MatButtonModule,
     MatIconModule,
     MatChipsModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    CardComponent,
+    LoadingSpinnerComponent
   ]
 })
 export class RecentGroupsComponent implements OnInit, OnDestroy {

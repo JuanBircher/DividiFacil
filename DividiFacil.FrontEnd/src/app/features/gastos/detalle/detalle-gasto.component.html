@@ -1,25 +1,18 @@
 <div class="detalle-gasto-container">
   
   <!-- LOADING STATE -->
-  <div class="loading-container" *ngIf="loading">
-    <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
-    <p>Cargando detalle del gasto...</p>
-  </div>
-
+  <app-card *ngIf="loading" title="Cargando detalle del gasto..." icon="hourglass_empty" [loading]="true"></app-card>
   <!-- ERROR STATE -->
-  <mat-card class="error-card" *ngIf="error && !loading">
-    <mat-card-content>
-      <div class="error-content">
-        <mat-icon class="error-icon">error</mat-icon>
-        <h3>{{ error }}</h3>
-        <button mat-raised-button color="primary" (click)="cargarDetalleGasto()">
-          <mat-icon>refresh</mat-icon>
-          Reintentar
-        </button>
-      </div>
-    </mat-card-content>
-  </mat-card>
-
+  <app-card *ngIf="error && !loading" title="Error" icon="error">
+    <div class="error-content">
+      <mat-icon class="error-icon">error</mat-icon>
+      <h3>{{ error }}</h3>
+      <button mat-raised-button color="primary" (click)="cargarDetalleGasto()">
+        <mat-icon>refresh</mat-icon>
+        Reintentar
+      </button>
+    </div>
+  </app-card>
   <!-- CONTENIDO PRINCIPAL -->
   <div class="detalle-content" *ngIf="gasto && !loading && !error">
     
@@ -69,61 +62,52 @@
     </div>
 
     <!-- RESUMEN PRINCIPAL -->
-    <mat-card class="resumen-card">
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon>account_balance_wallet</mat-icon>
-          Resumen del Gasto
-        </mat-card-title>
-      </mat-card-header>
-      
-      <mat-card-content>
-        <div class="resumen-grid">
-          <!-- Monto Total -->
-          <div class="resumen-item monto-total">
-            <div class="item-label">Monto Total</div>
-            <div class="item-valor grande">${{ gasto.monto | number:'1.2-2' }}</div>
-          </div>
+    <app-card title="Resumen del Gasto" icon="account_balance_wallet">
+      <div class="resumen-grid">
+        <!-- Monto Total -->
+        <div class="resumen-item monto-total">
+          <div class="item-label">Monto Total</div>
+          <div class="item-valor grande">${{ gasto.monto | number:'1.2-2' }}</div>
+        </div>
 
-          <!-- Pagador -->
-          <div class="resumen-item pagador">
-            <div class="item-label">Pagado por</div>
-            <div class="item-valor">{{ gasto.nombreMiembroPagador }}</div>
-          </div>
+        <!-- Pagador -->
+        <div class="resumen-item pagador">
+          <div class="item-label">Pagado por</div>
+          <div class="item-valor">{{ gasto.nombreMiembroPagador }}</div>
+        </div>
 
-          <!-- Progreso de Pagos -->
-          <div class="resumen-item progreso">
-            <div class="item-label">Progreso de Pagos</div>
-            <div class="progreso-contenido">
-              <div class="progreso-bar">
-                <div class="progreso-fill" [style.width.%]="obtenerPorcentajePagado()"></div>
-              </div>
-              <span class="progreso-texto">{{ obtenerPorcentajePagado() }}%</span>
+        <!-- Progreso de Pagos -->
+        <div class="resumen-item progreso">
+          <div class="item-label">Progreso de Pagos</div>
+          <div class="progreso-contenido">
+            <div class="progreso-bar">
+              <div class="progreso-fill" [style.width.%]="obtenerPorcentajePagado()"></div>
             </div>
+            <span class="progreso-texto">{{ obtenerPorcentajePagado() }}%</span>
           </div>
+        </div>
 
-          <!-- Estadísticas -->
-          <div class="resumen-item estadisticas">
-            <div class="estadisticas-grid">
-              <div class="stat-item pagado">
-                <mat-icon>check_circle</mat-icon>
-                <div class="stat-info">
-                  <div class="stat-valor">${{ totalPagado | number:'1.2-2' }}</div>
-                  <div class="stat-label">Pagado ({{ participantesPagados }})</div>
-                </div>
+        <!-- Estadísticas -->
+        <div class="resumen-item estadisticas">
+          <div class="estadisticas-grid">
+            <div class="stat-item pagado">
+              <mat-icon>check_circle</mat-icon>
+              <div class="stat-info">
+                <div class="stat-valor">${{ totalPagado | number:'1.2-2' }}</div>
+                <div class="stat-label">Pagado ({{ participantesPagados }})</div>
               </div>
-              <div class="stat-item pendiente">
-                <mat-icon>pending</mat-icon>
-                <div class="stat-info">
-                  <div class="stat-valor">${{ totalPendiente | number:'1.2-2' }}</div>
-                  <div class="stat-label">Pendiente ({{ participantesPendientes }})</div>
-                </div>
+            </div>
+            <div class="stat-item pendiente">
+              <mat-icon>pending</mat-icon>
+              <div class="stat-info">
+                <div class="stat-valor">${{ totalPendiente | number:'1.2-2' }}</div>
+                <div class="stat-label">Pendiente ({{ participantesPendientes }})</div>
               </div>
             </div>
           </div>
         </div>
-      </mat-card-content>
-    </mat-card>
+      </div>
+    </app-card>
 
     <!-- PARTICIPANTES Y ESTADOS -->
     <mat-card class="participantes-card">

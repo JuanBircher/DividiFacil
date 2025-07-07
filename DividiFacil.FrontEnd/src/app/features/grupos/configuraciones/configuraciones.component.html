@@ -1,18 +1,13 @@
 <div class="configuraciones-container" *ngIf="!loading; else loadingTemplate">
 
   <!-- ⚙️ CONFIGURACIÓN DEL GRUPO -->
-  <mat-card class="config-section" *ngIf="esAdministrador">
-    <mat-card-header>
-      <mat-card-title>
-        <mat-icon>settings</mat-icon>
-        Configuración del Grupo
-      </mat-card-title>
-      <mat-card-subtitle>
-        Personaliza la información y modo de operación del grupo
-      </mat-card-subtitle>
-    </mat-card-header>
-    
-    <mat-card-content>
+  <app-card *ngIf="esAdministrador" cardClass="config-section">
+    <ng-container card-header>
+      <mat-icon>settings</mat-icon>
+      <span>Configuración del Grupo</span>
+      <span class="subtitle">Personaliza la información y modo de operación del grupo</span>
+    </ng-container>
+    <ng-container card-content>
       <form [formGroup]="grupoForm" class="config-form">
         
         <!-- Nombre del Grupo -->
@@ -70,7 +65,7 @@
           </div>
         </div>
       </form>
-    </mat-card-content>
+    </ng-container>
 
     <mat-card-actions align="end">
       <button 
@@ -90,7 +85,7 @@
         {{ guardandoGrupo ? 'Guardando...' : 'Guardar Cambios' }}
       </button>
     </mat-card-actions>
-  </mat-card>
+  </app-card>
 
   <!-- 🔔 CONFIGURACIÓN DE NOTIFICACIONES -->
   <mat-card class="config-section">

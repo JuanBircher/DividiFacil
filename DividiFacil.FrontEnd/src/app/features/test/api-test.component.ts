@@ -120,7 +120,7 @@ export class ApiTestComponent implements OnInit {
     this.loading = true;
     this.pagosTestResult = null;
 
-    this.pagoService.obtenerPagosRealizados().subscribe({
+    this.pagoService.obtenerPagosCompletados().subscribe({
       next: (response: any) => {
         console.log('✅ Pagos obtenidos:', response);
         this.pagosTestResult = { success: true, data: response };
@@ -139,7 +139,15 @@ export class ApiTestComponent implements OnInit {
     this.loading = true;
     this.notificacionesTestResult = null;
 
-    this.notificacionService.obtenerPendientes().subscribe({
+    const usuario = this.authService.obtenerUsuario();
+    const idUsuario = usuario?.idUsuario;
+    if (!idUsuario) {
+      this.notificacionesTestResult = { success: false, data: 'Usuario no autenticado o idUsuario no disponible' };
+      this.loading = false;
+      return;
+    }
+
+    this.notificacionService.obtenerPendientes(idUsuario).subscribe({
       next: (response: any) => {
         console.log('✅ Notificaciones obtenidas:', response);
         this.notificacionesTestResult = { success: true, data: response };

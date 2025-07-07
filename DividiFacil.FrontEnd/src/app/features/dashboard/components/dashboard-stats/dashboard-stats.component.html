@@ -1,76 +1,72 @@
-<div class="dashboard-stats-container">
-  <!-- Loading State -->
-  <div *ngIf="cargando" class="loading-container">
-    <mat-spinner diameter="40"></mat-spinner>
-    <p>Cargando estadísticas...</p>
-  </div>
+<app-card cardClass="dashboard-stats-container">
+  <ng-container card-content>
+    <!-- Loading State -->
+    <div *ngIf="cargando" class="loading-container">
+      <app-loading-spinner text="Cargando estadísticas..."></app-loading-spinner>
+    </div>
 
-  <!-- Error State -->
-  <div *ngIf="error && !cargando" class="error-container">
-    <mat-card class="error-card">
-      <mat-card-content>
-        <mat-icon color="warn">error</mat-icon>
-        <span>{{ error }}</span>
-        <button mat-button color="primary" (click)="refrescar()">
-          <mat-icon>refresh</mat-icon>
-          Reintentar
-        </button>
-      </mat-card-content>
-    </mat-card>
-  </div>
+    <!-- Error State -->
+    <div *ngIf="error && !cargando" class="error-container">
+      <app-card cardClass="error-card">
+        <ng-container card-content>
+          <mat-icon color="warn">error</mat-icon>
+          <span>{{ error }}</span>
+          <button mat-button color="primary" (click)="refrescar()">
+            <mat-icon>refresh</mat-icon>
+            Reintentar
+          </button>
+        </ng-container>
+      </app-card>
+    </div>
 
-  <!-- Statistics Cards -->
-  <div *ngIf="!cargando && !error && estadisticas.length > 0" class="stats-grid">
-    <mat-card 
-      *ngFor="let estadistica of estadisticas; trackBy: trackByEstadisticaTitulo"
-      class="stat-card"
-      [attr.data-color]="estadistica.color">
-      
-      <mat-card-header>
-        <div mat-card-avatar class="stat-icon" [attr.data-color]="estadistica.color">
-          <mat-icon>{{ estadistica.icono }}</mat-icon>
-        </div>
-        <mat-card-title>{{ estadistica.titulo }}</mat-card-title>
-        <mat-card-subtitle>{{ estadistica.subtitulo }}</mat-card-subtitle>
-      </mat-card-header>
-
-      <mat-card-content>
-        <div class="stat-value">
-          <span class="value" [attr.data-color]="estadistica.color">
-            <!-- Formatear según el tipo -->
-            <ng-container *ngIf="estadistica.titulo.includes('Monto')">
-              {{ estadistica.valor | currency:'ARS':'symbol-narrow':'1.0-0' }}
-            </ng-container>
-            <ng-container *ngIf="!estadistica.titulo.includes('Monto')">
-              {{ estadistica.valor }}
-            </ng-container>
-          </span>
-          
-          <div class="trend-indicator" *ngIf="estadistica.tendencia">
-            <mat-icon 
-              [attr.data-trend]="estadistica.tendencia"
-              class="trend-icon">
-              {{ estadistica.tendencia === 'up' ? 'trending_up' : 
-                 estadistica.tendencia === 'down' ? 'trending_down' : 'trending_flat' }}
-            </mat-icon>
+    <!-- Statistics Cards -->
+    <div *ngIf="!cargando && !error && estadisticas.length > 0" class="stats-grid">
+      <app-card *ngFor="let estadistica of estadisticas; trackBy: trackByEstadisticaTitulo" [cardClass]="'stat-card ' + estadistica.color">
+        <ng-container card-header>
+          <div class="stat-icon" [attr.data-color]="estadistica.color">
+            <mat-icon>{{ estadistica.icono }}</mat-icon>
           </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
-  </div>
+          <span>{{ estadistica.titulo }}</span>
+          <span class="subtitle">{{ estadistica.subtitulo }}</span>
+        </ng-container>
+        <ng-container card-content>
+          <div class="stat-value">
+            <span class="value" [attr.data-color]="estadistica.color">
+              <!-- Formatear según el tipo -->
+              <ng-container *ngIf="estadistica.titulo.includes('Monto')">
+                {{ estadistica.valor | currency:'ARS':'symbol-narrow':'1.0-0' }}
+              </ng-container>
+              <ng-container *ngIf="!estadistica.titulo.includes('Monto')">
+                {{ estadistica.valor }}
+              </ng-container>
+            </span>
+            
+            <div class="trend-indicator" *ngIf="estadistica.tendencia">
+              <mat-icon 
+                [attr.data-trend]="estadistica.tendencia"
+                class="trend-icon">
+                {{ estadistica.tendencia === 'up' ? 'trending_up' : 
+                   estadistica.tendencia === 'down' ? 'trending_down' : 'trending_flat' }}
+              </mat-icon>
+            </div>
+          </div>
+        </ng-container>
+      </app-card>
+    </div>
 
-  <!-- Empty State -->
-  <div *ngIf="!cargando && !error && estadisticas.length === 0" class="empty-state">
-    <mat-card>
-      <mat-card-content>
-        <mat-icon class="empty-icon">analytics</mat-icon>
-        <h3>No hay estadísticas disponibles</h3>
-        <p>Cuando tengas grupos y gastos, las estadísticas aparecerán aquí</p>
-        <button mat-raised-button color="primary" (click)="refrescar()">
-          <mat-icon>refresh</mat-icon>
-          Actualizar
-        </button>
-      </mat-card-content>
-    </mat-card>
-  </div>
-</div>
+    <!-- Empty State -->
+    <div *ngIf="!cargando && !error && estadisticas.length === 0" class="empty-state">
+      <mat-card>
+        <mat-card-content>
+          <mat-icon class="empty-icon">analytics</mat-icon>
+          <h3>No hay estadísticas disponibles</h3>
+          <p>Cuando tengas grupos y gastos, las estadísticas aparecerán aquí</p>
+          <button mat-raised-button color="primary" (click)="refrescar()">
+            <mat-icon>refresh</mat-icon>
+            Actualizar
+          </button>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </ng-container>
+</app-card>

@@ -1,13 +1,10 @@
-<mat-card class="quick-actions-card">
-  <mat-card-header>
-    <mat-card-title>
-      <mat-icon color="primary">flash_on</mat-icon>
-      Acciones Rápidas
-    </mat-card-title>
-    <mat-card-subtitle>Accede rápidamente a las funciones principales</mat-card-subtitle>
-  </mat-card-header>
-
-  <mat-card-content>
+<app-card cardClass="quick-actions-card">
+  <ng-container card-header>
+    <mat-icon color="primary">flash_on</mat-icon>
+    <span>Acciones Rápidas</span>
+    <span class="subtitle">Accede rápidamente a las funciones principales</span>
+  </ng-container>
+  <ng-container card-content>
     <div class="actions-grid">
       <button 
         *ngFor="let action of actions; trackBy: trackByActionId" 
@@ -17,7 +14,6 @@
         [class]="'action-' + action.color"
         (click)="ejecutarAccion(action)"
         class="action-button">
-        
         <div class="action-content">
           <div class="action-icon">
             <mat-icon 
@@ -28,7 +24,6 @@
               {{ action.icono }}
             </mat-icon>
           </div>
-          
           <div class="action-text">
             <h3 class="action-title">{{ action.titulo }}</h3>
             <p class="action-description">{{ action.descripcion }}</p>
@@ -36,39 +31,19 @@
         </div>
       </button>
     </div>
-
-    <!-- Separador -->
     <div class="divider"></div>
-
-    <!-- Acciones secundarias -->
     <div class="secondary-actions">
       <h5 class="secondary-title">Accesos directos</h5>
-      
       <div class="secondary-buttons">
-        <button 
-          mat-button 
-          color="primary"
-          (click)="router.navigate(['/grupos'])">
+        <button mat-button color="primary" (click)="router.navigate(['/grupos'])">
           <mat-icon>list</mat-icon>
           Ver todos los grupos
         </button>
-        
-        <button 
-          mat-button 
-          color="primary"
-          (click)="router.navigate(['/pagos'])">
+        <button mat-button color="primary" (click)="router.navigate(['/pagos'])">
           <mat-icon>payment</mat-icon>
-          Ver pagos
-        </button>
-        
-        <button 
-          mat-button 
-          color="primary"
-          (click)="router.navigate(['/perfil'])">
-          <mat-icon>person</mat-icon>
-          Mi perfil
+          Ver todos los pagos
         </button>
       </div>
     </div>
-  </mat-card-content>
-</mat-card>
+  </ng-container>
+</app-card>

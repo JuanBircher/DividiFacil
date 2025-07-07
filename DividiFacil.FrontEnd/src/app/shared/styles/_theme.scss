@@ -1,0 +1,42 @@
+// Tema principal para DividiFácil
+
+@import './variables';
+@import './mixins';
+@import './typography';
+@import './layout';
+
+body {
+  background: $color-background;
+  color: $color-text;
+  transition: $transition-base;
+}
+
+body.dark-mode {
+  background: $color-background-dark;
+  color: $color-text-dark;
+}
+
+.mat-card {
+  @include card-base;
+  margin-bottom: $spacing-md;
+  transition: $transition-base;
+  // Dark mode
+  body.dark-mode & {
+    background: $color-surface-dark;
+    border-color: $color-border-dark;
+    color: $color-text-dark;
+  }
+}
+
+.mat-button, .mat-raised-button, .mat-flat-button {
+  font-family: $font-family-base;
+  border-radius: $border-radius;
+}
+
+a {
+  color: $color-primary;
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+  }
+}

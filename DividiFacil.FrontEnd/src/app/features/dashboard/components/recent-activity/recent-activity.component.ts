@@ -19,6 +19,7 @@ import { GrupoDto } from '../../../../core/models/grupo.model';
 // ✅ PIPES CORRECTOS
 import { DateFormatPipe } from '../../../../shared/pipes/date-format.pipe';
 import { CurrencyFormatPipe } from '../../../../shared/pipes/currency-format.pipe';
+import { CardComponent } from '../../../../shared/components/card/card.component';
 
 interface ActividadItem {
   id: string;
@@ -48,6 +49,7 @@ interface FiltroItem {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    CardComponent,
     RouterModule,
     MatCardModule,
     MatButtonModule,

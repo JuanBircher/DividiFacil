@@ -38,6 +38,7 @@ export class RecordatorioService {
    * Obtener recordatorios del usuario
    */
   obtenerMisRecordatorios(): Observable<ApiResponse<RecordatorioDto[]>> {
+    console.log('[RecordatorioService] obtenerMisRecordatorios');
     return this.http.get<ApiResponse<RecordatorioDto[]>>(`${this.apiUrl}/usuario`);
   }
 
@@ -45,6 +46,7 @@ export class RecordatorioService {
    * Crear nuevo recordatorio
    */
   crearRecordatorio(recordatorio: RecordatorioCreacionDto): Observable<ApiResponse<RecordatorioDto>> {
+    console.log('[RecordatorioService] crearRecordatorio', { recordatorio });
     return this.http.post<ApiResponse<RecordatorioDto>>(this.apiUrl, recordatorio);
   }
 
@@ -52,6 +54,7 @@ export class RecordatorioService {
    * Obtener recordatorio por ID
    */
   obtenerRecordatorio(idRecordatorio: string): Observable<ApiResponse<RecordatorioDto>> {
+    console.log('[RecordatorioService] obtenerRecordatorio', { idRecordatorio });
     return this.http.get<ApiResponse<RecordatorioDto>>(`${this.apiUrl}/${idRecordatorio}`);
   }
 
@@ -59,6 +62,7 @@ export class RecordatorioService {
    * Actualizar recordatorio
    */
   actualizarRecordatorio(idRecordatorio: string, recordatorio: Partial<RecordatorioCreacionDto>): Observable<ApiResponse<RecordatorioDto>> {
+    console.log('[RecordatorioService] actualizarRecordatorio', { idRecordatorio, recordatorio });
     return this.http.put<ApiResponse<RecordatorioDto>>(`${this.apiUrl}/${idRecordatorio}`, recordatorio);
   }
 
@@ -66,6 +70,7 @@ export class RecordatorioService {
    * Marcar recordatorio como completado
    */
   marcarComoCompletado(idRecordatorio: string): Observable<ApiResponse<boolean>> {
+    console.log('[RecordatorioService] marcarComoCompletado', { idRecordatorio });
     return this.http.put<ApiResponse<boolean>>(`${this.apiUrl}/${idRecordatorio}/completado`, {});
   }
 
@@ -73,6 +78,7 @@ export class RecordatorioService {
    * Eliminar recordatorio
    */
   eliminarRecordatorio(idRecordatorio: string): Observable<ApiResponse<boolean>> {
+    console.log('[RecordatorioService] eliminarRecordatorio', { idRecordatorio });
     return this.http.delete<ApiResponse<boolean>>(`${this.apiUrl}/${idRecordatorio}`);
   }
 
@@ -80,6 +86,7 @@ export class RecordatorioService {
    * Obtener recordatorios pendientes (no completados y no vencidos)
    */
   obtenerPendientes(): Observable<ApiResponse<RecordatorioDto[]>> {
+    console.log('[RecordatorioService] obtenerPendientes');
     return this.http.get<ApiResponse<RecordatorioDto[]>>(`${this.apiUrl}/pendientes`);
   }
 
@@ -87,6 +94,7 @@ export class RecordatorioService {
    * Obtener recordatorios vencidos
    */
   obtenerVencidos(): Observable<ApiResponse<RecordatorioDto[]>> {
+    console.log('[RecordatorioService] obtenerVencidos');
     return this.http.get<ApiResponse<RecordatorioDto[]>>(`${this.apiUrl}/vencidos`);
   }
 
@@ -94,6 +102,7 @@ export class RecordatorioService {
    * Postponer recordatorio (cambiar fecha de vencimiento)
    */
   postponerRecordatorio(idRecordatorio: string, nuevaFecha: string): Observable<ApiResponse<RecordatorioDto>> {
+    console.log('[RecordatorioService] postponerRecordatorio', { idRecordatorio, nuevaFecha });
     return this.http.put<ApiResponse<RecordatorioDto>>(`${this.apiUrl}/${idRecordatorio}/postponer`, { 
       fechaVencimiento: nuevaFecha 
     });

@@ -1,0 +1,32 @@
+// Utilidades de layout para DividiFácil
+// Ejemplo de uso:
+// <div class="container flex-row mt-md">...</div>
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: $spacing-sm;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  gap: $spacing-sm;
+}
+
+.flex-col {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.centered {
+  @include flex-center;
+}
+
+.mt-sm { margin-top: $spacing-sm; }
+.mt-md { margin-top: $spacing-md; }
+.mt-lg { margin-top: $spacing-lg; }
+.mb-sm { margin-bottom: $spacing-sm; }
+.mb-md { margin-bottom: $spacing-md; }
+.mb-lg { margin-bottom: $spacing-lg; }

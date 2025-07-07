@@ -33,6 +33,8 @@ import { ApiResponse, PaginatedResponse } from '../../../core/models/response.mo
 // Pipes
 import { CurrencyFormatPipe } from '../../../shared/pipes/currency-format.pipe';
 import { ActivatedRoute, Router } from '@angular/router';
+import { CardComponent } from '../../../shared/components/card/card.component';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-listado-pagos',
@@ -59,7 +61,8 @@ import { ActivatedRoute, Router } from '@angular/router';
     MatSortModule,
     MatMenuModule,
     MatBadgeModule,
-    CurrencyFormatPipe
+    CardComponent,
+    LoadingSpinnerComponent
 ]
 })
 export class ListadoPagosComponent implements OnInit, OnDestroy {
@@ -157,12 +160,12 @@ export class ListadoPagosComponent implements OnInit, OnDestroy {
               cantidadMiembros: dto.cantidadMiembros ?? 0,
               totalGastos: dto.totalGastos ?? 0
             }));
-            this.cdr.markForCheck(); // 🚀 AGREGAR SOLO ESTO
+            this.cdr.markForCheck();
           }
         },
         error: (err: any) => {
           console.error('Error al cargar grupos:', err);
-          this.cdr.markForCheck(); // 🚀 AGREGAR SOLO ESTO
+          this.cdr.markForCheck();
         }
       });
   }
@@ -188,13 +191,13 @@ export class ListadoPagosComponent implements OnInit, OnDestroy {
             this.separarPagos(pagosArray);
             this.cargarNombresUsuarios(pagosArray);
           }
-          this.cdr.markForCheck(); // 🚀 AGREGAR SOLO ESTO
+          this.cdr.markForCheck();
         },
         error: (err: any) => {
           this.loading = false;
           console.error('Error al cargar pagos:', err);
           this.snackBar.open('Error al cargar pagos', 'Cerrar', { duration: 3000 });
-          this.cdr.markForCheck(); // 🚀 AGREGAR SOLO ESTO
+          this.cdr.markForCheck();
         }
       });
   }

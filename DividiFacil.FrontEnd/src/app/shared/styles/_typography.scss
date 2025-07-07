@@ -1,0 +1,22 @@
+// Tipografía global para DividiFácil
+
+body, html {
+  font-family: $font-family-base;
+  color: $color-text;
+  font-size: $font-size-base;
+  background: $color-background;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-family-base;
+  color: $color-primary;
+  margin-bottom: $spacing-xs;
+}
+
+.section-title {
+  @include section-title;
+}
+
+.text-muted {
+  color: $color-text-light;
+}

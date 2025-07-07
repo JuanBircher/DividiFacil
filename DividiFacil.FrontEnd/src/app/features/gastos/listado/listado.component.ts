@@ -26,6 +26,7 @@ import { GrupoDto } from '../../../core/models/grupo.model';
 
 // ✅ PIPES
 import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
+import { CardComponent } from '../../../shared/components/card/card.component';
 
 import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
 
@@ -50,7 +51,8 @@ import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
     MatMenuModule,
     MatDividerModule,
     ScrollingModule, // ✅ AGREGAR PARA cdk-virtual-scroll-viewport
-    DateFormatPipe
+    DateFormatPipe,
+    CardComponent // <-- Importar CardComponent para <app-card>
   ]
 })
 export class ListadoGastosComponent implements OnInit, OnDestroy {

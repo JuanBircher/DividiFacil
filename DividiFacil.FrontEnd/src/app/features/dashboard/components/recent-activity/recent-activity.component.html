@@ -1,13 +1,10 @@
-<mat-card class="recent-activity-card">
-  <mat-card-header>
-    <mat-card-title>
-      <mat-icon color="primary">history</mat-icon>
-      Actividad Reciente
-    </mat-card-title>
-    <mat-card-subtitle>Últimos movimientos</mat-card-subtitle>
-  </mat-card-header>
-
-  <mat-card-content>
+<app-card cardClass="recent-activity-card">
+  <ng-container card-header>
+    <mat-icon color="primary">history</mat-icon>
+    <span>Actividad Reciente</span>
+    <span class="subtitle">Últimos movimientos</span>
+  </ng-container>
+  <ng-container card-content>
     <!-- Filters -->
     <div class="filters-container" *ngIf="filtros.length > 0">
       <mat-chip-listbox>
@@ -59,9 +56,9 @@
 
     <!-- Empty State -->
     <div *ngIf="actividadReciente.length === 0 && !loading" class="empty-state">
-      <mat-icon>timeline</mat-icon>
-      <h3>No hay actividad reciente</h3>
-      <p>Cuando realices gastos o pagos, aparecerán aquí</p>
+      <mat-icon>history_toggle_off</mat-icon>
+      <h4>No hay actividad reciente</h4>
+      <p>Cuando registres gastos, pagos o movimientos, aparecerán aquí.</p>
     </div>
 
     <!-- Loading -->
@@ -79,16 +76,5 @@
         Reintentar
       </button>
     </div>
-  </mat-card-content>
-
-  <mat-card-actions>
-    <button mat-button color="primary" (click)="verTodosLosGastos()">
-      <mat-icon>visibility</mat-icon>
-      Ver todo
-    </button>
-    <button mat-button (click)="refrescar()">
-      <mat-icon>refresh</mat-icon>
-      Actualizar
-    </button>
-  </mat-card-actions>
-</mat-card>
+  </ng-container>
+</app-card>

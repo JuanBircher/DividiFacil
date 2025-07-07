@@ -17,6 +17,7 @@ import { GastoService } from '../../../core/services/gasto.service';
 import { AuthService } from '../../../core/auth.service';
 import { GastoDto, DetalleGastoDto } from '../../../core/models/gasto.model';
 import { ResponseDto } from '../../../core/models/response.model';
+import { CardComponent } from '../../../shared/components/card/card.component';
 
 interface EstadoParticipante {
     detalle: DetalleGastoDto;
@@ -42,7 +43,8 @@ interface EstadoParticipante {
         MatMenuModule,
         MatTabsModule,
         MatDividerModule,
-        RouterModule
+        RouterModule,
+        CardComponent
     ]
 })
 export class DetalleGastoComponent implements OnInit, OnDestroy {

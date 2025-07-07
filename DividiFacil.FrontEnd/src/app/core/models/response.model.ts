@@ -1,5 +1,5 @@
 /**
- * 🔧 CORREGIDO: Estructura genérica que coincide con el backend
+ * 🔧 CORREGIDO: Estructura genérica que coincide con el backend (camelCase)
  */
 export interface ResponseDto<T = undefined> {
   exito: boolean;

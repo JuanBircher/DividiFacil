@@ -11,6 +11,8 @@ import { Router } from '@angular/router';
 import { GrupoService } from '../../../core/services/grupo.service';
 import { GrupoDto } from '../../../core/models/grupo.model';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { CardComponent } from '../../../shared/components/card/card.component';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-unirse-codigo',
@@ -25,7 +27,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    CardComponent
   ]
 })
 export class UnirseCodigoComponent implements OnInit {

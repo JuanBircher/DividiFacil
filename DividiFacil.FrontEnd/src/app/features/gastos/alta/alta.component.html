@@ -19,19 +19,17 @@
   </div>
 
   <!-- ADVERTENCIA DE EDICIÓN (solo si hay pagos) -->
-  <mat-card class="advertencia-card" *ngIf="modoEdicion && tieneGastoConPagos()">
-    <mat-card-content>
-      <div class="advertencia-content">
-        <mat-icon class="advertencia-icon">warning</mat-icon>
-        <div class="advertencia-texto">
-          <h3>Atención: Gasto con pagos registrados</h3>
-          <p>Este gasto tiene pagos confirmados. Los cambios podrían afectar los balances del grupo.</p>
-        </div>
+  <app-card *ngIf="modoEdicion && tieneGastoConPagos()" title="Atención: Gasto con pagos registrados" icon="warning">
+    <div class="advertencia-content">
+      <mat-icon class="advertencia-icon">warning</mat-icon>
+      <div class="advertencia-texto">
+        <h3>Atención: Gasto con pagos registrados</h3>
+        <p>Este gasto tiene pagos confirmados. Los cambios podrían afectar los balances del grupo.</p>
       </div>
-    </mat-card-content>
-  </mat-card>
+    </div>
+  </app-card>
 
-  <mat-card class="stepper-card">
+  <app-card title="Nuevo Gasto" icon="add" *ngIf="!modoEdicion">
     <mat-stepper #stepper orientation="horizontal" linear>
       
       <!-- 🔸 PASO 1: DETALLES DEL GASTO -->
@@ -360,7 +358,7 @@
         </div>
       </mat-step>
     </mat-stepper>
-  </mat-card>
+  </app-card>
 
   <!-- BOTÓN PRINCIPAL - REEMPLAZAR SECCIÓN COMPLETA -->
   <div class="actions-section">

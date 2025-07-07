@@ -7,6 +7,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { GastoService } from '../../core/services/gasto.service';
 import { GrupoService } from '../../core/services/grupo.service';
+import { BalanceService } from '../../core/services/balance.service';
+import { NotificacionService } from '../../core/services/notificacion.service';
 
 @Component({
   selector: 'app-dashboard-test',
@@ -66,6 +68,40 @@ import { GrupoService } from '../../core/services/grupo.service';
               </div>
             </div>
           </mat-expansion-panel>
+
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>💰 Probar Balance de Usuario</mat-panel-title>
+            </mat-expansion-panel-header>
+            
+            <div class="test-section">
+              <button mat-raised-button color="warn" (click)="probarBalanceUsuario()">
+                Probar Balance
+              </button>
+              
+              <div *ngIf="balanceUsuario" class="result">
+                <h4>✅ Balance del Usuario:</h4>
+                <pre>{{ balanceUsuario | json }}</pre>
+              </div>
+            </div>
+          </mat-expansion-panel>
+
+          <mat-expansion-panel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>🔔 Probar Notificaciones Pendientes</mat-panel-title>
+            </mat-expansion-panel-header>
+            
+            <div class="test-section">
+              <button mat-raised-button color="accent" (click)="probarNotificacionesPendientes()">
+                Probar Notificaciones
+              </button>
+              
+              <div *ngIf="notificacionesPendientes" class="result">
+                <h4>✅ Notificaciones Pendientes:</h4>
+                <pre>{{ notificacionesPendientes | json }}</pre>
+              </div>
+            </div>
+          </mat-expansion-panel>
           
           <div class="results" *ngIf="testResult">
             <h3>📊 Último Resultado</h3>
@@ -102,10 +138,14 @@ export class DashboardTestComponent implements OnInit {
   testResult: any = null;
   estadisticas: any = null;
   actividadReciente: any[] = [];
+  balanceUsuario: any = null;
+  notificacionesPendientes: any = null;
 
   constructor(
     private gastoService: GastoService,
-    private grupoService: GrupoService
+    private grupoService: GrupoService,
+    private balanceService: BalanceService,
+    private notificacionService: NotificacionService
   ) {}
 
   ngOnInit(): void {
@@ -194,5 +234,43 @@ export class DashboardTestComponent implements OnInit {
         console.error('❌ Error:', error);
       }
     );
+  }
+
+  probarBalanceUsuario(): void {
+    const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+    const idUsuario = usuario.idUsuario;
+    if (!idUsuario) {
+      this.balanceUsuario = { error: 'Usuario no autenticado' };
+      return;
+    }
+    this.balanceService.obtenerBalanceUsuario(idUsuario).subscribe({
+      next: (response) => {
+        this.balanceUsuario = response;
+        console.log('✅ Balance usuario:', response);
+      },
+      error: (error) => {
+        this.balanceUsuario = { error };
+        console.error('❌ Error balance usuario:', error);
+      }
+    });
+  }
+
+  probarNotificacionesPendientes(): void {
+    const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+    const idUsuario = usuario.idUsuario;
+    if (!idUsuario) {
+      this.notificacionesPendientes = { error: 'Usuario no autenticado' };
+      return;
+    }
+    this.notificacionService.obtenerPendientes(idUsuario).subscribe({
+      next: (response) => {
+        this.notificacionesPendientes = response;
+        console.log('✅ Notificaciones pendientes:', response);
+      },
+      error: (error) => {
+        this.notificacionesPendientes = { error };
+        console.error('❌ Error notificaciones pendientes:', error);
+      }
+    });
   }
 }

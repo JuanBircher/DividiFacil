@@ -1,0 +1,49 @@
+// Estilos para sidebar accesible, dark mode y animaciones sutiles
+mat-toolbar {
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+  background: $color-primary;
+  color: #fff;
+}
+body.dark-mode mat-toolbar {
+  background: $color-primary-darkmode;
+  color: $color-text-dark;
+}
+mat-nav-list {
+  padding: 0;
+  background: transparent;
+}
+a[mat-list-item] {
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  border-radius: 6px;
+  margin: 2px 0;
+}
+a[mat-list-item]:hover,
+a[mat-list-item]:focus-visible {
+  background: #e3f2fd;
+  color: $color-primary;
+  outline: 2px solid $color-primary;
+  box-shadow: 0 2px 8px #1976d233;
+}
+body.dark-mode a[mat-list-item]:hover,
+body.dark-mode a[mat-list-item]:focus-visible {
+  background: #263043;
+  color: $color-primary-darkmode;
+  outline: 2px solid $color-primary-darkmode;
+}
+a[mat-list-item].active-link {
+  font-weight: 600;
+  color: $color-primary;
+}
+body.dark-mode a[mat-list-item].active-link {
+  color: $color-primary-darkmode;
+}
+// Animación de despliegue de submenú
+#submenu-grupos {
+  animation: fadeIn 0.3s ease-in;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}

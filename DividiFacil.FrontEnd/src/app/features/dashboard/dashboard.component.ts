@@ -10,6 +10,8 @@ import { DashboardStatsComponent } from './components/dashboard-stats/dashboard-
 import { RecentGroupsComponent } from './components/recent-groups/recent-groups.component';
 import { QuickActionsComponent } from './components/quick-actions/quick-actions.component';
 import { RecentActivityComponent } from './components/recent-activity/recent-activity.component';
+import { CardComponent } from '../../shared/components/card/card.component';
+import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner.component';
 
 import { AuthService } from '../../core/auth.service';
 import { Subject } from 'rxjs';
@@ -26,6 +28,7 @@ import { Subject } from 'rxjs';
     MatButtonModule,
     MatIconModule,
     RouterModule,
+    CardComponent,
     DashboardStatsComponent,
     RecentGroupsComponent,
     QuickActionsComponent,
@@ -36,6 +39,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   nombreUsuario: string = 'Usuario';
   saludoPersonalizado: string = '';
   horaActual: string = '';
+  idUsuario: string = '';
   
   private intervalId?: number;
   private destroy$ = new Subject<void>();
@@ -71,6 +75,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const usuario = this.authService.obtenerUsuario();
     if (usuario?.nombre) {
       this.nombreUsuario = usuario.nombre;
+      this.idUsuario = usuario.idUsuario;
     } else {
       // Fallback: extraer del token
       const token = localStorage.getItem('token');

@@ -29,6 +29,8 @@ import { AuthService } from '../../../core/auth.service';
 // Pipes
 import { CurrencyFormatPipe } from '../../../shared/pipes/currency-format.pipe';
 import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
+import { CardComponent } from '../../../shared/components/card/card.component';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-caja',
@@ -52,7 +54,9 @@ import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
     MatDatepickerModule,
     MatNativeDateModule,
     CurrencyFormatPipe,
-    DateFormatPipe
+    DateFormatPipe,
+    CardComponent,
+    LoadingSpinnerComponent
   ]
 })
 export class CajaComponent implements OnInit, OnDestroy {

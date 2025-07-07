@@ -20,6 +20,8 @@ import { AuthService } from '../../../core/auth.service';
 // Pipes
 import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
 import { CurrencyFormatPipe } from '../../../shared/pipes/currency-format.pipe';
+import { CardComponent } from '../../../shared/components/card/card.component';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-detalle-pagos',
@@ -36,7 +38,9 @@ import { CurrencyFormatPipe } from '../../../shared/pipes/currency-format.pipe';
     MatSnackBarModule,
     MatDividerModule,
     DateFormatPipe,
-    CurrencyFormatPipe
+    CurrencyFormatPipe,
+    CardComponent,
+    LoadingSpinnerComponent
   ]
 })
 export class DetallePagosComponent implements OnInit, OnDestroy {

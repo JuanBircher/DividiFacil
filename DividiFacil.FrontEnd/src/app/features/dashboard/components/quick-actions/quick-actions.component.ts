@@ -6,6 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatBadgeModule } from '@angular/material/badge';
 import { Router, RouterModule } from '@angular/router';
 import { Subject } from 'rxjs';
+import { CardComponent } from '../../../../shared/components/card/card.component';
 
 // ✅ INTERFACE CORREGIDA
 interface QuickAction {
@@ -29,6 +30,7 @@ interface QuickAction {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
+    CardComponent,
     MatCardModule,
     MatButtonModule,
     MatIconModule,

@@ -29,69 +29,48 @@
   </div>
 
   <!-- FILTROS -->
-  <mat-card class="filtros-card">
-    <mat-card-content>
-      <form [formGroup]="filtrosForm" class="filtros-form">
-        <div class="filtros-row">
-          <!-- Búsqueda -->
-          <mat-form-field appearance="outline" class="busqueda-field">
-            <mat-label>Buscar gastos</mat-label>
-            <input matInput 
-                   formControlName="busqueda"
-                   placeholder="Descripción o categoría...">
-            <mat-icon matPrefix>search</mat-icon>
-          </mat-form-field>
-
-          <!-- Ordenamiento -->
-          <mat-form-field appearance="outline" class="ordenamiento-field">
-            <mat-label>Ordenar por</mat-label>
-            <mat-select formControlName="ordenamiento">
-              <mat-option *ngFor="let opcion of opcionesOrdenamiento" [value]="opcion.valor">
-                {{ opcion.nombre }}
-              </mat-option>
-            </mat-select>
-            <mat-icon matPrefix>sort</mat-icon>
-          </mat-form-field>
-
-          <!-- Acciones filtros -->
-          <div class="filtros-actions">
-            <button mat-stroked-button (click)="limpiarFiltros()" type="button">
-              <mat-icon>clear</mat-icon>
-              Limpiar
-            </button>
-          </div>
+  <app-card title="Filtros" icon="filter_list">
+    <form [formGroup]="filtrosForm" class="filtros-form">
+      <div class="filtros-row">
+        <!-- Búsqueda -->
+        <mat-form-field appearance="outline" class="busqueda-field">
+          <mat-label>Buscar gastos</mat-label>
+          <input matInput formControlName="busqueda" placeholder="Descripción o categoría...">
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+        <!-- Ordenamiento -->
+        <mat-form-field appearance="outline" class="ordenamiento-field">
+          <mat-label>Ordenar por</mat-label>
+          <mat-select formControlName="ordenamiento">
+            <mat-option *ngFor="let opcion of opcionesOrdenamiento" [value]="opcion.valor">
+              {{ opcion.nombre }}
+            </mat-option>
+          </mat-select>
+          <mat-icon matPrefix>sort</mat-icon>
+        </mat-form-field>
+        <!-- Acciones filtros -->
+        <div class="filtros-actions">
+          <button mat-stroked-button (click)="limpiarFiltros()" type="button">
+            <mat-icon>clear</mat-icon>
+            Limpiar
+          </button>
         </div>
-      </form>
-    </mat-card-content>
-  </mat-card>
+      </div>
+    </form>
+  </app-card>
 
   <!-- LISTA DE GASTOS -->
   <div class="gastos-content">
     <!-- Loading -->
-    <div class="loading-container" *ngIf="loading">
-      <mat-progress-spinner mode="indeterminate" diameter="50"></mat-progress-spinner>
-      <p>Cargando gastos...</p>
-    </div>
+    <app-card *ngIf="loading" title="Cargando gastos..." icon="hourglass_empty" [loading]="true"></app-card>
 
     <!-- Lista vacía -->
-    <mat-card class="empty-state" *ngIf="!loading && gastos.length === 0">
-      <mat-card-content>
-        <div class="empty-content">
-          <mat-icon class="empty-icon">receipt_long</mat-icon>
-          <h3>No hay gastos registrados</h3>
-          <p *ngIf="filtrosForm.get('busqueda')?.value">
-            No se encontraron gastos con los filtros aplicados.
-          </p>
-          <p *ngIf="!filtrosForm.get('busqueda')?.value">
-            ¡Comienza creando tu primer gasto!
-          </p>
-          <button mat-raised-button color="primary" (click)="crearGasto()">
-            <mat-icon>add</mat-icon>
-            Crear Primer Gasto
-          </button>
-        </div>
-      </mat-card-content>
-    </mat-card>
+    <app-card *ngIf="!loading && gastos.length === 0" title="Sin gastos" icon="receipt_long">
+      <div class="empty-content">
+        <mat-icon class="empty-icon">receipt_long</mat-icon>
+        <p>No hay gastos registrados en este grupo.</p>
+      </div>
+    </app-card>
 
     <!-- Lista de gastos - OPTIMIZADA -->
     <!-- 🚀 VIRTUAL SCROLLING para listas largas -->

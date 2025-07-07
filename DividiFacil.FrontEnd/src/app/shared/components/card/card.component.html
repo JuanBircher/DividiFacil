@@ -1,49 +1,76 @@
 <mat-card 
-  class="custom-card" 
+  class="custom-card {{cardClass}} variant-{{variant}} color-{{color}} size-{{size}} state-{{state}}" 
   [class.clickable]="clickable"
-  [class.loading]="loading">
-  
-  <!-- Header con icono y título -->
-  <mat-card-header class="card-header">
-    <div class="header-content">
-      <!-- Icono opcional -->
-      <div class="icon-container" *ngIf="icon">
-        <mat-icon [class]="'icon-' + iconColor">{{ icon }}</mat-icon>
+  [class.loading]="loading"
+  [attr.role]="'region'"
+  [attr.aria-label]="ariaLabel || title"
+>
+  <!-- Slot header personalizado o header por defecto -->
+  <ng-content select="[card-header]"></ng-content>
+  <ng-container *ngIf="!hasProjectedHeader">
+    <mat-card-header class="card-header">
+      <div class="header-content">
+        <div class="icon-container" *ngIf="icon">
+          <mat-icon [class]="'icon-' + iconColor">{{ icon }}</mat-icon>
+        </div>
+        <div class="title-container">
+          <mat-card-title class="card-title">{{ title }}</mat-card-title>
+          <mat-card-subtitle *ngIf="subtitle" class="card-subtitle">
+            {{ subtitle }}
+          </mat-card-subtitle>
+        </div>
       </div>
-      
-      <!-- Títulos -->
-      <div class="title-container">
-        <mat-card-title class="card-title">{{ title }}</mat-card-title>
-        <mat-card-subtitle *ngIf="subtitle" class="card-subtitle">
-          {{ subtitle }}
-        </mat-card-subtitle>
+    </mat-card-header>
+  </ng-container>
+
+  <mat-card-content class="card-content">
+    <!-- Estado: error -->
+    <div class="state-error" *ngIf="state === 'error'">
+      <ng-content select="[card-error]"></ng-content>
+      <div *ngIf="!hasProjectedError">Ocurrió un error.</div>
+    </div>
+    <!-- Estado: vacío -->
+    <div class="state-empty" *ngIf="state === 'empty'">
+      <ng-content select="[card-empty]"></ng-content>
+      <div *ngIf="!hasProjectedEmpty">Sin datos para mostrar.</div>
+    </div>
+    <!-- Estado: success -->
+    <div class="state-success" *ngIf="state === 'success'">
+      <ng-content select="[card-success]"></ng-content>
+    </div>
+    <!-- Estado: loading -->
+    <div class="loading-container" *ngIf="loading">
+      <ng-content select="[card-loading]"></ng-content>
+      <div *ngIf="!hasProjectedLoading">
+        <div class="skeleton-loader"></div>
       </div>
     </div>
-  </mat-card-header>
-
-  <!-- Contenido principal -->
-  <mat-card-content class="card-content">
     <!-- Valor principal (para estadísticas) -->
-    <div class="value-display" *ngIf="value !== undefined && !loading">
+    <div class="value-display" *ngIf="value !== undefined && !loading && state === 'default'">
       <span class="main-value">{{ value }}</span>
     </div>
-
-    <!-- Loading state -->
-    <div class="loading-container" *ngIf="loading">
-      <div class="skeleton-loader"></div>
-    </div>
-
     <!-- Contenido personalizado -->
-    <div class="custom-content">
+    <div class="custom-content" *ngIf="state === 'default' && !loading">
       <ng-content></ng-content>
     </div>
   </mat-card-content>
 
-  <!-- Acciones opcionales -->
-  <mat-card-actions *ngIf="showAction" class="card-actions">
+  <!-- Slot de acciones -->
+  <ng-content select="[card-actions]"></ng-content>
+  <mat-card-actions *ngIf="showAction && state === 'default' && !loading" class="card-actions">
     <button mat-button color="primary" class="action-button">
       <span>{{ actionText }}</span>
       <mat-icon>{{ actionIcon }}</mat-icon>
     </button>
   </mat-card-actions>
 </mat-card>
+<!--
+  Slots disponibles:
+  [card-header]    - Header personalizado
+  [card-error]     - Estado error
+  [card-empty]     - Estado vacío
+  [card-success]   - Estado success
+  [card-loading]   - Estado loading
+  [card-actions]   - Acciones personalizadas
+  (default)        - Contenido principal
+-->

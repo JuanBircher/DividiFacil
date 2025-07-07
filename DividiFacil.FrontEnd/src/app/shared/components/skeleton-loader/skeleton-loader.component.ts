@@ -6,11 +6,14 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="skeleton-loader" [ngClass]="type">
-      <div class="skeleton-item" 
-           *ngFor="let item of items; trackBy: trackByIndex"
-           [style.height.px]="height">
-      </div>
+    <div class="skeleton-loader" [ngClass]="[type, color, variant]" [attr.aria-busy]="true" aria-hidden="true">
+      <ng-content select="[skeleton-custom]"></ng-content>
+      <ng-container *ngIf="!hasProjectedCustom">
+        <div class="skeleton-item" 
+             *ngFor="let item of items; trackBy: trackByIndex"
+             [style.height.px]="height">
+        </div>
+      </ng-container>
     </div>
   `,
   styles: [`
@@ -39,18 +42,31 @@ import { CommonModule } from '@angular/common';
     .list-skeleton .skeleton-item {
       height: 60px;
     }
+    
+    .skeleton-loader.dark .skeleton-item {
+      background: linear-gradient(90deg, #23272f 25%, #333 50%, #23272f 75%);
+    }
   `]
 })
 export class SkeletonLoaderComponent {
   @Input() type: 'card' | 'list' | 'text' = 'card';
   @Input() count: number = 3;
   @Input() height: number = 120;
-  
+  @Input() color: 'default' | 'dark' = 'default';
+  @Input() variant: 'default' | 'rounded' = 'default';
+
   get items(): number[] {
     return Array(this.count).fill(0);
   }
   
   trackByIndex(index: number): number {
     return index;
+  }
+  
+  // Slot para custom skeleton
+  hasProjectedCustom = false;
+  ngAfterContentInit() {
+    // Detectar si hay contenido proyectado
+    this.hasProjectedCustom = !!(this as any).skeletonCustomSlot;
   }
 }

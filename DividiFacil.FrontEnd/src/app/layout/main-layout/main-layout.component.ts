@@ -10,6 +10,9 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { AuthService } from '../../core/auth.service';
 import { NotificacionService } from '../../core/services/notificacion.service';
 import { Subject, takeUntil, Observable } from 'rxjs';
+import { NavbarComponent } from '../navbar/navbar.component';
+import { SidebarComponent } from '../sidebar/sidebar.component';
+import { FooterComponent } from '../footer/footer.component';
 
 @Component({
   selector: 'app-main-layout',
@@ -19,6 +22,9 @@ import { Subject, takeUntil, Observable } from 'rxjs';
   imports: [
     CommonModule,
     RouterOutlet,
+    NavbarComponent,
+    SidebarComponent,
+    FooterComponent,
     MatToolbarModule,
     MatButtonModule,
     MatIconModule,
@@ -42,6 +48,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     private router: Router,
     private notificacionService: NotificacionService
   ) {
+    console.log('[MainLayoutComponent] Constructor ejecutado');
     // ✅ CORRECCIÓN: Inicializar en constructor después de inyección
     this.contadorNotificaciones$ = this.notificacionService.contadorNoLeidas$;
   }

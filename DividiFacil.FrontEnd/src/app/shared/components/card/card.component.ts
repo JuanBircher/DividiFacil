@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ContentChild, AfterContentInit, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -16,7 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
     MatButtonModule
   ]
 })
-export class CardComponent {
+export class CardComponent implements AfterContentInit {
   @Input() title: string = '';
   @Input() subtitle?: string;
   @Input() icon?: string;
@@ -27,4 +27,28 @@ export class CardComponent {
   @Input() showAction: boolean = false;
   @Input() actionText: string = 'Ver más';
   @Input() actionIcon: string = 'arrow_forward';
+  @Input() cardClass: string = '';
+  @Input() variant: 'default' | 'elevated' | 'flat' = 'default';
+  @Input() color: 'default' | 'primary' | 'accent' | 'warn' = 'default';
+  @Input() size: 'sm' | 'md' | 'lg' = 'md';
+  @Input() state: 'default' | 'error' | 'empty' | 'success' = 'default';
+  @Input() ariaLabel?: string;
+
+  // Slots avanzados
+  @ContentChild('cardHeader', { static: false, read: ElementRef }) cardHeaderSlot?: ElementRef;
+  @ContentChild('cardError', { static: false, read: ElementRef }) cardErrorSlot?: ElementRef;
+  @ContentChild('cardEmpty', { static: false, read: ElementRef }) cardEmptySlot?: ElementRef;
+  @ContentChild('cardLoading', { static: false, read: ElementRef }) cardLoadingSlot?: ElementRef;
+
+  hasProjectedHeader = false;
+  hasProjectedError = false;
+  hasProjectedEmpty = false;
+  hasProjectedLoading = false;
+
+  ngAfterContentInit(): void {
+    this.hasProjectedHeader = !!this.cardHeaderSlot;
+    this.hasProjectedError = !!this.cardErrorSlot;
+    this.hasProjectedEmpty = !!this.cardEmptySlot;
+    this.hasProjectedLoading = !!this.cardLoadingSlot;
+  }
 }

@@ -23,6 +23,8 @@ import { ResponseDto } from '../../../core/models/response.model';
 
 // Pipes
 import { CurrencyFormatPipe } from '../../../shared/pipes/currency-format.pipe';
+import { CardComponent } from '../../../shared/components/card/card.component';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-balance-grupo',

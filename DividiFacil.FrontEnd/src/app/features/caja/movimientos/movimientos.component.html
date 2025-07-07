@@ -1,1 +1,14 @@
-<p>movimientos works!</p>
+<app-card>
+  <ng-container card-header>
+    <mat-icon>receipt_long</mat-icon>
+    <span>Movimientos de Caja</span>
+  </ng-container>
+  <ng-container card-content>
+    <!-- Aquí se mostrará la lista de movimientos o un estado vacío -->
+    <div class="empty-state">
+      <mat-icon>list_alt</mat-icon>
+      <h2>No hay movimientos registrados</h2>
+      <p>Cuando se realicen depósitos o extracciones, aparecerán aquí.</p>
+    </div>
+  </ng-container>
+</app-card>

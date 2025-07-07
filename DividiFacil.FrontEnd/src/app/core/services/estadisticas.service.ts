@@ -30,10 +30,11 @@ export class EstadisticasService {
    * 🔧 MÉTODO PARA DASHBOARD: Obtiene estadísticas globales del usuario
    * Combina múltiples servicios ya que no existe endpoint unificado
    */
-  obtenerEstadisticasUsuario(): Observable<EstadisticasUsuario> {
+  obtenerEstadisticasUsuario(idUsuario: string): Observable<EstadisticasUsuario> {
+    console.log('[EstadisticasService] obtenerEstadisticasUsuario', { idUsuario });
     return forkJoin({
       grupos: this.grupoService.getGrupos(),
-      notificaciones: this.notificacionService.obtenerPendientes(),
+      notificaciones: this.notificacionService.obtenerPendientes(idUsuario),
       gastos: this.gastoService.obtenerMisGastos()
     }).pipe(
       map(responses => {

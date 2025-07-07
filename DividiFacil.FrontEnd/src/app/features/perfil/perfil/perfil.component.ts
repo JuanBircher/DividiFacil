@@ -19,6 +19,8 @@ import { Usuario } from '../../../core/models/usuario.model';
 
 // Pipes
 import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
+import { CardComponent } from '../../../shared/components/card/card.component';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-perfil',
@@ -34,7 +36,9 @@ import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatChipsModule,
-    DateFormatPipe
+    DateFormatPipe,
+    CardComponent,
+    LoadingSpinnerComponent
   ]
 })
 export class PerfilComponent implements OnInit, OnDestroy {
@@ -153,7 +157,7 @@ export class PerfilComponent implements OnInit, OnDestroy {
    */
   obtenerIniciales(): string {
     if (!this.usuario?.nombre) return 'U';
-    
+
     const palabras = this.usuario.nombre.split(' ');
     if (palabras.length >= 2) {
       return (palabras[0][0] + palabras[1][0]).toUpperCase();

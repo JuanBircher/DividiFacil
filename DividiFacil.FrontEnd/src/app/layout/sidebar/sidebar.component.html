@@ -1,1 +1,31 @@
-<p>sidebar works!</p>
+<mat-toolbar color="primary" role="banner">DividiFácil</mat-toolbar>
+<mat-nav-list role="navigation" [attr.aria-label]="ariaLabel">
+  <a mat-list-item routerLink="/dashboard" routerLinkActive="active-link" tabindex="0">Dashboard</a>
+  <div>
+    <a mat-list-item (click)="toggleGruposMenu.emit()" style="cursor:pointer;" tabindex="0" aria-expanded="false" aria-controls="submenu-grupos">
+      Grupos
+      <mat-icon style="float:right;">{{ gruposMenuAbierto ? 'expand_less' : 'expand_more' }}</mat-icon>
+    </a>
+    <div *ngIf="gruposMenuAbierto" id="submenu-grupos" style="padding-left: 16px;">
+      <a mat-list-item routerLink="/grupos" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact:true}" tabindex="0">
+        Ver Grupos
+      </a>
+      <a mat-list-item routerLink="/grupos/alta" routerLinkActive="active-link" tabindex="0">Alta Grupos</a>
+    </div>
+  </div>
+  <a mat-list-item routerLink="/gastos" routerLinkActive="active-link" tabindex="0">Gastos</a>
+  <a mat-list-item routerLink="/pagos" routerLinkActive="active-link" tabindex="0">Pagos</a>
+  <a mat-list-item routerLink="/caja" routerLinkActive="active-link" tabindex="0">Caja Común</a>
+  <a mat-list-item 
+     routerLink="/notificaciones" 
+     routerLinkActive="active-link"
+     [matBadge]="contadorNotificaciones"
+     [matBadgeHidden]="contadorNotificaciones === 0"
+     matBadgeColor="warn"
+     matBadgeSize="small"
+     tabindex="0"
+     aria-label="Notificaciones no leídas">
+    Notificaciones
+  </a>
+  <a mat-list-item routerLink="/perfil" routerLinkActive="active-link" tabindex="0">Mi Perfil</a>
+</mat-nav-list>
