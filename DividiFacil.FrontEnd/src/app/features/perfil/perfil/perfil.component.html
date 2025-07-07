@@ -41,6 +41,7 @@
                   *ngIf="usuario.urlImagen" 
                   [src]="usuario.urlImagen" 
                   [alt]="usuario.nombre"
+                  loading="lazy"
                   (error)="onImageError($event)">
                 <span *ngIf="!usuario.urlImagen" class="avatar-iniciales">
                   {{ obtenerIniciales() }}

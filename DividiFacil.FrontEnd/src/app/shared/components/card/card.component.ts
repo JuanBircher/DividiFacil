@@ -34,6 +34,8 @@ export class CardComponent implements AfterContentInit {
   @Input() state: 'default' | 'error' | 'empty' | 'success' = 'default';
   @Input() ariaLabel?: string;
 
+  cardInstanceId = 'card-' + Math.random().toString(36).substring(2, 10);
+
   // Slots avanzados
   @ContentChild('cardHeader', { static: false, read: ElementRef }) cardHeaderSlot?: ElementRef;
   @ContentChild('cardError', { static: false, read: ElementRef }) cardErrorSlot?: ElementRef;

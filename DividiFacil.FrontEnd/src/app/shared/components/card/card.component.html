@@ -3,7 +3,8 @@
   [class.clickable]="clickable"
   [class.loading]="loading"
   [attr.role]="'region'"
-  [attr.aria-label]="ariaLabel || title"
+  [attr.aria-label]="!title ? (ariaLabel || 'Tarjeta de información') : null"
+  [attr.aria-labelledby]="title ? 'card-title-' + cardInstanceId : null"
 >
   <!-- Slot header personalizado o header por defecto -->
   <ng-content select="[card-header]"></ng-content>
@@ -14,7 +15,7 @@
           <mat-icon [class]="'icon-' + iconColor">{{ icon }}</mat-icon>
         </div>
         <div class="title-container">
-          <mat-card-title class="card-title">{{ title }}</mat-card-title>
+          <mat-card-title class="card-title" [attr.id]="'card-title-' + cardInstanceId">{{ title }}</mat-card-title>
           <mat-card-subtitle *ngIf="subtitle" class="card-subtitle">
             {{ subtitle }}
           </mat-card-subtitle>

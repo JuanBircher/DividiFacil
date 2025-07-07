@@ -1,4 +1,4 @@
-<mat-toolbar color="primary" role="navigation" [attr.aria-label]="ariaLabel">
+<mat-toolbar color="primary" role="navigation" [attr.aria-label]="ariaLabel || 'Barra de navegación principal'">
   <button mat-icon-button (click)="toggleMenu.emit()" class="hide-desktop" tabindex="0" aria-label="Abrir menú lateral">
     <mat-icon>menu</mat-icon>
   </button>
@@ -8,6 +8,11 @@
   </button>
   <span *ngIf="nombreUsuario">Hola, {{ nombreUsuario }}</span>
   <button mat-button color="accent" (click)="logout.emit()" tabindex="0" aria-label="Cerrar sesión">
-    <mat-icon>logout</mat-icon> Cerrar sesión
+    <mat-icon>logout</mat-icon> <span class="visually-hidden">Cerrar sesión</span>
   </button>
 </mat-toolbar>
+<!--
+  Mejoras:
+  - aria-label por defecto en toolbar
+  - span visually-hidden para accesibilidad en botón de logout
+-->

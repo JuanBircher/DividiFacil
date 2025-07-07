@@ -1,8 +1,11 @@
 <mat-toolbar color="primary" role="banner">DividiFácil</mat-toolbar>
-<mat-nav-list role="navigation" [attr.aria-label]="ariaLabel">
-  <a mat-list-item routerLink="/dashboard" routerLinkActive="active-link" tabindex="0">Dashboard</a>
+<mat-nav-list role="navigation" [attr.aria-label]="ariaLabel || 'Menú lateral de navegación'">
+  <a mat-list-item routerLink="/dashboard" routerLinkActive="active-link" tabindex="0" aria-current="page">Dashboard</a>
   <div>
-    <a mat-list-item (click)="toggleGruposMenu.emit()" style="cursor:pointer;" tabindex="0" aria-expanded="false" aria-controls="submenu-grupos">
+    <a mat-list-item (click)="toggleGruposMenu.emit()" style="cursor:pointer;" tabindex="0"
+      [attr.aria-expanded]="gruposMenuAbierto ? 'true' : 'false'"
+      aria-controls="submenu-grupos"
+      aria-label="Abrir menú de grupos">
       Grupos
       <mat-icon style="float:right;">{{ gruposMenuAbierto ? 'expand_less' : 'expand_more' }}</mat-icon>
     </a>
@@ -29,3 +32,10 @@
   </a>
   <a mat-list-item routerLink="/perfil" routerLinkActive="active-link" tabindex="0">Mi Perfil</a>
 </mat-nav-list>
+<!--
+  Mejoras:
+  - aria-label por defecto en nav-list
+  - aria-expanded dinámico en menú de grupos
+  - aria-current en Dashboard
+  - aria-label claro en menú de grupos
+-->

@@ -1,40 +1,43 @@
 // Tema principal para DividiFácil
-
-@import './variables';
-@import './mixins';
-@import './typography';
-@import './layout';
+@use './variables' as variables;
+// @use './mixins' as mixins;
+@use './typography' as typography;
+@use './layout' as layout;
 
 body {
-  background: $color-background;
-  color: $color-text;
-  transition: $transition-base;
+  background: variables.$color-background;
+  color: variables.$color-text;
+  transition: variables.$transition-base;
 }
 
 body.dark-mode {
-  background: $color-background-dark;
-  color: $color-text-dark;
+  background: variables.$color-background-dark;
+  color: variables.$color-text-dark;
 }
 
 .mat-card {
-  @include card-base;
-  margin-bottom: $spacing-md;
-  transition: $transition-base;
+  border-radius: variables.$border-radius;
+  border: variables.$border-width solid variables.$color-border;
+  background: variables.$color-surface;
+  font-family: variables.$font-family-base;
+  box-shadow: variables.$box-shadow;
+  margin-bottom: variables.$spacing-md;
+  transition: variables.$transition-base;
   // Dark mode
   body.dark-mode & {
-    background: $color-surface-dark;
-    border-color: $color-border-dark;
-    color: $color-text-dark;
+    background: variables.$color-surface-dark;
+    border-color: variables.$color-border-dark;
+    color: variables.$color-text-dark;
   }
 }
 
 .mat-button, .mat-raised-button, .mat-flat-button {
-  font-family: $font-family-base;
-  border-radius: $border-radius;
+  font-family: variables.$font-family-base;
+  border-radius: variables.$border-radius;
 }
 
 a {
-  color: $color-primary;
+  color: variables.$color-primary;
   text-decoration: none;
   &:hover {
     text-decoration: underline;

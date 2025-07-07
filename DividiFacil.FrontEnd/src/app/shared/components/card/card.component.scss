@@ -1,22 +1,25 @@
+@use 'sass:color';
+@use 'src/app/shared/styles/variables' as variables;
+
 .custom-card {
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: all 0.3s cubic-bezier(.4,0,.2,1);
-  background: white;
-  border: 1px solid #e0e0e0;
+  background: variables.$color-surface;
+  border: 1px solid variables.$color-border;
   position: relative;
 
   // Dark mode
   @media (prefers-color-scheme: dark) {
-    background: #23272f;
-    border: 1px solid #333;
-    color: #f1f1f1;
+    background: variables.$color-background-dark;
+    border: 1px solid variables.$color-border-dark;
+    color: variables.$color-text-dark;
   }
 
   // Variantes de color
-  &.color-primary { border-color: #1976d2; }
-  &.color-accent { border-color: #ff4081; }
-  &.color-warn { border-color: #ff9800; }
+  &.color-primary { border-color: variables.$color-primary; }
+  &.color-accent { border-color: variables.$color-accent; }
+  &.color-warn { border-color: variables.$color-warn; }
 
   // Variantes de elevación
   &.variant-elevated { box-shadow: 0 6px 24px rgba(25, 118, 210, 0.12); }
@@ -27,8 +30,8 @@
   &.size-lg { font-size: 1.15rem; }
 
   // Estados
-  &.state-error { border-color: #e53935; box-shadow: 0 0 0 2px #e5393533; }
-  &.state-success { border-color: #43a047; box-shadow: 0 0 0 2px #43a04733; }
+  &.state-error { border-color: variables.$color-warn; box-shadow: 0 0 0 2px rgba(229,57,53,0.2); }
+  &.state-success { border-color: variables.$color-success; box-shadow: 0 0 0 2px rgba(56,142,60,0.2); }
   &.state-empty { opacity: 0.7; }
 
   &:hover {
@@ -39,10 +42,10 @@
   &.clickable {
     cursor: pointer;
     &:hover {
-      box-shadow: 0 6px 20px rgba(25, 118, 210, 0.18);
-      background: #f5faff;
+      box-shadow: 0 6px 20px rgba(25,118,210,0.18);
+      background: color.adjust(variables.$color-primary, $lightness: 48%);
       @media (prefers-color-scheme: dark) {
-        background: #263043;
+        background: color.adjust(variables.$color-primary-darkmode, $lightness: -60%);
       }
     }
   }
@@ -55,7 +58,7 @@
 
 .card-header {
   padding: 16px 20px 8px;
-  
+
   .header-content {
     display: flex;
     align-items: center;
@@ -65,17 +68,17 @@
 
   .icon-container {
     flex-shrink: 0;
-    
+
     mat-icon {
       font-size: 24px;
       width: 24px;
       height: 24px;
-      
-      &.icon-primary { color: #1976d2; }
-      &.icon-accent { color: #ff4081; }
-      &.icon-warn { color: #ff9800; }
-      &.icon-success { color: #4caf50; }
-      &.icon-info { color: #2196f3; }
+
+      &.icon-primary { color: variables.$color-primary; }
+      &.icon-accent { color: variables.$color-accent; }
+      &.icon-warn { color: variables.$color-warn; }
+      &.icon-success { color: variables.$color-success; }
+      &.icon-info { color: variables.$color-info; }
     }
   }
 
@@ -87,14 +90,14 @@
   .card-title {
     font-size: 1rem;
     font-weight: 600;
-    color: #333;
+    color: variables.$color-text;
     margin: 0;
     line-height: 1.2;
   }
 
   .card-subtitle {
     font-size: 0.875rem;
-    color: #666;
+    color: variables.$color-text-light;
     margin: 2px 0 0 0;
     line-height: 1.2;
   }
@@ -105,18 +108,18 @@
 
   .value-display {
     margin: 8px 0 16px 0;
-    
+
     .main-value {
       font-size: 2rem;
       font-weight: 700;
-      color: #1976d2;
+      color: variables.$color-primary;
       line-height: 1;
     }
   }
 
   .loading-container {
     margin: 8px 0 16px 0;
-    
+
     .skeleton-loader {
       height: 32px;
       background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
@@ -125,24 +128,20 @@
       animation: loading 1.5s infinite;
     }
   }
-
-  .custom-content {
-    // Espacio para contenido personalizado
-  }
 }
 
 .card-actions {
   padding: 8px 16px 16px;
-  
+
   .action-button {
     display: flex;
     align-items: center;
     gap: 8px;
     font-size: 0.875rem;
-    
+
     mat-icon {
       font-size: 18px;
-      width: 18px;
+     
       height: 18px;
     }
   }
@@ -152,33 +151,31 @@
 .card-actions .action-button {
   transition: background 0.2s, color 0.2s, box-shadow 0.2s;
   &:hover {
-    background: #e3f2fd;
-    color: #1976d2;
-    box-shadow: 0 2px 8px #1976d233;
-  }
-  @media (prefers-color-scheme: dark) {
-    &:hover {
-      background: #263043;
-      color: #90caf9;
+    background: color.adjust(variables.$color-primary, $lightness: 48%);
+    color: variables.$color-primary;
+    box-shadow: 0 2px 8px rgba(25,118,210,0.2);
+    @media (prefers-color-scheme: dark) {
+      background: color.adjust(variables.$color-primary-darkmode, $lightness: -60%);
+      color: variables.$color-primary-darkmode;
     }
   }
 }
 
 // Estados visuales
 .state-error {
-  color: #e53935;
+  color: variables.$color-warn;
   text-align: center;
   padding: 16px 0;
   font-weight: 600;
 }
 .state-empty {
-  color: #888;
+  color: variables.$color-empty;
   text-align: center;
   padding: 16px 0;
   font-style: italic;
 }
 .state-success {
-  color: #43a047;
+  color: variables.$color-success;
   text-align: center;
   padding: 16px 0;
   font-weight: 600;
@@ -198,7 +195,7 @@
 @media (max-width: 600px) {
   .card-header {
     padding: 12px 16px 6px;
-    
+
     .header-content {
       gap: 8px;
     }
@@ -206,7 +203,7 @@
 
   .card-content {
     padding: 6px 16px 12px;
-    
+
     .value-display .main-value {
       font-size: 1.75rem;
     }

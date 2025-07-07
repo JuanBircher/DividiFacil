@@ -1,22 +1,26 @@
 // Tipografía global para DividiFácil
+@use './variables' as variables;
 
 body, html {
-  font-family: $font-family-base;
-  color: $color-text;
-  font-size: $font-size-base;
-  background: $color-background;
+  font-family: variables.$font-family-base;
+  color: variables.$color-text;
+  font-size: variables.$font-size-base;
+  background: variables.$color-background;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: $font-family-base;
-  color: $color-primary;
-  margin-bottom: $spacing-xs;
+  font-family: variables.$font-family-base;
+  color: variables.$color-primary;
+  margin-bottom: variables.$spacing-xs;
 }
 
 .section-title {
-  @include section-title;
+  font-size: variables.$font-size-title;
+  font-weight: 500;
+  color: variables.$color-primary;
+  margin-bottom: variables.$spacing-sm;
 }
 
 .text-muted {
-  color: $color-text-light;
+  color: variables.$color-text-light;
 }

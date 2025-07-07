@@ -1,32 +1,36 @@
 // Utilidades de layout para DividiFácil
+@use './variables' as variables;
+// @use './mixins' as mixins;
 // Ejemplo de uso:
 // <div class="container flex-row mt-md">...</div>
 
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: $spacing-sm;
+  padding: variables.$spacing-sm;
 }
 
 .flex-row {
   display: flex;
   flex-direction: row;
-  gap: $spacing-sm;
+  gap: variables.$spacing-sm;
 }
 
 .flex-col {
   display: flex;
   flex-direction: column;
-  gap: $spacing-sm;
+  gap: variables.$spacing-sm;
 }
 
 .centered {
-  @include flex-center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.mt-sm { margin-top: $spacing-sm; }
-.mt-md { margin-top: $spacing-md; }
-.mt-lg { margin-top: $spacing-lg; }
-.mb-sm { margin-bottom: $spacing-sm; }
-.mb-md { margin-bottom: $spacing-md; }
-.mb-lg { margin-bottom: $spacing-lg; }
+.mt-sm { margin-top: variables.$spacing-sm; }
+.mt-md { margin-top: variables.$spacing-md; }
+.mt-lg { margin-top: variables.$spacing-lg; }
+.mb-sm { margin-bottom: variables.$spacing-sm; }
+.mb-md { margin-bottom: variables.$spacing-md; }
+.mb-lg { margin-bottom: variables.$spacing-lg; }

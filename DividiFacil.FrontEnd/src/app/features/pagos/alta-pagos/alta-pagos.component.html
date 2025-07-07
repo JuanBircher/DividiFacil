@@ -5,7 +5,7 @@
     <button mat-icon-button (click)="cancelar()" class="back-button">
       <mat-icon>arrow_back</mat-icon>
     </button>
-    <h1>
+    <h1 id="main-title">
       <mat-icon>add_circle</mat-icon>
       Crear Nuevo Pago
     </h1>
@@ -15,7 +15,7 @@
   <app-card>
     <ng-container card-header>
       <mat-icon>add_circle</mat-icon>
-      <span>Crear Nuevo Pago</span>
+      <span><h2 class="card-title" id="card-title">Crear Nuevo Pago</h2></span>
     </ng-container>
     <ng-container card-content>
       <!-- CARGANDO -->
@@ -53,26 +53,26 @@
               
               <!-- Receptor -->
               <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Pagar a</mat-label>
-                <mat-select formControlName="idReceptor" [disabled]="miembrosGrupo.length === 0">
+                <mat-label id="label-receptor">Pagar a</mat-label>
+                <mat-select formControlName="idReceptor" [disabled]="miembrosGrupo.length === 0" aria-labelledby="label-receptor" aria-describedby="error-receptor">
                   <mat-option *ngFor="let miembro of miembrosGrupo" [value]="miembro.idUsuario">
                     {{ miembro.nombre }}
                   </mat-option>
                 </mat-select>
                 <mat-icon matSuffix>person</mat-icon>
                 <mat-hint *ngIf="miembrosGrupo.length === 0">Selecciona un grupo primero</mat-hint>
-                <mat-error *ngIf="pagoForm.get('idReceptor')?.hasError('required')">
+                <mat-error *ngIf="pagoForm.get('idReceptor')?.hasError('required')" id="error-receptor">
                   Debes seleccionar a quién pagarle
                 </mat-error>
               </mat-form-field>
 
               <!-- Monto -->
               <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Monto</mat-label>
-                <input matInput type="number" step="0.01" min="0" formControlName="monto" placeholder="0.00">
+                <mat-label id="label-monto">Monto</mat-label>
+                <input matInput type="number" step="0.01" min="0" formControlName="monto" placeholder="0.00" aria-labelledby="label-monto" aria-describedby="error-monto">
                 <span matTextPrefix>$&nbsp;</span>
                 <mat-icon matSuffix>attach_money</mat-icon>
-                <mat-error *ngIf="pagoForm.get('monto')?.hasError('required')">
+                <mat-error *ngIf="pagoForm.get('monto')?.hasError('required')" id="error-monto">
                   El monto es requerido
                 </mat-error>
                 <mat-error *ngIf="pagoForm.get('monto')?.hasError('min')">
@@ -82,10 +82,10 @@
 
               <!-- Concepto -->
               <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Concepto del pago</mat-label>
-                <textarea matInput rows="3" formControlName="concepto" placeholder="Ej: Pago por cena del viernes"></textarea>
+                <mat-label id="label-concepto">Concepto del pago</mat-label>
+                <textarea matInput rows="3" formControlName="concepto" placeholder="Ej: Pago por cena del viernes" aria-labelledby="label-concepto" aria-describedby="error-concepto"></textarea>
                 <mat-icon matSuffix>description</mat-icon>
-                <mat-error *ngIf="pagoForm.get('concepto')?.hasError('required')">
+                <mat-error *ngIf="pagoForm.get('concepto')?.hasError('required')" id="error-concepto">
                   El concepto es requerido
                 </mat-error>
                 <mat-error *ngIf="pagoForm.get('concepto')?.hasError('minlength')">

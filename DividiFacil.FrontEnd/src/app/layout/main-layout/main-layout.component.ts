@@ -13,6 +13,14 @@ import { Subject, takeUntil, Observable } from 'rxjs';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { FooterComponent } from '../footer/footer.component';
+import {
+  trigger,
+  transition,
+  style,
+  animate,
+  query,
+  group
+} from '@angular/animations';
 
 @Component({
   selector: 'app-main-layout',
@@ -32,6 +40,29 @@ import { FooterComponent } from '../footer/footer.component';
     MatListModule,
     MatBadgeModule,
     RouterModule
+  ],
+  animations: [
+    trigger('routeAnimations', [
+      transition('* <=> *', [
+        query(':enter, :leave', [
+          style({
+            position: 'absolute',
+            left: 0,
+            width: '100%',
+            opacity: 0,
+            transform: 'translateY(16px)'
+          })
+        ], { optional: true }),
+        group([
+          query(':leave', [
+            animate('200ms cubic-bezier(.4,0,.2,1)', style({ opacity: 0, transform: 'translateY(-16px)' }))
+          ], { optional: true }),
+          query(':enter', [
+            animate('300ms cubic-bezier(.4,0,.2,1)', style({ opacity: 1, transform: 'none' }))
+          ], { optional: true })
+        ])
+      ])
+    ])
   ]
 })
 export class MainLayoutComponent implements OnInit, OnDestroy {
@@ -73,5 +104,9 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
 
   toggleGruposMenu() {
     this.gruposMenuAbierto = !this.gruposMenuAbierto;
+  }
+
+  getRouteAnimationData(outlet: RouterOutlet) {
+    return outlet && outlet.activatedRouteData && outlet.activatedRouteData['animation'];
   }
 }

@@ -1,4 +1,4 @@
-<div class="spinner-container" [class.overlay]="overlay" [class.centered]="variant === 'centered'" [attr.role]="'status'" [attr.aria-label]="ariaLabel">
+<div class="spinner-container" [class.overlay]="overlay" [class.centered]="variant === 'centered'" [attr.role]="'status'" [attr.aria-label]="ariaLabel || 'Cargando'">
   <div class="spinner-content">
     <ng-content select="[spinner-icon]"></ng-content>
     <mat-spinner 
@@ -8,13 +8,14 @@
       *ngIf="!hasProjectedIcon">
     </mat-spinner>
     <ng-content select="[spinner-message]"></ng-content>
-    <p *ngIf="showMessage && !hasProjectedMessage" class="loading-message">
+    <p *ngIf="showMessage && !hasProjectedMessage" class="loading-message" [class.visually-hidden]="overlay">
       {{ message }}
     </p>
+    <span *ngIf="overlay && showMessage && !hasProjectedMessage" class="visually-hidden">{{ message }}</span>
   </div>
 </div>
 <!--
-  Slots disponibles:
-  [spinner-icon]    - Icono personalizado
-  [spinner-message] - Mensaje personalizado
+  Mejoras:
+  - aria-label por defecto
+  - mensaje de carga accesible para lectores de pantalla si overlay
 -->

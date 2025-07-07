@@ -4,9 +4,8 @@
   </mat-sidenav>
   <mat-sidenav-content>
     <app-navbar [nombreUsuario]="nombreUsuario" (logout)="logout()" (toggleMenu)="drawer.toggle()"></app-navbar>
-    <div class="content">
-      <!-- SOLO este router-outlet -->
-      <router-outlet></router-outlet>
+    <div class="content" style="position:relative; min-height:60vh;">
+      <router-outlet @routeAnimations #outlet="outlet" [attr.data-animation]="getRouteAnimationData(outlet)"></router-outlet>
     </div>
     <app-footer></app-footer>
   </mat-sidenav-content>

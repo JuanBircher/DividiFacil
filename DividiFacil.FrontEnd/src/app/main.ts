@@ -19,7 +19,7 @@ bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(routes),
     provideHttpClient(
-      withInterceptors([authInterceptor]) // ✅ Tu interceptor funcional existente
+      withInterceptors([authInterceptor])
     ),
     // ✅ INTERCEPTORES ADICIONALES (clase-based)
     {

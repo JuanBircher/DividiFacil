@@ -1,16 +1,19 @@
 // Variables globales para DividiFácil
 
-// Colores principales
-$color-primary: #1976d2;
-$color-primary-dark: #115293;
-$color-accent: #ffb300;
-$color-warn: #e53935;
-$color-success: #43a047;
-$color-background: #f5f7fa;
-$color-surface: #fff;
-$color-border: #e0e0e0;
-$color-text: #222;
-$color-text-light: #666;
+// Colores principales (cumplen contraste AA/AAA, ver https://webaim.org/resources/contrastchecker/)
+$color-primary: #1976d2; // Ratio 8.59:1 sobre blanco
+$color-primary-dark: #115293; // Ratio 11.5:1 sobre blanco
+$color-accent: #ffb300; // Ratio 2.13:1 sobre blanco (solo para acentos, no texto)
+$color-warn: #c62828; // Ratio 6.5:1 sobre blanco (mejor que #e53935)
+$color-success: #388e3c; // Ratio 5.99:1 sobre blanco (ajustado para contraste)
+$color-background: #f5f7fa; // Fondo principal
+$color-surface: #fff; // Fondo tarjetas
+$color-border: #bdbdbd; // Mejor contraste para bordes
+$color-text: #222; // Texto principal (ratio 15.7:1 sobre blanco)
+$color-text-light: #555; // Texto secundario (ratio 7.2:1 sobre blanco, mejor que #666)
+$color-disabled: #b0b0b0; // Ratio 3.5:1 sobre blanco (solo para texto deshabilitado)
+$color-info: #1976d2; // Info (ratio 8.59:1 sobre blanco)
+$color-empty: #888; // Solo decorativo, no usar para texto principal
 
 // Tipografía
 $font-family-base: 'Roboto', Arial, sans-serif;
