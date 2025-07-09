@@ -6,7 +6,7 @@
         <div class="error-content">
           <mat-icon class="error-icon">error</mat-icon>
           <h3>{{ error }}</h3>
-          <button mat-raised-button color="primary" (click)="cargarDatosCompletos()">
+          <button mat-raised-button color="primary" (click)="cargarDatosCompletos()" aria-label="Intentar de nuevo">
             <mat-icon>refresh</mat-icon>
             Intentar de nuevo
           </button>
@@ -15,7 +15,24 @@
     </app-card>
   </ng-container>
   <ng-template #mainContent>
-    <ng-container *ngIf="grupo">
+    <!-- NO ES MIEMBRO -->
+    <ng-container *ngIf="!miembroActual">
+      <app-card cardClass="error-card">
+        <ng-container card-content>
+          <div class="error-content">
+            <mat-icon class="error-icon">block</mat-icon>
+            <h3>No eres miembro de este grupo</h3>
+            <p>No tienes permisos para ver la información de este grupo.</p>
+            <button mat-raised-button color="primary" routerLink="/grupos" aria-label="Volver a mis grupos">
+              <mat-icon>arrow_back</mat-icon>
+              Volver a mis grupos
+            </button>
+          </div>
+        </ng-container>
+      </app-card>
+    </ng-container>
+    <!-- CONTENIDO SOLO SI ES MIEMBRO -->
+    <ng-container *ngIf="grupo && miembroActual">
       <app-card cardClass="header-card">
         <ng-container card-content>
           <div class="header-content">
@@ -132,6 +149,7 @@
                       color="primary"
                       [disabled]="generandoCodigo"
                       (click)="invitarMiembro()"
+                      aria-label="Generar código de invitación"
                     >
                       <mat-icon *ngIf="!generandoCodigo">qr_code</mat-icon>
                       <mat-icon *ngIf="generandoCodigo" class="spinning">hourglass_empty</mat-icon>
@@ -142,6 +160,7 @@
                       mat-stroked-button
                       color="accent"
                       (click)="toggleFormularioAgregar()"
+                      aria-label="Agregar miembro por email"
                     >
                       <mat-icon>person_add</mat-icon>
                       Agregar por Email

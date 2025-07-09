@@ -5,6 +5,12 @@ import { of } from 'rxjs';
 
 import { DetalleComponent } from './detalle.component';
 
+// ------------------------------------------------------------
+// Test de integración de DetalleComponent (Notificaciones)
+// - Verifica creación básica del componente.
+// - Recomendado: agregar tests de interacción, feedback visual y mocks de servicios.
+// ------------------------------------------------------------
+
 describe('DetalleComponent', () => {
   let component: DetalleComponent;
   let fixture: ComponentFixture<DetalleComponent>;

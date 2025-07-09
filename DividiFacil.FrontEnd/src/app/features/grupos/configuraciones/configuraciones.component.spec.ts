@@ -1,3 +1,8 @@
+// ------------------------------------------------------------
+// Test de integración de ConfiguracionesComponent
+// - Verifica creación, formularios y validaciones básicas.
+// - Recomendado: agregar tests de interacción, feedback visual y mocks de servicios.
+// ------------------------------------------------------------
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ConfiguracionesComponent } from './configuraciones.component';
 import { ReactiveFormsModule } from '@angular/forms';

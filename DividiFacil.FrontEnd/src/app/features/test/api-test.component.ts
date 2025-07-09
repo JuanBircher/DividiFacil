@@ -147,7 +147,7 @@ export class ApiTestComponent implements OnInit {
       return;
     }
 
-    this.notificacionService.obtenerPendientes(idUsuario).subscribe({
+    this.notificacionService.obtenerPendientes().subscribe({
       next: (response: any) => {
         console.log('✅ Notificaciones obtenidas:', response);
         this.notificacionesTestResult = { success: true, data: response };

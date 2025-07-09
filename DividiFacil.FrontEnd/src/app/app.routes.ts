@@ -2,6 +2,32 @@ import { Routes } from '@angular/router';
 import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
 import { authGuard } from './core/auth.guard';
 
+// ===================== CHECKLIST DE RUTAS PRINCIPALES =====================
+// GRUPOS:
+//  - /grupos                -> Listado de grupos
+//  - /grupos/alta           -> Alta de grupo
+//  - /grupos/unirse         -> Unirse a grupo por código
+//  - /grupos/:idGrupo       -> Detalle de grupo
+//  - /grupos/:idGrupo/editar-> Editar grupo
+//  - /grupos/:idGrupo/configuraciones -> Configuración de grupo
+// GASTOS:
+//  - /gastos                -> Listado de gastos
+//  - /gastos/alta           -> Alta de gasto
+//  - /gastos/:idGasto       -> Detalle de gasto
+//  - /gastos/:idGasto/editar-> Editar gasto
+// PAGOS:
+//  - /pagos                 -> Listado de pagos
+//  - /pagos/alta            -> Alta de pago
+//  - /pagos/:idPago         -> Detalle de pago
+// BALANCES:
+//  - /balances/grupo/:idGrupo -> Balance de grupo
+//  - /balances/usuario        -> Balance de usuario
+// OTROS:
+//  - /notificaciones, /caja, /perfil, /test-*
+// RUTA POR DEFECTO:
+//  - '**' -> Redirige a login
+// ===========================================================================
+
 export const routes: Routes = [
   // ✅ RUTAS DE AUTENTICACIÓN
   {

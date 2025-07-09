@@ -1,5 +1,6 @@
 ﻿using DividiFacil.Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using System.Text.RegularExpressions;
 
 namespace DividiFacil.Data
@@ -218,6 +219,16 @@ namespace DividiFacil.Data
                     .HasForeignKey<ConfiguracionNotificaciones>(c => c.IdUsuario)
                     .OnDelete(DeleteBehavior.Cascade);
             });
+        }
+    }
+
+    public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
+    {
+        public ApplicationDbContext CreateDbContext(string[] args)
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
+            optionsBuilder.UseSqlServer("Server=JM2804;Database=DividiFacil;User Id=juanb;Password=Portulaco.88;TrustServerCertificate=True;");
+            return new ApplicationDbContext(optionsBuilder.Options);
         }
     }
 }

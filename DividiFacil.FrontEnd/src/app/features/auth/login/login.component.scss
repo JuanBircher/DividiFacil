@@ -5,7 +5,8 @@
 }
 
 .login-card {
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  border: 1.5px solid #e3e8f0;
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.10);
   border-radius: 12px;
   overflow: hidden;
   background: white;
@@ -19,16 +20,18 @@
       width: 100%;
 
       .app-title {
-        color: #333;
-        font-size: 2rem;
-        font-weight: 700;
-        margin: 0;
+        color: #1976d2;
+        font-size: 2.1rem;
+        font-weight: 800;
+        margin: 0 0 4px 0;
+        letter-spacing: 0.5px;
       }
 
       .app-subtitle {
         color: #666;
-        font-size: 0.875rem;
-        margin: 8px 0 0 0;
+        font-size: 1rem;
+        margin: 0 0 8px 0;
+        font-weight: 500;
       }
     }
   }
@@ -36,6 +39,16 @@
   mat-card-content {
     padding: 24px;
   }
+}
+
+.login-logo {
+  display: block;
+  margin: 0 auto 12px auto;
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.10);
 }
 
 .login-form {
@@ -85,11 +98,20 @@
 .login-button {
   height: 48px;
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 700;
   margin-top: 8px;
+  background: linear-gradient(90deg, #1976d2 0%, #67b26f 100%);
+  color: #fff;
+  letter-spacing: 0.5px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.10);
 
   mat-spinner {
     margin-right: 8px;
+  }
+
+  &[disabled] {
+    opacity: 0.7;
   }
 }
 
@@ -114,6 +136,15 @@ mat-card-actions {
 @media (max-width: 480px) {
   .login-container {
     padding: 0 16px;
+  }
+
+  .login-logo {
+    width: 44px;
+    height: 44px;
+  }
+
+  .app-title {
+    font-size: 1.3rem;
   }
 
   .login-card {

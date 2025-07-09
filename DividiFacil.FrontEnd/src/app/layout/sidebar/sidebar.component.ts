@@ -23,6 +23,9 @@ import { MatBadgeModule } from '@angular/material/badge';
 export class SidebarComponent {
   @Input() gruposMenuAbierto: boolean = false;
   @Input() contadorNotificaciones: number = 0;
+  @Input() saludoPersonalizado: string = '';
+  @Input() nombreUsuario: string = '';
+  @Input() horaActual: string = '';
   @Output() toggleGruposMenu = new EventEmitter<void>();
   // Accesibilidad
   ariaLabel: string = 'Menú lateral de navegación';

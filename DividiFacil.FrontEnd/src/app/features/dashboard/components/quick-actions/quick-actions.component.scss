@@ -6,13 +6,17 @@
 }
 
 .action-button {
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(102, 126, 234, 0.10);
+  border: 1.5px solid #e3e8f0;
   padding: 16px;
   height: auto;
   min-height: 80px;
-  border-radius: 12px;
   text-align: left;
   transition: all 0.3s ease;
-  border: 2px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: 14px;
   
   &:hover:not(:disabled) {
     transform: translateY(-2px);
@@ -68,6 +72,11 @@
     &:hover:not(:disabled) {
       box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
     }
+  }
+  
+  .mat-icon {
+    font-size: 2rem;
+    margin-right: 8px;
   }
 }
 
@@ -177,6 +186,21 @@
     
     .action-description {
       font-size: 0.8rem;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .actions-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .action-button {
+    font-size: 0.98rem;
+    padding: 10px;
+    border-radius: 8px;
+    .mat-icon {
+      font-size: 1.3rem;
     }
   }
 }

@@ -1,3 +1,9 @@
+// ------------------------------------------------------------
+// Test de integración de DetalleGruposComponent
+// - Verifica creación, manejo de errores y lógica básica.
+// - Recomendado: agregar tests de interacción, feedback visual y mocks de servicios.
+// ------------------------------------------------------------
+
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DetalleGruposComponent } from './detalle-grupos.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';

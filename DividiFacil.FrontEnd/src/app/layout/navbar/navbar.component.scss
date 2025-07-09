@@ -42,3 +42,55 @@ body.dark-mode button[mat-icon-button] {
     display: inline-flex;
   }
 }
+
+.navbar-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #fff;
+  margin-right: 10px;
+}
+.navbar-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #fff;
+  margin-right: 16px;
+}
+.navbar-user-menu {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 12px;
+  .navbar-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid #1976d2;
+    background: #fff;
+    object-fit: cover;
+  }
+  .navbar-username {
+    font-weight: 600;
+    color: #fff;
+    font-size: 1rem;
+    margin-right: 4px;
+  }
+}
+@media (max-width: 800px) {
+  .navbar-logo {
+    width: 24px;
+    height: 24px;
+  }
+  .navbar-title {
+    font-size: 1rem;
+    margin-right: 8px;
+  }
+  .navbar-user-menu .navbar-avatar {
+    width: 24px;
+    height: 24px;
+  }
+  .navbar-user-menu .navbar-username {
+    font-size: 0.95rem;
+  }
+}

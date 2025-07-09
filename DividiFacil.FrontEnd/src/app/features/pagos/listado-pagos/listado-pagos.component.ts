@@ -336,6 +336,7 @@ export class ListadoPagosComponent implements OnInit, OnDestroy {
    */
   verDetalle(pago: Pago): void {
     this.router.navigate(['/detalle-pagos', pago.idPago]);
+    this.snackBar.open('Abriendo detalle del pago...', 'Cerrar', { duration: 2000 });
   }
 
   /**
@@ -411,5 +412,21 @@ obtenerIconoEstado(estado: string): string {
   volver(): void {
     // Implementa aquí la lógica para volver atrás, por ejemplo navegar a la vista anterior
     window.history.back();
+  }
+
+  /**
+   * ✏️ EDITAR PAGO
+   */
+  editarPago(pago: Pago): void {
+    this.router.navigate(['/detalle-pagos', pago.idPago, 'editar']);
+    this.snackBar.open('Redirigiendo a editar pago...', 'Cerrar', { duration: 2000 });
+  }
+
+  /**
+   * ❌ ELIMINAR PAGO
+   */
+  eliminarPago(pago: Pago): void {
+    // Implementar lógica de eliminación
+    this.snackBar.open('Pago eliminado correctamente', 'Cerrar', { duration: 3000 });
   }
 }

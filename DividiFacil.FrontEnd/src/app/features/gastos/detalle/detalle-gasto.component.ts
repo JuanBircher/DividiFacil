@@ -67,6 +67,9 @@ export class DetalleGastoComponent implements OnInit, OnDestroy {
     participantesPagados = 0;
     participantesPendientes = 0;
 
+    // Indica si el usuario actual es participante del gasto
+    esParticipante: boolean = false;
+
     constructor(
         private gastoService: GastoService,
         private authService: AuthService,
@@ -108,6 +111,7 @@ export class DetalleGastoComponent implements OnInit, OnDestroy {
     cargarDetalleGasto(): void {
         this.loading = true;
         this.error = null;
+        this.esParticipante = false;
 
         this.gastoService.obtenerGasto(this.idGasto)
             .pipe(takeUntil(this.destroy$))
@@ -118,6 +122,10 @@ export class DetalleGastoComponent implements OnInit, OnDestroy {
                         this.gasto = response.data;
                         this.procesarParticipantes();
                         this.calcularResumen();
+                        // Validar si el usuario es participante
+                        this.esParticipante = !!this.gasto.detalles?.some(
+                          d => d.idMiembroDeudor === this.idUsuarioActual
+                        ) || this.gasto.idMiembroPagador === this.idUsuarioActual;
                     } else {
                         this.error = 'No se pudo cargar el detalle del gasto';
                         this.snackBar.open('Error al cargar el gasto', 'Cerrar', { duration: 3000 });
@@ -207,7 +215,7 @@ export class DetalleGastoComponent implements OnInit, OnDestroy {
      * ✏️ EDITAR GASTO
      */
     editarGasto(): void {
-        this.router.navigate(['/gastos/editar', this.idGasto], {
+        this.router.navigate(['/gastos', this.idGasto, 'editar'], {
             queryParams: { grupo: this.obtenerIdGrupo() }
         });
     }
@@ -217,19 +225,13 @@ export class DetalleGastoComponent implements OnInit, OnDestroy {
      */
     async eliminarGasto(): Promise<void> {
         if (!this.gasto) return;
-
         if (!confirm(`¿Estás seguro de eliminar el gasto "${this.gasto.descripcion}"?`)) {
             return;
         }
-
         try {
             await this.gastoService.eliminarGasto(this.idGasto).toPromise();
-
-            this.snackBar.open('Gasto eliminado exitosamente', 'Cerrar', { duration: 3000 });
-
-            // Navegar de vuelta al listado
-            this.volverAlListado();
-
+            this.snackBar.open('Gasto eliminado correctamente', 'Cerrar', { duration: 3000 });
+            this.router.navigate(['/gastos'], { queryParams: { grupo: this.gasto.idGrupo } });
         } catch (error) {
             console.error('Error al eliminar gasto:', error);
             this.snackBar.open('Error al eliminar el gasto', 'Cerrar', { duration: 3000 });
@@ -324,3 +326,7 @@ export class DetalleGastoComponent implements OnInit, OnDestroy {
     // Exponer Math para el template
     Math = Math;
 }
+
+/**
+ * NOTA: Se corrigió la ruta de edición de gasto para alinearla con el checklist y app.routes.ts: '/gastos/:idGasto/editar'
+ */

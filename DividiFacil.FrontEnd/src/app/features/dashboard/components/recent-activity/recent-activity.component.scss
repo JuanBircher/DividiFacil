@@ -1,3 +1,106 @@
 // 🚀 ARCHIVO VACÍO - SOLO ESTILOS INLINE PARA EVITAR PROBLEMAS DE BUDGET
 
 /* CSS vacío - usando estilos inline para evitar problemas de budget */
+
+.timeline-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0;
+}
+
+.timeline-item {
+  display: flex;
+  align-items: flex-start;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(102, 126, 234, 0.10);
+  padding: 14px 18px;
+  min-height: 64px;
+  border: 1.5px solid #e3e8f0;
+  margin-bottom: 4px;
+  transition: box-shadow 0.2s;
+}
+
+.timeline-item:hover {
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.16);
+}
+
+.timeline-icon {
+  margin-right: 10px;
+  align-self: flex-start;
+  mat-icon {
+    font-size: 1.5rem;
+    color: #667eea;
+  }
+}
+
+.timeline-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.timeline-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.timeline-title {
+  font-size: 1.08rem;
+  font-weight: 700;
+  margin: 0;
+  color: #222;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.timeline-date {
+  font-size: 0.89rem;
+  color: #1976d2;
+  font-weight: 500;
+}
+
+.timeline-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 0.93rem;
+  color: #666;
+  margin-top: 2px;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.meta-amount {
+  font-weight: 600;
+  color: #43a047;
+  margin-left: 8px;
+}
+
+@media (max-width: 600px) {
+  .timeline-container {
+    gap: 6px;
+  }
+  .timeline-item {
+    padding: 8px 6px;
+    border-radius: 8px;
+    min-height: 48px;
+  }
+  .timeline-title {
+    font-size: 0.98rem;
+  }
+  .timeline-date {
+    font-size: 0.8rem;
+  }
+  .timeline-meta {
+    font-size: 0.85rem;
+    gap: 4px;
+  }
+}

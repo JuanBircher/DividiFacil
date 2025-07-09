@@ -125,6 +125,9 @@ export class DetalleGruposComponent implements OnInit {
   generandoCodigo = false;
   mostrarModalCodigo = false;
 
+  // Miembro actual
+  miembroActual: MiembroGrupoSimpleDto | null = null;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -191,14 +194,19 @@ export class DetalleGruposComponent implements OnInit {
   private configurarPermisos(): void {
     if (!this.grupo || !this.usuarioActual) return;
 
-    const miembroActual = this.grupo.miembros.find(
+    this.miembroActual = this.grupo.miembros.find(
       m => m.idUsuario === this.usuarioActual.idUsuario
-    );
+    ) || null;
 
-    if (miembroActual) {
-      this.esAdministrador = miembroActual.rol === 'Administrador';
+    if (this.miembroActual) {
+      this.esAdministrador = this.miembroActual.rol === 'Administrador';
       this.puedeEditarGrupo = this.esAdministrador;
       this.puedeInvitarMiembros = this.esAdministrador;
+    } else {
+      // Si no es miembro, limpiar permisos
+      this.esAdministrador = false;
+      this.puedeEditarGrupo = false;
+      this.puedeInvitarMiembros = false;
     }
   }
 
@@ -513,7 +521,7 @@ export class DetalleGruposComponent implements OnInit {
    * 💰 VER PAGOS DEL GRUPO
    */
   verPagosGrupo(): void {
-    this.router.navigate(['/listado-pagos'], {
+    this.router.navigate(['/pagos'], {
       queryParams: { idGrupo: this.idGrupo }
     });
   }
@@ -522,7 +530,7 @@ export class DetalleGruposComponent implements OnInit {
    * 💳 CREAR PAGO RÁPIDO
    */
   crearPagoRapido(): void {
-    this.router.navigate(['/alta-pagos'], {
+    this.router.navigate(['/pagos/alta'], {
       queryParams: { idGrupo: this.idGrupo }
     });
   }
@@ -568,3 +576,6 @@ export class DetalleGruposComponent implements OnInit {
     console.log('Confirmar acción para miembro:', miembro);
   }
 }
+
+// NOTA: Se corrigieron las rutas de pagos para alinearlas con el checklist y las rutas definidas en app.routes.ts.
+// Antes: '/listado-pagos', '/alta-pagos' | Ahora: '/pagos', '/pagos/alta'

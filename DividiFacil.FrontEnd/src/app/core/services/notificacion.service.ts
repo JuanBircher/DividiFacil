@@ -28,9 +28,9 @@ export class NotificacionService {
 
   constructor(private http: HttpClient) {}
 
-  obtenerPendientes(idUsuario: string): Observable<ResponseDto<NotificacionDto[]>> {
-    console.log('[NotificacionService] obtenerPendientes', { idUsuario });
-    return this.http.get<ResponseDto<NotificacionDto[]>>(`${this.apiUrl}/pendientes/${idUsuario}`)
+  obtenerPendientes(): Observable<ResponseDto<NotificacionDto[]>> {
+    console.log('[NotificacionService] obtenerPendientes');
+    return this.http.get<ResponseDto<NotificacionDto[]>>(`${this.apiUrl}/pendientes`)
       .pipe(
         tap(response => {
           if (response.exito && response.data) {

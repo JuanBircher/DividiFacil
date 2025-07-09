@@ -1,4 +1,17 @@
-﻿using Xunit;
+﻿// ------------------------------------------------------------
+// PagoServiceTests.cs
+// Tests unitarios para PagoService
+// Cubre creación de pagos, validaciones y notificaciones.
+// ------------------------------------------------------------
+// AAA: Arrange, Act, Assert
+//
+// Estructura:
+// - CrearPagoAsync: Casos de usuario pagador inválido/no existe, receptor, grupo, mocks de servicios relacionados.
+// ------------------------------------------------------------
+// Cada test debe tener comentario breve explicando el objetivo.
+// ------------------------------------------------------------
+
+using Xunit;
 using Moq;
 using System;
 using System.Threading.Tasks;
@@ -37,6 +50,11 @@ namespace DividiFacil.Tests.Services
             );
         }
 
+        // ------------------------------------------------------------
+        // CrearPagoAsync_UsuarioPagadorInvalido_RetornaError
+        // Prueba que verifica que se retorna un error adecuado cuando el
+        // usuario pagador es inválido.
+        // ------------------------------------------------------------
         [Fact]
         public async Task CrearPagoAsync_UsuarioPagadorInvalido_RetornaError()
         {
@@ -52,6 +70,11 @@ namespace DividiFacil.Tests.Services
             Assert.Contains("inválido", result.Mensaje, StringComparison.OrdinalIgnoreCase);
         }
 
+        // ------------------------------------------------------------
+        // CrearPagoAsync_UsuarioPagadorNoExiste_RetornaError
+        // Prueba que verifica que se retorna un error adecuado cuando el
+        // usuario pagador no existe en el sistema.
+        // ------------------------------------------------------------
         [Fact]
         public async Task CrearPagoAsync_UsuarioPagadorNoExiste_RetornaError()
         {
@@ -63,6 +86,11 @@ namespace DividiFacil.Tests.Services
             Assert.Contains("pagador no encontrado", result.Mensaje, StringComparison.OrdinalIgnoreCase);
         }
 
+        // ------------------------------------------------------------
+        // CrearPagoAsync_UsuarioReceptorNoExiste_RetornaError
+        // Prueba que verifica que se retorna un error adecuado cuando el
+        // receptor del pago no existe en el sistema.
+        // ------------------------------------------------------------
         [Fact]
         public async Task CrearPagoAsync_UsuarioReceptorNoExiste_RetornaError()
         {
@@ -77,6 +105,11 @@ namespace DividiFacil.Tests.Services
             Assert.Contains("receptor no encontrado", result.Mensaje, StringComparison.OrdinalIgnoreCase);
         }
 
+        // ------------------------------------------------------------
+        // CrearPagoAsync_GrupoNoExiste_RetornaError
+        // Prueba que verifica que se retorna un error adecuado cuando el
+        // grupo al que se intenta asociar el pago no existe.
+        // ------------------------------------------------------------
         [Fact]
         public async Task CrearPagoAsync_GrupoNoExiste_RetornaError()
         {
@@ -92,6 +125,11 @@ namespace DividiFacil.Tests.Services
             Assert.Contains("grupo no encontrado", result.Mensaje, StringComparison.OrdinalIgnoreCase);
         }
 
+        // ------------------------------------------------------------
+        // CrearPagoAsync_NoEsMiembroDelGrupo_RetornaError
+        // Prueba que verifica que se retorna un error adecuado cuando el
+        // pagador no es miembro del grupo al que se intenta asociar el pago.
+        // ------------------------------------------------------------
         [Fact]
         public async Task CrearPagoAsync_NoEsMiembroDelGrupo_RetornaError()
         {
@@ -110,6 +148,11 @@ namespace DividiFacil.Tests.Services
             Assert.Contains("no eres miembro", result.Mensaje, StringComparison.OrdinalIgnoreCase);
         }
 
+        // ------------------------------------------------------------
+        // CrearPagoAsync_TodoValido_CreaPago
+        // Prueba que verifica que se crea un pago correctamente cuando
+        // todos los datos son válidos.
+        // ------------------------------------------------------------
         [Fact]
         public async Task CrearPagoAsync_TodoValido_CreaPago()
         {
@@ -132,6 +175,11 @@ namespace DividiFacil.Tests.Services
             _mockRecordatorioService.Verify(x => x.CrearRecordatorioPagoAsync(It.IsAny<Guid>()), Times.Once);
         }
 
+        // ------------------------------------------------------------
+        // ConfirmarPagoAsync_PagoNoExiste_RetornaError
+        // Prueba que verifica que se retorna un error adecuado cuando se
+        // intenta confirmar un pago que no existe.
+        // ------------------------------------------------------------
         [Fact]
         public async Task ConfirmarPagoAsync_PagoNoExiste_RetornaError()
         {
@@ -142,6 +190,11 @@ namespace DividiFacil.Tests.Services
             Assert.Contains("no encontrado", result.Mensaje, StringComparison.OrdinalIgnoreCase);
         }
 
+        // ------------------------------------------------------------
+        // ConfirmarPagoAsync_UsuarioNoEsReceptor_RetornaError
+        // Prueba que verifica que se retorna un error adecuado cuando un
+        // usuario que no es el receptor del pago intenta confirmarlo.
+        // ------------------------------------------------------------
         [Fact]
         public async Task ConfirmarPagoAsync_UsuarioNoEsReceptor_RetornaError()
         {
@@ -153,6 +206,11 @@ namespace DividiFacil.Tests.Services
             Assert.Contains("solo el receptor", result.Mensaje, StringComparison.OrdinalIgnoreCase);
         }
 
+        // ------------------------------------------------------------
+        // ConfirmarPagoAsync_PagoNoPendiente_RetornaError
+        // Prueba que verifica que se retorna un error adecuado cuando se
+        // intenta confirmar un pago que no está en estado pendiente.
+        // ------------------------------------------------------------
         [Fact]
         public async Task ConfirmarPagoAsync_PagoNoPendiente_RetornaError()
         {
@@ -165,6 +223,11 @@ namespace DividiFacil.Tests.Services
             Assert.Contains("no se puede confirmar", result.Mensaje, StringComparison.OrdinalIgnoreCase);
         }
 
+        // ------------------------------------------------------------
+        // ConfirmarPagoAsync_TodoValido_ConfirmaPago
+        // Prueba que verifica que se confirma un pago correctamente cuando
+        // todos los datos son válidos.
+        // ------------------------------------------------------------
         [Fact]
         public async Task ConfirmarPagoAsync_TodoValido_ConfirmaPago()
         {
@@ -180,6 +243,11 @@ namespace DividiFacil.Tests.Services
             _mockNotificacionService.Verify(x => x.CrearNotificacionPagoAsync(pagoId, "Confirmado"), Times.Once);
         }
 
+        // ------------------------------------------------------------
+        // RechazarPagoAsync_TodoValido_RechazaPago
+        // Prueba que verifica que se rechaza un pago correctamente cuando
+        // todos los datos son válidos.
+        // ------------------------------------------------------------
         [Fact]
         public async Task RechazarPagoAsync_TodoValido_RechazaPago()
         {
@@ -197,6 +265,11 @@ namespace DividiFacil.Tests.Services
             _mockNotificacionService.Verify(x => x.CrearNotificacionPagoAsync(pagoId, "Rechazado"), Times.Once);
         }
 
+        // ------------------------------------------------------------
+        // EliminarPagoAsync_PagoNoExiste_RetornaError
+        // Prueba que verifica que se retorna un error adecuado cuando se
+        // intenta eliminar un pago que no existe.
+        // ------------------------------------------------------------
         [Fact]
         public async Task EliminarPagoAsync_PagoNoExiste_RetornaError()
         {
@@ -207,6 +280,12 @@ namespace DividiFacil.Tests.Services
             Assert.Contains("no encontrado", result.Mensaje, StringComparison.OrdinalIgnoreCase);
         }
 
+        // ------------------------------------------------------------
+        // EliminarPagoAsync_NoEsPagadorNiAdmin_RetornaError
+        // Prueba que verifica que se retorna un error adecuado cuando un
+        // usuario que no es el pagador ni administrador del grupo intenta
+        // eliminar el pago.
+        // ------------------------------------------------------------
         [Fact]
         public async Task EliminarPagoAsync_NoEsPagadorNiAdmin_RetornaError()
         {
@@ -220,6 +299,11 @@ namespace DividiFacil.Tests.Services
             Assert.Contains("permiso", result.Mensaje, StringComparison.OrdinalIgnoreCase);
         }
 
+        // ------------------------------------------------------------
+        // GetByIdAsync_PagoNoExiste_RetornaError
+        // Prueba que verifica que se retorna un error adecuado cuando se
+        // intenta obtener un pago que no existe.
+        // ------------------------------------------------------------
         [Fact]
         public async Task GetByIdAsync_PagoNoExiste_RetornaError()
         {
@@ -230,6 +314,10 @@ namespace DividiFacil.Tests.Services
             Assert.Contains("no encontrado", result.Mensaje, StringComparison.OrdinalIgnoreCase);
         }
 
+        // ------------------------------------------------------------
+        // EliminarPagoAsync_EsPagador_Elimina
+        // Prueba que verifica que un pagador puede eliminar su pago.
+        // ------------------------------------------------------------
         [Fact]
         public async Task EliminarPagoAsync_EsPagador_Elimina()
         {

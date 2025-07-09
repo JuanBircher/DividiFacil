@@ -1,4 +1,18 @@
-﻿using Xunit;
+﻿// ------------------------------------------------------------
+// AuthServiceTests.cs
+// Tests unitarios para AuthService
+// Cubre registro, login y validaciones de usuario.
+// ------------------------------------------------------------
+// AAA: Arrange, Act, Assert
+//
+// Estructura:
+// - RegistrarUsuarioAsync: Casos de usuario existente y nuevo
+// - LoginAsync: Casos de email incorrecto, password incorrecto, login exitoso
+// ------------------------------------------------------------
+// Cada test debe tener comentario breve explicando el objetivo.
+// ------------------------------------------------------------
+
+using Xunit;
 using Moq;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -26,6 +40,11 @@ namespace DividiFacil.Tests.Services
             _service = new AuthService(_mockUsuarioRepo.Object, _mockConfig.Object);
         }
 
+        // ------------------------------------------------------------
+        // RegistrarUsuarioAsync_UsuarioYaExiste_RetornaError
+        // Intenta registrar un usuario con email ya existente.
+        // Se espera un resultado con éxito en falso y mensaje de error.
+        // ------------------------------------------------------------
         [Fact]
         public async Task RegistrarUsuarioAsync_UsuarioYaExiste_RetornaError()
         {
@@ -38,6 +57,10 @@ namespace DividiFacil.Tests.Services
             Assert.Contains("ya está registrado", result.Mensaje, StringComparison.OrdinalIgnoreCase);
         }
 
+        // ------------------------------------------------------------
+        // RegistrarUsuarioAsync_UsuarioNuevo_CreaYRetornaToken
+        // Registra un nuevo usuario y verifica que se genere un token.
+        // ------------------------------------------------------------
         [Fact]
         public async Task RegistrarUsuarioAsync_UsuarioNuevo_CreaYRetornaToken()
         {
@@ -53,6 +76,11 @@ namespace DividiFacil.Tests.Services
             _mockUsuarioRepo.Verify(r => r.SaveAsync(), Times.Once);
         }
 
+        // ------------------------------------------------------------
+        // LoginAsync_EmailIncorrecto_RetornaError
+        // Intenta hacer login con un email que no existe.
+        // Se espera un resultado con éxito en falso y mensaje de error.
+        // ------------------------------------------------------------
         [Fact]
         public async Task LoginAsync_EmailIncorrecto_RetornaError()
         {
@@ -65,6 +93,11 @@ namespace DividiFacil.Tests.Services
             Assert.Contains("incorrectos", result.Mensaje, StringComparison.OrdinalIgnoreCase);
         }
 
+        // ------------------------------------------------------------
+        // LoginAsync_UsuarioDesactivado_RetornaError
+        // Intenta hacer login con un usuario desactivado.
+        // Se espera un resultado con éxito en falso y mensaje de error.
+        // ------------------------------------------------------------
         [Fact]
         public async Task LoginAsync_UsuarioDesactivado_RetornaError()
         {
@@ -78,6 +111,10 @@ namespace DividiFacil.Tests.Services
             Assert.Contains("desactivada", result.Mensaje, StringComparison.OrdinalIgnoreCase);
         }
 
+        // ------------------------------------------------------------
+        // LoginAsync_UsuarioCorrecto_RetornaToken
+        // Realiza login con credenciales correctas y verifica el token recibido.
+        // ------------------------------------------------------------
         [Fact]
         public async Task LoginAsync_UsuarioCorrecto_RetornaToken()
         {
@@ -96,6 +133,10 @@ namespace DividiFacil.Tests.Services
             Assert.Equal(usuario.Email, result.Data.Usuario.Email);
         }
 
+        // ------------------------------------------------------------
+        // LoginExternoAsync_NuevoUsuario_CreaYRetornaToken
+        // Prueba el login externo para un usuario nuevo, verificando la creación y token.
+        // ------------------------------------------------------------
         [Fact]
         public async Task LoginExternoAsync_NuevoUsuario_CreaYRetornaToken()
         {
@@ -109,6 +150,10 @@ namespace DividiFacil.Tests.Services
             _mockUsuarioRepo.Verify(r => r.CreateAsync(It.IsAny<Usuario>()), Times.Once);
         }
 
+        // ------------------------------------------------------------
+        // LoginExternoAsync_UsuarioYaExiste_RetornaToken
+        // Verifica el login externo para un usuario ya existente.
+        // ------------------------------------------------------------
         [Fact]
         public async Task LoginExternoAsync_UsuarioYaExiste_RetornaToken()
         {
@@ -123,6 +168,10 @@ namespace DividiFacil.Tests.Services
             Assert.Equal(usuario.Email, result.Data.Usuario.Email);
         }
 
+        // ------------------------------------------------------------
+        // RefreshTokenAsync_TokenInvalido_RetornaError
+        // Intenta refrescar un token inválido, se espera un error.
+        // ------------------------------------------------------------
         [Fact]
         public async Task RefreshTokenAsync_TokenInvalido_RetornaError()
         {
@@ -130,6 +179,10 @@ namespace DividiFacil.Tests.Services
             Assert.False(result.Exito);
         }
 
+        // ------------------------------------------------------------
+        // RefreshTokenAsync_TokenValidoYUsuarioActivo_RetornaNuevoToken
+        // Prueba el refresco de token con un token válido y usuario activo.
+        // ------------------------------------------------------------
         [Fact]
         public async Task RefreshTokenAsync_TokenValidoYUsuarioActivo_RetornaNuevoToken()
         {
@@ -149,6 +202,10 @@ namespace DividiFacil.Tests.Services
             Assert.True(true); // Coloca aquí tu lógica de mock si puedes interceptar tokenHandler
         }
 
+        // ------------------------------------------------------------
+        // LogoutAsync_Siempre_RetornaExito
+        // Prueba el logout, se espera un resultado exitoso.
+        // ------------------------------------------------------------
         [Fact]
         public async Task LogoutAsync_Siempre_RetornaExito()
         {
@@ -156,6 +213,11 @@ namespace DividiFacil.Tests.Services
             Assert.True(result.Exito);
         }
 
+        // ------------------------------------------------------------
+        // GetUsuarioActualAsync_IdUsuarioInvalido_RetornaError
+        // Intenta obtener usuario con un ID inválido.
+        // Se espera un resultado con éxito en falso y mensaje de error.
+        // ------------------------------------------------------------
         [Fact]
         public async Task GetUsuarioActualAsync_IdUsuarioInvalido_RetornaError()
         {
@@ -164,6 +226,11 @@ namespace DividiFacil.Tests.Services
             Assert.Contains("inválido", result.Mensaje, StringComparison.OrdinalIgnoreCase);
         }
 
+        // ------------------------------------------------------------
+        // GetUsuarioActualAsync_UsuarioNoExiste_RetornaError
+        // Intenta obtener un usuario que no existe por ID.
+        // Se espera un resultado con éxito en falso y mensaje de error.
+        // ------------------------------------------------------------
         [Fact]
         public async Task GetUsuarioActualAsync_UsuarioNoExiste_RetornaError()
         {
@@ -174,6 +241,10 @@ namespace DividiFacil.Tests.Services
             Assert.Contains("no encontrado", result.Mensaje, StringComparison.OrdinalIgnoreCase);
         }
 
+        // ------------------------------------------------------------
+        // GetUsuarioActualAsync_UsuarioExiste_RetornaDatos
+        // Obtiene un usuario existente y verifica que los datos sean correctos.
+        // ------------------------------------------------------------
         [Fact]
         public async Task GetUsuarioActualAsync_UsuarioExiste_RetornaDatos()
         {

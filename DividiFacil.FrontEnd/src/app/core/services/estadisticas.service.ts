@@ -34,7 +34,7 @@ export class EstadisticasService {
     console.log('[EstadisticasService] obtenerEstadisticasUsuario', { idUsuario });
     return forkJoin({
       grupos: this.grupoService.getGrupos(),
-      notificaciones: this.notificacionService.obtenerPendientes(idUsuario),
+      notificaciones: this.notificacionService.obtenerPendientes(),
       gastos: this.gastoService.obtenerMisGastos()
     }).pipe(
       map(responses => {

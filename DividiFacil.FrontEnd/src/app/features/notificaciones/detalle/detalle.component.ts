@@ -40,7 +40,7 @@ export class DetalleComponent implements OnInit {
     const idNotificacion = this.route.snapshot.queryParamMap.get('id');
     const usuario = this.authService.obtenerUsuario();
     if (idNotificacion && usuario) {
-      this.notificacionService.obtenerPendientes(usuario.idUsuario).subscribe({
+      this.notificacionService.obtenerPendientes().subscribe({
         next: (resp: ResponseDto<NotificacionDto[]>) => {
           if (resp.exito && resp.data) {
             this.notificacion = resp.data.find((n: NotificacionDto) => n.idNotificacion === idNotificacion) || null;

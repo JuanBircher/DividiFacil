@@ -3,6 +3,12 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { ListadoNotificacionesComponent  } from './listado.component';
 
+// ------------------------------------------------------------
+// Test de integración de ListadoNotificacionesComponent
+// - Verifica que el componente se crea correctamente.
+// - Recomendado: agregar tests de interacción, feedback visual y mocks de servicios.
+// ------------------------------------------------------------
+
 describe('ListadoNotificacionesComponent', () => {
   let component: ListadoNotificacionesComponent;
   let fixture: ComponentFixture<ListadoNotificacionesComponent>;

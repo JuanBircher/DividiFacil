@@ -3,15 +3,14 @@ import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterModule } from '@angular/router';
+import { MatTabsModule } from '@angular/material/tabs';
+import { RouterModule, Router } from '@angular/router';
 
 // Importar componentes hijo
 import { DashboardStatsComponent } from './components/dashboard-stats/dashboard-stats.component';
 import { RecentGroupsComponent } from './components/recent-groups/recent-groups.component';
 import { QuickActionsComponent } from './components/quick-actions/quick-actions.component';
 import { RecentActivityComponent } from './components/recent-activity/recent-activity.component';
-import { CardComponent } from '../../shared/components/card/card.component';
-import { LoadingSpinnerComponent } from '../../shared/components/loading-spinner/loading-spinner.component';
 
 import { AuthService } from '../../core/auth.service';
 import { Subject } from 'rxjs';
@@ -27,8 +26,8 @@ import { Subject } from 'rxjs';
     MatCardModule,
     MatButtonModule,
     MatIconModule,
+    MatTabsModule,
     RouterModule,
-    CardComponent,
     DashboardStatsComponent,
     RecentGroupsComponent,
     QuickActionsComponent,
@@ -46,7 +45,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   constructor(
     private authService: AuthService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    public router: Router
   ) {}
 
   ngOnInit(): void {

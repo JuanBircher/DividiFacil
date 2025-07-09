@@ -1,3 +1,9 @@
+// ------------------------------------------------------------
+// Test de integración de AltaPagosComponent
+// - Verifica creación y formulario inicializado.
+// - Recomendado: agregar tests de interacción, feedback visual y mocks de servicios.
+// ------------------------------------------------------------
+
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AltaPagosComponent } from './alta-pagos.component';
 import { ReactiveFormsModule } from '@angular/forms';

@@ -18,10 +18,10 @@
     </div>
     
     <div class="header-actions">
-      <button mat-icon-button (click)="actualizarLista()" [disabled]="loading">
+      <button mat-icon-button (click)="actualizarLista()" [disabled]="loading" aria-label="Refrescar lista de gastos">
         <mat-icon [class.spinning]="loading">refresh</mat-icon>
       </button>
-      <button mat-raised-button color="primary" (click)="crearGasto()">
+      <button mat-raised-button color="primary" (click)="crearGasto()" aria-label="Crear nuevo gasto">
         <mat-icon>add</mat-icon>
         Nuevo Gasto
       </button>
@@ -50,7 +50,7 @@
         </mat-form-field>
         <!-- Acciones filtros -->
         <div class="filtros-actions">
-          <button mat-stroked-button (click)="limpiarFiltros()" type="button">
+          <button mat-stroked-button (click)="limpiarFiltros()" type="button" aria-label="Limpiar filtros">
             <mat-icon>clear</mat-icon>
             Limpiar
           </button>
@@ -61,11 +61,38 @@
 
   <!-- LISTA DE GASTOS -->
   <div class="gastos-content">
+    <!-- NO ES MIEMBRO DEL GRUPO -->
+    <app-card *ngIf="!loading && !error && grupo && !esMiembroGrupo" cardClass="error-card">
+      <div class="error-content" role="alert">
+        <mat-icon class="error-icon">block</mat-icon>
+        <h3>No eres miembro de este grupo</h3>
+        <p>No tienes permisos para ver los gastos de este grupo.</p>
+        <button mat-raised-button color="primary" routerLink="/grupos" aria-label="Volver a mis grupos">
+          <mat-icon>arrow_back</mat-icon>
+          Volver a mis grupos
+        </button>
+      </div>
+    </app-card>
+
     <!-- Loading -->
     <app-card *ngIf="loading" title="Cargando gastos..." icon="hourglass_empty" [loading]="true"></app-card>
 
+    <!-- Error visual -->
+    <app-card *ngIf="!loading && error" cardClass="error-card">
+      <ng-container card-content>
+        <div class="error-content" role="alert">
+          <mat-icon class="error-icon">error</mat-icon>
+          <h3>{{ error }}</h3>
+          <button mat-raised-button color="primary" (click)="actualizarLista()" aria-label="Intentar de nuevo">
+            <mat-icon>refresh</mat-icon>
+            Intentar de nuevo
+          </button>
+        </div>
+      </ng-container>
+    </app-card>
+
     <!-- Lista vacía -->
-    <app-card *ngIf="!loading && gastos.length === 0" title="Sin gastos" icon="receipt_long">
+    <app-card *ngIf="!loading && !error && esMiembroGrupo && gastos.length === 0" title="Sin gastos" icon="receipt_long">
       <div class="empty-content">
         <mat-icon class="empty-icon">receipt_long</mat-icon>
         <p>No hay gastos registrados en este grupo.</p>
@@ -74,7 +101,7 @@
 
     <!-- Lista de gastos - OPTIMIZADA -->
     <!-- 🚀 VIRTUAL SCROLLING para listas largas -->
-    <div class="gastos-content" *ngIf="!loading && gastos.length > 0">
+    <div class="gastos-content" *ngIf="!loading && !error && esMiembroGrupo && gastos.length > 0">
       <cdk-virtual-scroll-viewport 
         itemSize="200" 
         class="gastos-viewport"
@@ -89,33 +116,31 @@
             <div mat-card-avatar class="gasto-avatar">
               <!-- 🚀 LAZY LOADING para avatares de usuarios -->
               <img 
-              [src]="obtenerIconoCategoria(gasto.categoria)"
-              [alt]="gasto.categoria"
-              class="categoria-img"
-              loading="lazy">
+                [src]="obtenerIconoCategoria(gasto.categoria)"
+                [alt]="gasto.categoria"
+                class="categoria-img"
+                loading="lazy" />
             </div>
-            
             <mat-card-title>{{ gasto.descripcion }}</mat-card-title>
             <mat-card-subtitle>
               <span class="pagador">{{ gasto.nombreMiembroPagador }}</span>
               <span class="fecha">{{ gasto.fechaCreacion | dateFormat }}</span>
             </mat-card-subtitle>
-
             <!-- Menú de acciones -->
             <button mat-icon-button [matMenuTriggerFor]="menuAcciones">
               <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #menuAcciones="matMenu">
-              <button mat-menu-item (click)="verDetalle(gasto)">
+              <button mat-menu-item (click)="verDetalle(gasto)" attr.aria-label="Ver detalle del gasto {{ gasto.descripcion }}">
                 <mat-icon>visibility</mat-icon>
                 Ver Detalle
               </button>
-              <button mat-menu-item (click)="editarGasto(gasto)">
+              <button mat-menu-item (click)="editarGasto(gasto)" attr.aria-label="Editar gasto {{ gasto.descripcion }}">
                 <mat-icon>edit</mat-icon>
                 Editar
               </button>
               <mat-divider></mat-divider>
-              <button mat-menu-item (click)="eliminarGasto(gasto)" class="delete-action">
+              <button mat-menu-item (click)="eliminarGasto(gasto)" class="delete-action" attr.aria-label="Eliminar gasto {{ gasto.descripcion }}">
                 <mat-icon>delete</mat-icon>
                 Eliminar
               </button>
@@ -153,11 +178,11 @@
           </mat-card-content>
 
           <mat-card-actions>
-            <button mat-button (click)="verDetalle(gasto)">
+            <button mat-button (click)="verDetalle(gasto)" attr.aria-label="Ver detalle del gasto {{ gasto.descripcion }}">
               <mat-icon>visibility</mat-icon>
               Ver Detalle
             </button>
-            <button mat-button (click)="editarGasto(gasto)">
+            <button mat-button (click)="editarGasto(gasto)" attr.aria-label="Editar gasto {{ gasto.descripcion }}">
               <mat-icon>edit</mat-icon>
               Editar
             </button>
@@ -168,7 +193,7 @@
 
     <!-- Paginación -->
     <mat-paginator 
-      *ngIf="!loading && gastos.length > 0"
+      *ngIf="!loading && !error && esMiembroGrupo && gastos.length > 0"
       [length]="totalItems"
       [pageSize]="itemsPorPagina"
       [pageIndex]="paginaActual - 1"

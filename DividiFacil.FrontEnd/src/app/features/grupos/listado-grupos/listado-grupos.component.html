@@ -3,7 +3,7 @@
     <mat-icon>groups</mat-icon>
     <span>Mis Grupos</span>
     <span class="subtitle">Administra tus grupos de gastos compartidos</span>
-    <button mat-raised-button color="primary" routerLink="/grupos/alta" class="ml-auto">
+    <button mat-raised-button color="primary" routerLink="/grupos/alta" class="ml-auto" aria-label="Crear nuevo grupo">
       <mat-icon>add</mat-icon>
       Nuevo Grupo
     </button>
@@ -15,7 +15,7 @@
     <ng-template #gruposContent>
       <ng-container *ngIf="grupos && grupos.length > 0; else emptyState">
         <div class="grupo-list">
-          <div class="grupo-item" *ngFor="let grupo of grupos">
+          <div class="grupo-item" *ngFor="let grupo of grupos" tabindex="0" attr.aria-label="Grupo {{ grupo.nombreGrupo }}">
             <div class="icon"><mat-icon>groups</mat-icon></div>
             <div class="info">
               <div class="nombre">{{ grupo.nombreGrupo }}</div>
@@ -27,7 +27,7 @@
               </div>
             </div>
             <div class="actions">
-              <button mat-icon-button color="primary" [routerLink]="['/grupos/detalle', grupo.idGrupo]">
+              <button mat-icon-button color="primary" [routerLink]="['/grupos', grupo.idGrupo]" attr.aria-label="Ver detalles del grupo {{ grupo.nombreGrupo }}">
                 <mat-icon>visibility</mat-icon>
               </button>
             </div>
@@ -39,7 +39,7 @@
           <mat-icon>group_add</mat-icon>
           <h3>No tienes grupos aún</h3>
           <p>Crea tu primer grupo para comenzar a dividir gastos</p>
-          <button mat-raised-button color="primary" routerLink="/grupos/alta">
+          <button mat-raised-button color="primary" routerLink="/grupos/alta" aria-label="Crear grupo">
             <mat-icon>add</mat-icon>
             Crear Grupo
           </button>

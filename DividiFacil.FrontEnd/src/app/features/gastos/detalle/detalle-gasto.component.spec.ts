@@ -1,3 +1,9 @@
+// ------------------------------------------------------------
+// Test de integración de DetalleGastoComponent
+// - Verifica creación básica del componente.
+// - Recomendado: agregar tests de interacción, feedback visual y mocks de servicios.
+// ------------------------------------------------------------
+
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DetalleGastoComponent } from './detalle-gasto.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';

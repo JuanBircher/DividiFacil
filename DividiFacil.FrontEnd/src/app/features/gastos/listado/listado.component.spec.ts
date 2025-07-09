@@ -1,3 +1,9 @@
+// ------------------------------------------------------------
+// Test de integración de ListadoGastosComponent
+// - Verifica que el componente se crea correctamente.
+// - Recomendado: agregar tests de interacción, feedback visual y mocks de servicios.
+// ------------------------------------------------------------
+
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ListadoGastosComponent } from './listado.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';

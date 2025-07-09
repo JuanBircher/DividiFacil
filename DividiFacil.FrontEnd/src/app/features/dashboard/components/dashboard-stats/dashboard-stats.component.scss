@@ -43,7 +43,15 @@
 }
 
 .stat-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(102, 126, 234, 0.10);
+  padding: 1.2rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 140px;
+  border: 1.5px solid #e3e8f0;
   
   &:hover {
     transform: translateY(-2px);
@@ -57,6 +65,7 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
+    margin-bottom: 0.5rem;
     
     &[data-color="primary"] {
       background-color: #e3f2fd;
@@ -74,6 +83,13 @@
     }
   }
 
+  .stat-label {
+    font-size: 1.02rem;
+    color: #888;
+    font-weight: 500;
+    margin-bottom: 0.2rem;
+  }
+
   .stat-value {
     display: flex;
     align-items: center;
@@ -81,8 +97,9 @@
     margin-top: 1rem;
     
     .value {
-      font-size: 1.8rem;
-      font-weight: 600;
+      font-size: 2.1rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
       
       &[data-color="primary"] {
         color: #1976d2;
@@ -139,6 +156,52 @@
   p {
     color: #999;
     margin-bottom: 1rem;
+  }
+}
+
+// Scroll horizontal para stats en mobile
+.stats-horizontal-scroll {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+
+  .stat-card {
+    min-width: 220px;
+    max-width: 80vw;
+    flex: 0 0 auto;
+    margin-bottom: 0;
+  }
+}
+
+// Mobile styles
+@media (max-width: 900px) {
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .stat-card {
+    min-height: 120px;
+    padding: 1rem 0.8rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-stats-container {
+    padding: 0 4px;
+    box-shadow: none;
+    background: transparent;
+  }
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 0.7rem;
+  }
+  .stat-card {
+    min-height: 90px;
+    padding: 0.7rem 0.5rem;
+    border-radius: 10px;
   }
 }
 

@@ -458,3 +458,93 @@ mat-card {
     transform: translateY(0);
   }
 }
+
+.pago-card {
+    cursor: pointer;
+    transition: box-shadow 0.2s, transform 0.2s, opacity 0.3s;
+    opacity: 0;
+    animation: fadeInCard 0.5s forwards;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border-radius: 8px;
+    outline: none;
+    &:hover, &:focus {
+      transform: translateY(-2px) scale(1.01);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+      border: 2px solid #3f51b5;
+    }
+    &:active {
+      opacity: 0.8;
+    }
+  }
+
+  @keyframes fadeInCard {
+    to { opacity: 1; }
+  }
+
+  .mat-card-actions button {
+    transition: background 0.2s, color 0.2s;
+    &:hover, &:focus {
+      background: #e3eaff;
+      color: #3f51b5;
+    }
+    outline: none;
+  }
+
+  .mat-menu-item {
+    outline: none;
+    &:hover, &:focus {
+      background: #e3eaff;
+      color: #3f51b5;
+    }
+  }
+
+  .monto-valor {
+    font-weight: 700;
+    font-size: 1.2rem;
+    color: #3f51b5;
+    transition: color 0.2s;
+    &.negativo { color: #f44336; }
+    &.positivo { color: #4caf50; }
+  }
+
+  .empty-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 3rem 1rem;
+    text-align: center;
+    mat-icon {
+      font-size: 4rem;
+      color: #bdbdbd;
+      margin-bottom: 1rem;
+      animation: pulseIcon 1.2s infinite alternate;
+    }
+    h2 {
+      color: #666;
+      margin: 0 0 0.5rem 0;
+    }
+    p {
+      color: #999;
+      margin: 0 0 2rem 0;
+      max-width: 400px;
+    }
+  }
+
+  @keyframes pulseIcon {
+    to { color: #3f51b5; transform: scale(1.1); }
+  }
+
+  // Focus visible para accesibilidad
+  :focus-visible {
+    outline: 2px solid #3f51b5 !important;
+    outline-offset: 2px;
+  }
+
+  // Tooltips
+  .mat-tooltip {
+    font-size: 1rem;
+    background: #3f51b5;
+    color: #fff;
+    border-radius: 6px;
+    padding: 0.5rem 1rem;
+  }

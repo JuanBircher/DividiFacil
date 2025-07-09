@@ -79,9 +79,100 @@
   }
 }
 
+// Banner Compacto de Bienvenida
+.welcome-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(90deg, #e3f2fd 0%, #fff 100%);
+  border-radius: 12px;
+  padding: 10px 16px;
+  margin: 12px 0 16px 0;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.08);
+  font-size: 1.05rem;
+  font-weight: 500;
+  
+  .welcome-text {
+    font-weight: 600;
+    color: #1976d2;
+    margin-right: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .welcome-time {
+    color: #666;
+    font-size: 0.92rem;
+    margin-left: auto;
+    white-space: nowrap;
+  }
+  
+  mat-icon {
+    font-size: 2rem;
+    color: #1976d2;
+  }
+}
+
+@media (max-width: 600px) {
+  .welcome-banner {
+    font-size: 0.98rem;
+    padding: 8px 8px;
+    border-radius: 8px;
+    margin: 8px 0 10px 0;
+    
+    mat-icon {
+      font-size: 1.5rem;
+    }
+    
+    .welcome-text {
+      font-size: 1rem;
+    }
+    
+    .welcome-time {
+      font-size: 0.85rem;
+    }
+  }
+}
+
 // Sección de Estadísticas
 .stats-section {
   margin-bottom: 24px;
+}
+
+// Main content: dos columnas en desktop, tabs en mobile
+.main-content {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 32px;
+  margin-bottom: 32px;
+}
+.main-left, .main-right {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+@media (max-width: 900px) {
+  .main-content {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .main-left, .main-right {
+    gap: 16px;
+  }
+}
+@media (max-width: 600px) {
+  .main-content {
+    display: block;
+  }
+  .main-left, .main-right {
+    display: block;
+    gap: 0;
+  }
+  // Mostrar tabs en mobile
+  .main-left {
+    margin-bottom: 0;
+  }
 }
 
 // Contenido Principal
@@ -92,14 +183,6 @@
   margin-bottom: 24px;
 }
 
-.left-column {
-  // Columna para grupos recientes
-}
-
-.right-column {
-  // Columna para acciones rápidas
-}
-
 // Sección de Actividad
 .activity-section {
   margin-bottom: 24px;
@@ -108,6 +191,32 @@
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
+}
+
+// FAB flotante para mobile
+.fab-add {
+  position: fixed;
+  right: 20px;
+  bottom: 76px; // deja espacio para la bottom nav
+  z-index: 100;
+  box-shadow: 0 4px 16px rgba(102, 126, 234, 0.18);
+  display: none;
+}
+
+// Bottom navigation
+.bottom-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 56px;
+  background: #fff;
+  border-top: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 99;
+  box-shadow: 0 -2px 8px rgba(102, 126, 234, 0.08);
 }
 
 // Responsive Design
@@ -173,6 +282,31 @@
         width: 100%;
       }
     }
+  }
+}
+
+// Mostrar FAB y bottom nav solo en mobile
+@media (max-width: 600px) {
+  .fab-add {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    font-size: 2rem;
+  }
+  .bottom-nav {
+    display: flex;
+  }
+  .dashboard-container {
+    padding-bottom: 80px; // espacio para bottom nav
+  }
+}
+
+// Ocultar bottom nav y FAB en desktop
+@media (min-width: 601px) {
+  .fab-add, .bottom-nav {
+    display: none !important;
   }
 }
 

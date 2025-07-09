@@ -13,8 +13,20 @@
       </button>
     </div>
   </app-card>
+  <!-- NO ES PARTICIPANTE -->
+  <app-card *ngIf="!loading && !error && gasto && !esParticipante" cardClass="error-card">
+    <div class="error-content">
+      <mat-icon class="error-icon">block</mat-icon>
+      <h3>No eres participante de este gasto</h3>
+      <p>No tienes permisos para ver la información de este gasto.</p>
+      <button mat-raised-button color="primary" routerLink="/gastos">
+        <mat-icon>arrow_back</mat-icon>
+        Volver al listado de gastos
+      </button>
+    </div>
+  </app-card>
   <!-- CONTENIDO PRINCIPAL -->
-  <div class="detalle-content" *ngIf="gasto && !loading && !error">
+  <div class="detalle-content" *ngIf="gasto && !loading && !error && esParticipante">
     
     <!-- HEADER -->
     <div class="detalle-header">

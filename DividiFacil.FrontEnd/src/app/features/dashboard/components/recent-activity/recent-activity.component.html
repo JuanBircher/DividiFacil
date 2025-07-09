@@ -20,7 +20,7 @@
     <!-- Timeline -->
     <div *ngIf="actividadReciente.length > 0 && !loading" class="timeline-container">
       <div 
-        *ngFor="let item of actividadReciente; trackBy: trackByItemId"
+        *ngFor="let item of actividadReciente | slice:0:5; trackBy: trackByItemId"
         class="timeline-item"
         (mouseenter)="onMouseEnter($event)"
         (mouseleave)="onMouseLeave($event)">
@@ -52,6 +52,10 @@
           </div>
         </div>
       </div>
+      <button mat-stroked-button color="primary" class="ver-todo-btn" (click)="verTodosLosGastos()">
+        Ver todos
+        <mat-icon>arrow_forward</mat-icon>
+      </button>
     </div>
 
     <!-- Empty State -->

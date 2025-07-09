@@ -3,46 +3,34 @@ import { CommonModule } from '@angular/common';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
   templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.scss',
+  styleUrls: ['./navbar.component.scss'],
   imports: [
     CommonModule,
     MatToolbarModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatMenuModule
   ]
 })
 export class NavbarComponent {
   @Input() nombreUsuario: string = '';
-  @Output() logout = new EventEmitter<void>();
+  @Input() darkMode: boolean = false;
+  @Input() notificaciones: number = 0;
   @Output() toggleMenu = new EventEmitter<void>();
+  @Output() toggleDarkMode = new EventEmitter<void>();
+  @Output() logout = new EventEmitter<void>();
+  @Output() accionRapida = new EventEmitter<void>();
   // Accesibilidad
   ariaLabel: string = 'Barra de navegación principal';
 
-  // Dark mode toggle
-  darkMode: boolean = false;
-
-  constructor() {
-    // Leer preferencia guardada
-    this.darkMode = localStorage.getItem('darkMode') === 'true';
-    this.setDarkModeClass();
-  }
-
-  toggleDarkMode() {
-    this.darkMode = !this.darkMode;
-    localStorage.setItem('darkMode', this.darkMode.toString());
-    this.setDarkModeClass();
-  }
-
-  private setDarkModeClass() {
-    if (this.darkMode) {
-      document.body.classList.add('dark-mode');
-    } else {
-      document.body.classList.remove('dark-mode');
-    }
+  // Método para emitir el evento correctamente desde el template
+  onToggleDarkMode() {
+    this.toggleDarkMode.emit();
   }
 }

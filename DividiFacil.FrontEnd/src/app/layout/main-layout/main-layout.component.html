@@ -1,12 +1,26 @@
 <mat-sidenav-container class="sidenav-container">
   <mat-sidenav #drawer mode="side" opened>
-    <app-sidebar [gruposMenuAbierto]="gruposMenuAbierto" (toggleGruposMenu)="toggleGruposMenu()" [contadorNotificaciones]="(contadorNotificaciones$ | async) ?? 0"></app-sidebar>
+    <app-sidebar 
+      [gruposMenuAbierto]="gruposMenuAbierto" 
+      (toggleGruposMenu)="toggleGruposMenu()" 
+      [contadorNotificaciones]="(contadorNotificaciones$ | async) ?? 0"
+      [saludoPersonalizado]="saludoPersonalizado"
+      [nombreUsuario]="nombreUsuario"
+      [horaActual]="horaActual"
+    ></app-sidebar>
   </mat-sidenav>
   <mat-sidenav-content>
-    <app-navbar [nombreUsuario]="nombreUsuario" (logout)="logout()" (toggleMenu)="drawer.toggle()"></app-navbar>
+    <app-navbar 
+      [nombreUsuario]="nombreUsuario" 
+      (logout)="logout()" 
+      (toggleMenu)="drawer.toggle()" 
+      [darkMode]="darkMode" 
+      (toggleDarkMode)="toggleDarkMode()"
+    ></app-navbar>
     <div class="content" style="position:relative; min-height:60vh;">
       <router-outlet @routeAnimations #outlet="outlet" [attr.data-animation]="getRouteAnimationData(outlet)"></router-outlet>
     </div>
     <app-footer></app-footer>
+    <app-onboarding *ngIf="mostrarOnboarding" (finish)="onFinishOnboarding()"></app-onboarding>
   </mat-sidenav-content>
 </mat-sidenav-container>

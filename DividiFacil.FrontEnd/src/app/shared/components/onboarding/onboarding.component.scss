@@ -1,0 +1,55 @@
+.onboarding-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(30, 42, 80, 0.75);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.onboarding-card {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(102, 126, 234, 0.18);
+  padding: 36px 28px 24px 28px;
+  max-width: 350px;
+  text-align: center;
+  animation: fadeIn 0.4s;
+}
+.onboarding-card h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1976d2;
+  margin-bottom: 10px;
+}
+.onboarding-card p {
+  color: #444;
+  font-size: 1.05rem;
+  margin-bottom: 24px;
+}
+.onboarding-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.onboarding-steps {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+.onboarding-steps span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #e3e8f0;
+  display: inline-block;
+  transition: background 0.2s;
+}
+.onboarding-steps span.active {
+  background: #1976d2;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: none; }
+}

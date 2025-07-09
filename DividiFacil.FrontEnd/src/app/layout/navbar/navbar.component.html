@@ -2,17 +2,43 @@
   <button mat-icon-button (click)="toggleMenu.emit()" class="hide-desktop" tabindex="0" aria-label="Abrir menú lateral">
     <mat-icon>menu</mat-icon>
   </button>
+  <img src="assets/logo.svg" alt="Logo DividiFácil" class="navbar-logo" />
+  <span class="navbar-title">DividiFácil</span>
+  <button mat-flat-button color="accent" class="navbar-action hide-mobile" (click)="accionRapida.emit()" aria-label="Nuevo Gasto">
+    <mat-icon>add</mat-icon>
+    Nuevo Gasto
+  </button>
   <span class="flex-spacer"></span>
-  <button mat-icon-button (click)="toggleDarkMode()" [attr.aria-label]="darkMode ? 'Desactivar modo oscuro' : 'Activar modo oscuro'" tabindex="0">
+  <button mat-icon-button (click)="onToggleDarkMode()" [attr.aria-label]="darkMode ? 'Desactivar modo oscuro' : 'Activar modo oscuro'" tabindex="0">
     <mat-icon>{{ darkMode ? 'dark_mode' : 'light_mode' }}</mat-icon>
   </button>
-  <span *ngIf="nombreUsuario">Hola, {{ nombreUsuario }}</span>
-  <button mat-button color="accent" (click)="logout.emit()" tabindex="0" aria-label="Cerrar sesión">
-    <mat-icon>logout</mat-icon> <span class="visually-hidden">Cerrar sesión</span>
-  </button>
+  <div class="navbar-user-menu" [matMenuTriggerFor]="userMenu" tabindex="0" aria-label="Menú de usuario">
+    <span class="navbar-badge-wrapper">
+      <img src="assets/avatar-default.png" alt="Avatar" class="navbar-avatar" />
+      <span *ngIf="notificaciones > 0" class="navbar-badge">{{ notificaciones }}</span>
+    </span>
+    <span *ngIf="nombreUsuario" class="navbar-username hide-mobile">{{ nombreUsuario }}</span>
+    <mat-icon>expand_more</mat-icon>
+  </div>
+  <mat-menu #userMenu="matMenu">
+    <button mat-menu-item aria-label="Perfil">
+      <mat-icon>person</mat-icon>
+      Perfil
+    </button>
+    <button mat-menu-item aria-label="Configuración">
+      <mat-icon>settings</mat-icon>
+      Configuración
+    </button>
+    <button mat-menu-item (click)="logout.emit()" aria-label="Cerrar sesión">
+      <mat-icon>logout</mat-icon>
+      Cerrar sesión
+    </button>
+  </mat-menu>
 </mat-toolbar>
 <!--
   Mejoras:
-  - aria-label por defecto en toolbar
-  - span visually-hidden para accesibilidad en botón de logout
+  - Acción rápida solo desktop
+  - Avatar con menú desplegable
+  - Badge de notificaciones
+  - Responsividad y accesibilidad
 -->

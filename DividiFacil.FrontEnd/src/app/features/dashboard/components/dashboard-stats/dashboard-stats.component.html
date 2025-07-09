@@ -19,8 +19,8 @@
       </app-card>
     </div>
 
-    <!-- Statistics Cards -->
-    <div *ngIf="!cargando && !error && estadisticas.length > 0" class="stats-grid">
+    <!-- Statistics Cards: scroll horizontal en mobile -->
+    <div *ngIf="!cargando && !error && estadisticas.length > 0" class="stats-horizontal-scroll">
       <app-card *ngFor="let estadistica of estadisticas; trackBy: trackByEstadisticaTitulo" [cardClass]="'stat-card ' + estadistica.color">
         <ng-container card-header>
           <div class="stat-icon" [attr.data-color]="estadistica.color">
@@ -40,7 +40,6 @@
                 {{ estadistica.valor }}
               </ng-container>
             </span>
-            
             <div class="trend-indicator" *ngIf="estadistica.tendencia">
               <mat-icon 
                 [attr.data-trend]="estadistica.tendencia"

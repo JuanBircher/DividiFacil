@@ -19,6 +19,7 @@ import { NotificacionService } from '../../../core/services/notificacion.service
 import { NotificacionDto } from '../../../core/models/notificacion.model';
 import { AuthService } from '../../../core/auth.service';
 import { Inject } from '@angular/core';
+import { GrupoService } from '../../../core/services/grupo.service';
 
 // Pipes
 import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
@@ -52,6 +53,7 @@ export class ListadoNotificacionesComponent implements OnInit, OnDestroy {
   // Estados
   loading = false;
   procesando = false;
+  procesandoId: string | null = null;
   
   // Datos
   notificaciones: NotificacionDto[] = [];
@@ -62,7 +64,8 @@ export class ListadoNotificacionesComponent implements OnInit, OnDestroy {
     private notificacionService: NotificacionService,
     private router: Router,
     private snackBar: MatSnackBar,
-    @Inject(AuthService) private authService: AuthService
+    @Inject(AuthService) private authService: AuthService,
+    private grupoService: GrupoService
   ) {}
 
   ngOnInit(): void {
@@ -86,7 +89,7 @@ export class ListadoNotificacionesComponent implements OnInit, OnDestroy {
    */
   cargarNotificaciones(): void {
     this.loading = true;
-    this.notificacionService.obtenerPendientes(this.idUsuario)
+    this.notificacionService.obtenerPendientes()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
@@ -130,7 +133,7 @@ export class ListadoNotificacionesComponent implements OnInit, OnDestroy {
    * 🔄 CARGAR SIN LOADING (para polling)
    */
   private cargarNotificacionesSilencioso(): void {
-    this.notificacionService.obtenerPendientes(this.idUsuario)
+    this.notificacionService.obtenerPendientes()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
@@ -314,5 +317,43 @@ export class ListadoNotificacionesComponent implements OnInit, OnDestroy {
    */
   trackByNotificacion(index: number, notificacion: NotificacionDto): string {
     return notificacion.idNotificacion;
+  }
+
+  /**
+   * 🤝 ACEPTAR INVITACIÓN A GRUPO
+   */
+  aceptarInvitacion(notificacion: NotificacionDto): void {
+    if (notificacion.tipo !== 'GRUPO_INVITACION' || this.procesandoId) return;
+    this.procesandoId = notificacion.idNotificacion;
+    const invitacion = { emailInvitado: notificacion.nombreUsuario || '' };
+    this.grupoService.agregarMiembro(notificacion.idGrupo, invitacion)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.exito) {
+            this.marcarComoLeida(notificacion);
+            this.snackBar.open('¡Te has unido al grupo!', 'Cerrar', { duration: 2500, panelClass: ['success-snackbar'] });
+          } else {
+            this.snackBar.open(response.mensaje || 'No se pudo unir al grupo', 'Cerrar', { duration: 3000 });
+          }
+          this.procesandoId = null;
+        },
+        error: (err) => {
+          this.snackBar.open('Error al aceptar invitación', 'Cerrar', { duration: 3000 });
+          this.procesandoId = null;
+        }
+      });
+  }
+
+  /**
+   * ❌ RECHAZAR INVITACIÓN A GRUPO
+   */
+  rechazarInvitacion(notificacion: NotificacionDto): void {
+    if (notificacion.tipo !== 'GRUPO_INVITACION' || this.procesandoId) return;
+    this.procesandoId = notificacion.idNotificacion;
+    // Simulación: marcar como leída y mostrar feedback (ajustar si hay endpoint específico)
+    this.marcarComoLeida(notificacion);
+    this.snackBar.open('Invitación rechazada', 'Cerrar', { duration: 2000 });
+    this.procesandoId = null;
   }
 }

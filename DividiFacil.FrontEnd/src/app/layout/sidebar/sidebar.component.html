@@ -1,24 +1,56 @@
-<mat-toolbar color="primary" role="banner">DividiFácil</mat-toolbar>
-<mat-nav-list role="navigation" [attr.aria-label]="ariaLabel || 'Menú lateral de navegación'">
-  <a mat-list-item routerLink="/dashboard" routerLinkActive="active-link" tabindex="0" aria-current="page">Dashboard</a>
-  <div>
-    <a mat-list-item (click)="toggleGruposMenu.emit()" style="cursor:pointer;" tabindex="0"
-      [attr.aria-expanded]="gruposMenuAbierto ? 'true' : 'false'"
-      aria-controls="submenu-grupos"
-      aria-label="Abrir menú de grupos">
-      Grupos
-      <mat-icon style="float:right;">{{ gruposMenuAbierto ? 'expand_less' : 'expand_more' }}</mat-icon>
-    </a>
-    <div *ngIf="gruposMenuAbierto" id="submenu-grupos" style="padding-left: 16px;">
-      <a mat-list-item routerLink="/grupos" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact:true}" tabindex="0">
-        Ver Grupos
-      </a>
-      <a mat-list-item routerLink="/grupos/alta" routerLinkActive="active-link" tabindex="0">Alta Grupos</a>
-    </div>
+<mat-toolbar color="primary" role="banner" class="sidebar-toolbar">
+  <img src="assets/logo.svg" alt="Logo DividiFácil" class="sidebar-logo" />
+  <span class="sidebar-title">DividiFácil</span>
+</mat-toolbar>
+<!-- Banner de bienvenida con avatar -->
+<div class="sidebar-welcome-banner">
+  <img src="assets/avatar-default.png" alt="Avatar" class="sidebar-avatar" />
+  <div class="sidebar-welcome-info">
+    <span class="sidebar-welcome-text">{{ saludoPersonalizado }}, {{ nombreUsuario }}!</span>
+    <span class="sidebar-welcome-time">{{ horaActual }}</span>
   </div>
-  <a mat-list-item routerLink="/gastos" routerLinkActive="active-link" tabindex="0">Gastos</a>
-  <a mat-list-item routerLink="/pagos" routerLinkActive="active-link" tabindex="0">Pagos</a>
-  <a mat-list-item routerLink="/caja" routerLinkActive="active-link" tabindex="0">Caja Común</a>
+</div>
+<mat-nav-list role="navigation" [attr.aria-label]="ariaLabel || 'Menú lateral de navegación'">
+  <mat-divider></mat-divider>
+  <a mat-list-item routerLink="/dashboard" routerLinkActive="active-link" tabindex="0" aria-current="page">
+    <mat-icon>dashboard</mat-icon>
+    <span>Inicio</span>
+  </a>
+  <mat-divider></mat-divider>
+  <div class="sidebar-section-title">Grupos</div>
+  <a mat-list-item (click)="toggleGruposMenu.emit()" style="cursor:pointer;" tabindex="0"
+    [attr.aria-expanded]="gruposMenuAbierto ? 'true' : 'false'"
+    aria-controls="submenu-grupos"
+    aria-label="Abrir menú de grupos">
+    <mat-icon>groups</mat-icon>
+    <span>Grupos</span>
+    <mat-icon style="margin-left:auto;">{{ gruposMenuAbierto ? 'expand_less' : 'expand_more' }}</mat-icon>
+  </a>
+  <div *ngIf="gruposMenuAbierto" id="submenu-grupos" class="sidebar-submenu">
+    <a mat-list-item routerLink="/grupos" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact:true}" tabindex="0">
+      <mat-icon>list</mat-icon>
+      <span>Ver Grupos</span>
+    </a>
+    <a mat-list-item routerLink="/grupos/alta" routerLinkActive="active-link" tabindex="0">
+      <mat-icon>add</mat-icon>
+      <span>Alta Grupos</span>
+    </a>
+  </div>
+  <mat-divider></mat-divider>
+  <div class="sidebar-section-title">Finanzas</div>
+  <a mat-list-item routerLink="/gastos" routerLinkActive="active-link" tabindex="0">
+    <mat-icon>receipt_long</mat-icon>
+    <span>Gastos</span>
+  </a>
+  <a mat-list-item routerLink="/pagos" routerLinkActive="active-link" tabindex="0">
+    <mat-icon>payments</mat-icon>
+    <span>Pagos</span>
+  </a>
+  <a mat-list-item routerLink="/caja" routerLinkActive="active-link" tabindex="0">
+    <mat-icon>savings</mat-icon>
+    <span>Caja Común</span>
+  </a>
+  <mat-divider></mat-divider>
   <a mat-list-item 
      routerLink="/notificaciones" 
      routerLinkActive="active-link"
@@ -28,14 +60,20 @@
      matBadgeSize="small"
      tabindex="0"
      aria-label="Notificaciones no leídas">
-    Notificaciones
+    <mat-icon>notifications</mat-icon>
+    <span>Notificaciones</span>
   </a>
-  <a mat-list-item routerLink="/perfil" routerLinkActive="active-link" tabindex="0">Mi Perfil</a>
+  <mat-divider></mat-divider>
+  <a mat-list-item routerLink="/perfil" routerLinkActive="active-link" tabindex="0">
+    <mat-icon>person</mat-icon>
+    <span>Mi Perfil</span>
+  </a>
 </mat-nav-list>
 <!--
   Mejoras:
-  - aria-label por defecto en nav-list
-  - aria-expanded dinámico en menú de grupos
-  - aria-current en Dashboard
-  - aria-label claro en menú de grupos
+  - Branding y logo
+  - Avatar y saludo
+  - Agrupación y separadores
+  - Íconos y badges
+  - Accesibilidad
 -->

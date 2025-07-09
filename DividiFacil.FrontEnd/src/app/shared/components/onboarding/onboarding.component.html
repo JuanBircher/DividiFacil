@@ -1,0 +1,15 @@
+<div class="onboarding-overlay">
+  <div class="onboarding-card">
+    <h2>{{ steps[step].title }}</h2>
+    <p>{{ steps[step].description }}</p>
+    <div class="onboarding-actions">
+      <button mat-stroked-button color="primary" (click)="prev()" [disabled]="step === 0">Anterior</button>
+      <button mat-flat-button color="primary" (click)="next()">
+        {{ step === steps.length - 1 ? 'Finalizar' : 'Siguiente' }}
+      </button>
+    </div>
+    <div class="onboarding-steps">
+      <span *ngFor="let s of steps; let i = index" [class.active]="i === step"></span>
+    </div>
+  </div>
+</div>

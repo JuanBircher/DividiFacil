@@ -1,6 +1,6 @@
 <div class="configuraciones-container" *ngIf="!loading; else loadingTemplate">
 
-  <!-- ⚙️ CONFIGURACIÓN DEL GRUPO -->
+  <!-- ⚙️ CONFIGURACIÓN DEL GRUPO SOLO PARA ADMIN -->
   <app-card *ngIf="esAdministrador" cardClass="config-section">
     <ng-container card-header>
       <mat-icon>settings</mat-icon>
@@ -87,7 +87,51 @@
     </mat-card-actions>
   </app-card>
 
-  <!-- 🔔 CONFIGURACIÓN DE NOTIFICACIONES -->
+  <!-- ⚠️ MENSAJE SOLO LECTURA PARA NO ADMIN -->
+  <app-card *ngIf="!esAdministrador" cardClass="config-section">
+    <ng-container card-header>
+      <mat-icon>lock</mat-icon>
+      <span>Configuración del Grupo</span>
+      <span class="subtitle">Solo el administrador puede modificar la configuración</span>
+    </ng-container>
+    <ng-container card-content>
+      <form [formGroup]="grupoForm" class="config-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nombre del Grupo</mat-label>
+          <input matInput formControlName="nombreGrupo" maxlength="50" [disabled]="true">
+          <mat-icon matSuffix>group</mat-icon>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Descripción (opcional)</mat-label>
+          <textarea matInput formControlName="descripcion" rows="3" maxlength="200" [disabled]="true"></textarea>
+          <mat-icon matSuffix>description</mat-icon>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Modo de Operación</mat-label>
+          <mat-select formControlName="modoOperacion" [disabled]="true">
+            <mat-option *ngFor="let modo of modosOperacion" [value]="modo.valor">
+              <div class="modo-option">
+                <div class="modo-icon">
+                  <mat-icon>{{ modo.icono }}</mat-icon>
+                </div>
+                <div class="modo-info">
+                  <div class="modo-nombre">{{ modo.nombre }}</div>
+                  <div class="modo-descripcion">{{ modo.descripcion }}</div>
+                </div>
+              </div>
+            </mat-option>
+          </mat-select>
+          <mat-icon matSuffix>tune</mat-icon>
+        </mat-form-field>
+      </form>
+      <div class="info-text">
+        <mat-icon color="warn">info</mat-icon>
+        Solo el administrador puede modificar la configuración del grupo.
+      </div>
+    </ng-container>
+  </app-card>
+
+  <!-- 🔔 CONFIGURACIÓN DE NOTIFICACIONES (editable por todos) -->
   <mat-card class="config-section">
     <mat-card-header>
       <mat-card-title>

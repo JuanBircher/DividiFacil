@@ -1,3 +1,9 @@
+// ------------------------------------------------------------
+// Test de integración de DetallePagosComponent
+// - Verifica creación básica del componente.
+// - Recomendado: agregar tests de interacción, feedback visual y mocks de servicios.
+// ------------------------------------------------------------
+
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DetallePagosComponent } from './detalle-pagos.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';

@@ -9,11 +9,21 @@ import { GastoService } from '../../core/services/gasto.service';
 import { GrupoService } from '../../core/services/grupo.service';
 import { BalanceService } from '../../core/services/balance.service';
 import { NotificacionService } from '../../core/services/notificacion.service';
+import { NavbarComponent } from '../../layout/navbar/navbar.component';
 
 @Component({
   selector: 'app-dashboard-test',
   standalone: true,
   template: `
+    <app-navbar 
+      [darkMode]="darkMode" 
+      (toggleDarkMode)="toggleDarkMode()"
+      [nombreUsuario]="nombreUsuario"
+      [notificaciones]="0"
+      (logout)="onLogout()"
+      (toggleMenu)="onToggleMenu()"
+      (accionRapida)="onAccionRapida()"
+    ></app-navbar>
     <div class="test-container">
       <mat-card>
         <mat-card-header>
@@ -130,7 +140,8 @@ import { NotificacionService } from '../../core/services/notificacion.service';
     MatButtonModule, 
     MatProgressSpinnerModule,
     MatExpansionModule,
-    MatIconModule
+    MatIconModule,
+    NavbarComponent
   ]
 })
 export class DashboardTestComponent implements OnInit {
@@ -140,6 +151,8 @@ export class DashboardTestComponent implements OnInit {
   actividadReciente: any[] = [];
   balanceUsuario: any = null;
   notificacionesPendientes: any = null;
+  darkMode = false;
+  nombreUsuario = '';
 
   constructor(
     private gastoService: GastoService,
@@ -150,6 +163,10 @@ export class DashboardTestComponent implements OnInit {
 
   ngOnInit(): void {
     this.probarEstadisticas();
+    const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+    this.nombreUsuario = usuario?.nombre || '';
+    // Detectar dark mode inicial
+    this.darkMode = document.body.classList.contains('dark-mode');
   }
 
   probarEstadisticas(): void {
@@ -262,7 +279,7 @@ export class DashboardTestComponent implements OnInit {
       this.notificacionesPendientes = { error: 'Usuario no autenticado' };
       return;
     }
-    this.notificacionService.obtenerPendientes(idUsuario).subscribe({
+    this.notificacionService.obtenerPendientes().subscribe({
       next: (response) => {
         this.notificacionesPendientes = response;
         console.log('✅ Notificaciones pendientes:', response);
@@ -273,4 +290,17 @@ export class DashboardTestComponent implements OnInit {
       }
     });
   }
+
+  toggleDarkMode() {
+    this.darkMode = !this.darkMode;
+    if (this.darkMode) {
+      document.body.classList.add('dark-mode');
+    } else {
+      document.body.classList.remove('dark-mode');
+    }
+  }
+
+  onLogout() {}
+  onToggleMenu() {}
+  onAccionRapida() {}
 }

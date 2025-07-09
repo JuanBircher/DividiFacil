@@ -16,6 +16,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { AuthService } from '../../../core/auth.service';
 import { UsuarioService } from '../../../core/services/usuario.service';
 import { Usuario } from '../../../core/models/usuario.model';
+import { OnboardingService } from '../../../shared/services/onboarding.service';
 
 // Pipes
 import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
@@ -60,7 +61,8 @@ export class PerfilComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private usuarioService: UsuarioService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private onboardingService: OnboardingService
   ) {}
 
   ngOnInit(): void {
@@ -180,5 +182,13 @@ export class PerfilComponent implements OnInit, OnDestroy {
     if (target) {
       target.style.display = 'none';
     }
+  }
+
+  /**
+   * 🔄 REINICIAR ONBOARDING
+   */
+  reiniciarOnboarding(): void {
+    this.onboardingService.resetOnboarding();
+    this.snackBar.open('Onboarding reiniciado. Recarga la página para ver el tour.', 'Cerrar', { duration: 4000 });
   }
 }

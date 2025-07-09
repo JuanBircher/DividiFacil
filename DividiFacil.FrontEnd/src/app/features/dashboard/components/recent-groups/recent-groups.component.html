@@ -34,7 +34,7 @@
     <!-- Groups List -->
     <div *ngIf="!cargando && !error && grupos.length > 0" class="groups-list">
       <div 
-        *ngFor="let grupo of grupos; trackBy: trackByGrupoId" 
+        *ngFor="let grupo of grupos | slice:0:3; trackBy: trackByGrupoId" 
         class="group-item"
         [attr.data-grupo-id]="grupo.idGrupo"
         (click)="verGrupo(grupo.idGrupo)">
@@ -80,6 +80,11 @@
           <mat-icon>chevron_right</mat-icon>
         </div>
       </div>
+      
+      <button mat-stroked-button color="primary" class="ver-todo-btn" (click)="verTodosLosGrupos()">
+        Ver todos
+        <mat-icon>arrow_forward</mat-icon>
+      </button>
     </div>
   </ng-container>
 </app-card>

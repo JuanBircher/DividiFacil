@@ -80,6 +80,8 @@
                         <mat-chip [color]="obtenerColor(notificacion.tipo)">
                           {{ notificacion.tipo.replace('_', ' ') }}
                         </mat-chip>
+                        <span *ngIf="notificacion.nombreGrupo">&nbsp;|&nbsp;{{ notificacion.nombreGrupo }}</span>
+                        <span *ngIf="notificacion.nombreUsuario">&nbsp;•&nbsp;{{ notificacion.nombreUsuario }}</span>
                       </div>
                     </div>
                     
@@ -87,10 +89,19 @@
                       <button 
                         mat-icon-button 
                         (click)="marcarComoLeida(notificacion); $event.stopPropagation()"
-                        [disabled]="procesando"
-                        title="Marcar como leída">
+                        [disabled]="procesando || procesandoId === notificacion.idNotificacion"
+                        title="Marcar como leída"
+                        aria-label="Marcar como leída">
                         <mat-icon>done</mat-icon>
                       </button>
+                      <ng-container *ngIf="notificacion.tipo === 'GRUPO_INVITACION'">
+                        <button mat-stroked-button color="primary" (click)="aceptarInvitacion(notificacion); $event.stopPropagation()" [disabled]="procesandoId === notificacion.idNotificacion" attr.aria-label="Aceptar invitación de grupo {{ notificacion.nombreGrupo }}">
+                          <mat-icon>check</mat-icon> Aceptar
+                        </button>
+                        <button mat-stroked-button color="warn" (click)="rechazarInvitacion(notificacion); $event.stopPropagation()" [disabled]="procesandoId === notificacion.idNotificacion" attr.aria-label="Rechazar invitación de grupo {{ notificacion.nombreGrupo }}">
+                          <mat-icon>close</mat-icon> Rechazar
+                        </button>
+                      </ng-container>
                     </div>
                   </div>
                   
@@ -112,7 +123,8 @@
                 <mat-list-item 
                   *ngFor="let notificacion of notificacionesLeidas; trackBy: trackByNotificacion"
                   class="notificacion-item leida"
-                  (click)="verDetalle(notificacion)">
+                  (click)="verDetalle(notificacion)"
+                  attr.aria-label="Notificación leída: {{ obtenerTitulo(notificacion) }}">
                   
                   <div class="notificacion-content">
                     <div class="notificacion-icon">

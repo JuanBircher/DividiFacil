@@ -274,22 +274,30 @@ namespace DividiFacil.Services.Implementations
             }
 
             var grupos = await _grupoRepository.GetByUsuarioAsync(userGuid);
+            var gruposList = grupos.ToList();
+            var gruposDto = new List<GrupoDto>();
 
-            // Mapear entidades a DTOs
-            // Mapear entidades a DTOs
-            var gruposDto = grupos.Select(g => new GrupoDto
+            foreach (var grupo in gruposList)
             {
-                IdGrupo = g.IdGrupo,
-                NombreGrupo = g.NombreGrupo,
-                Descripcion = g.Descripcion,
-                ModoOperacion = g.ModoOperacion,
-                IdUsuarioCreador = g.IdUsuarioCreador,
-                NombreCreador = "",
-                FechaCreacion = g.FechaCreacion,
-                CodigoAcceso = g.CodigoAcceso,
-                CantidadMiembros = 0,
-                TotalGastos = 0
-            }).ToList();
+                // Obtener cantidad de miembros
+                var miembros = await _miembroGrupoRepository.GetMiembrosByGrupoAsync(grupo.IdGrupo);
+                // Obtener gastos
+                var gastos = await _gastoRepository.GetByGrupoAsync(grupo.IdGrupo);
+
+                gruposDto.Add(new GrupoDto
+                {
+                    IdGrupo = grupo.IdGrupo,
+                    NombreGrupo = grupo.NombreGrupo,
+                    Descripcion = grupo.Descripcion,
+                    ModoOperacion = grupo.ModoOperacion,
+                    IdUsuarioCreador = grupo.IdUsuarioCreador,
+                    NombreCreador = "",
+                    FechaCreacion = grupo.FechaCreacion,
+                    CodigoAcceso = grupo.CodigoAcceso,
+                    CantidadMiembros = miembros?.Count() ?? 0,
+                    TotalGastos = gastos?.Sum(gs => gs.Monto) ?? 0
+                });
+            }
 
             response.Exito = true;
             response.Data = gruposDto;

@@ -14,6 +14,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 // ✅ CDK MODULES - PARA VIRTUAL SCROLLING
 import { ScrollingModule } from '@angular/cdk/scrolling';
@@ -58,7 +59,7 @@ import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
 export class ListadoGastosComponent implements OnInit, OnDestroy {
   // ✅ PROPIEDADES EXISTENTES
   gastos: GastoDto[] = [];
-  grupo: GrupoDto | null = null;
+  grupo: import('../../../core/models/grupo.model').GrupoConMiembrosDto | null = null;
   loading = false;
   error: string | null = null;
   
@@ -79,6 +80,8 @@ export class ListadoGastosComponent implements OnInit, OnDestroy {
   
   private destroy$ = new Subject<void>();
   private idGrupoActual: string | null = null;
+  usuarioActual: any = null;
+  esMiembroGrupo: boolean = false;
 
   constructor(
     private gastoService: GastoService,
@@ -86,7 +89,8 @@ export class ListadoGastosComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private fb: FormBuilder,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private snackBar: MatSnackBar
   ) {
     this.filtrosForm = this.fb.group({
       busqueda: [''],
@@ -97,6 +101,10 @@ export class ListadoGastosComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.inicializarComponente();
     this.configurarFiltros();
+
+    // Obtener usuario actual
+    const usuario = localStorage.getItem('usuario');
+    this.usuarioActual = usuario ? JSON.parse(usuario) : null;
   }
 
   ngOnDestroy(): void {
@@ -129,14 +137,15 @@ export class ListadoGastosComponent implements OnInit, OnDestroy {
 
   private cargarDatosGrupo(): void {
     if (!this.idGrupoActual) return;
-
-    // ✅ USAR: Método que SÍ existe
-    this.grupoService.obtenerGrupo(this.idGrupoActual)
-      .pipe(takeUntil(this.destroy$))
+    this.grupoService.obtenerGrupoConMiembros(this.idGrupoActual)
       .subscribe({
         next: (response) => {
           if (response.exito && response.data) {
             this.grupo = response.data;
+            // Validar membresía
+            this.esMiembroGrupo = !!this.grupo.miembros?.some(
+              (m: any) => m.idUsuario === this.usuarioActual?.idUsuario
+            );
             this.cdr.markForCheck();
           }
         },
@@ -281,25 +290,46 @@ export class ListadoGastosComponent implements OnInit, OnDestroy {
     this.router.navigate(['/grupos']);
   }
 
+  eliminarGasto(gasto: any): void {
+    if (!gasto || !gasto.idGasto) return;
+    this.gastoService.eliminarGasto(gasto.idGasto).subscribe({
+      next: (response) => {
+        if (response.exito) {
+          this.snackBar.open('Gasto eliminado correctamente', 'Cerrar', { duration: 3000 });
+          this.actualizarLista();
+        } else {
+          this.snackBar.open(response.mensaje || 'Error al eliminar gasto', 'Cerrar', { duration: 3000 });
+        }
+      },
+      error: (error) => {
+        this.snackBar.open('Error al eliminar gasto', 'Cerrar', { duration: 3000 });
+      }
+    });
+  }
+
   actualizarLista(): void {
     this.cargarGastos();
+    this.snackBar.open('Lista de gastos actualizada', 'Cerrar', { duration: 2000 });
   }
 
   crearGasto(): void {
-    this.router.navigate(['/gastos/alta']);
+    this.router.navigate(['/gastos/alta']).then(() => {
+      // Al volver, refrescar la lista
+      this.cargarGastos();
+    });
+    this.snackBar.open('Redirigiendo a crear gasto...', 'Cerrar', { duration: 2000 });
+  }
+
+  editarGasto(gasto: any): void {
+    this.router.navigate(['/gastos', gasto.idGasto, 'editar']).then(() => {
+      // Al volver, refrescar la lista
+      this.cargarGastos();
+    });
+    this.snackBar.open('Redirigiendo a editar gasto...', 'Cerrar', { duration: 2000 });
   }
 
   verDetalle(gasto: any): void {
     this.router.navigate(['/gastos', gasto.idGasto]);
-  }
-
-  editarGasto(gasto: any): void {
-    this.router.navigate(['/gastos', gasto.idGasto, 'editar']);
-  }
-
-  eliminarGasto(gasto: any): void {
-    // Implementar lógica de eliminación
-    console.log('Eliminar gasto:', gasto.idGasto);
   }
 
   limpiarFiltros(): void {

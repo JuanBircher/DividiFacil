@@ -35,9 +35,66 @@
         </ng-container>
         
         <ng-template #listaPagos>
-          <!-- Aquí va la lista/tablas de pagos migrada a la nueva estructura visual -->
           <div class="pagos-list">
-            <!-- ...contenido de la lista de pagos... -->
+            <mat-card *ngFor="let pago of todosLosPagos; trackBy: trackByPago" class="pago-card">
+              <mat-card-header>
+                <div mat-card-avatar class="pago-avatar">
+                  <mat-icon>payments</mat-icon>
+                </div>
+                <mat-card-title>
+                  {{ pago.descripcion || 'Pago sin descripción' }}
+                </mat-card-title>
+                <mat-card-subtitle>
+                  <span class="grupo">{{ obtenerNombreGrupo(pago.idGrupo) }}</span>
+                  <span class="fecha">{{ pago.fechaCreacion | date:'shortDate' }}</span>
+                </mat-card-subtitle>
+                <button mat-icon-button [matMenuTriggerFor]="menuAcciones">
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menuAcciones="matMenu">
+                  <button mat-menu-item (click)="verDetalle(pago)">
+                    <mat-icon>visibility</mat-icon>
+                    Ver Detalle
+                  </button>
+                  <button mat-menu-item (click)="editarPago(pago)">
+                    <mat-icon>edit</mat-icon>
+                    Editar
+                  </button>
+                </mat-menu>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="pago-info">
+                  <div class="monto-principal">
+                    <span class="monto-valor">
+                      ${{ pago.monto | number:'1.2-2' }}
+                    </span>
+                  </div>
+                  <div class="pagador-info">
+                    <span class="pagador-label">Pagado por:</span>
+                    <span class="pagador-nombre">{{ obtenerNombreUsuario(pago.idPagador) }}</span>
+                  </div>
+                  <div class="receptor-info">
+                    <span class="receptor-label">Recibido por:</span>
+                    <span class="receptor-nombre">{{ obtenerNombreUsuario(pago.idReceptor) }}</span>
+                  </div>
+                  <div class="estado-info">
+                    <mat-chip [color]="pago.estado === 'Completado' ? 'primary' : 'warn'">
+                      {{ pago.estado }}
+                    </mat-chip>
+                  </div>
+                </div>
+              </mat-card-content>
+              <mat-card-actions>
+                <button mat-button (click)="verDetalle(pago)">
+                  <mat-icon>visibility</mat-icon>
+                  Ver Detalle
+                </button>
+                <button mat-button (click)="editarPago(pago)">
+                  <mat-icon>edit</mat-icon>
+                  Editar
+                </button>
+              </mat-card-actions>
+            </mat-card>
           </div>
         </ng-template>
       </ng-template>

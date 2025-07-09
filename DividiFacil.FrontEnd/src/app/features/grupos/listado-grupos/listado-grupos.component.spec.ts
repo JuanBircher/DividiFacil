@@ -1,3 +1,9 @@
+// ------------------------------------------------------------
+// Test de integración de ListadoGruposComponent
+// - Verifica creación y manejo de errores visuales.
+// - Recomendado: agregar tests de interacción, feedback visual y mocks de servicios.
+// ------------------------------------------------------------
+
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ListadoGruposComponent } from './listado-grupos.component';
 import { HttpClientTestingModule } from '@angular/common/http/testing';

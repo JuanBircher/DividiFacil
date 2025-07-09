@@ -1,4 +1,15 @@
-﻿// En DividiFacil.Tests/Services/GastoServiceTests.cs
+﻿// ------------------------------------------------------------
+// GastoServiceTests.cs
+// Tests unitarios para GastoService
+// Cubre creación de gastos, mocks de repositorios y servicios relacionados.
+// ------------------------------------------------------------
+// AAA: Arrange, Act, Assert
+//
+// Estructura:
+// - CrearGastoAsync: Casos de datos válidos, mocks de grupo, miembro, usuario, notificaciones y recordatorios.
+// ------------------------------------------------------------
+
+// En DividiFacil.Tests/Services/GastoServiceTests.cs
 using DividiFacil.Data.Repositories.Interfaces;
 using DividiFacil.Domain.DTOs.Gasto;
 using DividiFacil.Domain.Models;

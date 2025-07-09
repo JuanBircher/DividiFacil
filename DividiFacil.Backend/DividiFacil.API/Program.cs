@@ -19,11 +19,12 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Instrumentation.SqlClient;
+using Microsoft.AspNetCore.ResponseCompression;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configurar telemetría
+// Configurar telemetrï¿½a
 builder.Services.AddOpenTelemetry()
     .WithTracing(tracing =>
     {
@@ -31,7 +32,7 @@ builder.Services.AddOpenTelemetry()
             .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(builder.Environment.ApplicationName))
             .AddAspNetCoreInstrumentation()    // Registra cada request HTTP
             .AddSqlClientInstrumentation()     // Registra cada consulta a SQL Server
-            .AddConsoleExporter();             // Muestra la telemetría en consola
+            .AddConsoleExporter();             // Muestra la telemetrï¿½a en consola
     })
     .WithMetrics(metrics =>
     {
@@ -49,21 +50,17 @@ Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog();
 
 // Agregar servicios al contenedor
-builder.Services.AddControllers()
-    .AddFluentValidation(fv =>
-    {
-        fv.RegisterValidatorsFromAssemblyContaining<GastoCreacionDtoValidator>();
-        // O registrar manualmente:
-        // fv.RegisterValidatorsFromAssemblyContaining<Program>();
-    });
+builder.Services.AddControllers();
 
-// Alternativamente, en .NET 9:
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddFluentValidationClientsideAdapters();
 builder.Services.AddValidatorsFromAssemblyContaining<GastoCreacionDtoValidator>();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddApplicationServices();
 
 
-// Configurar Swagger usando método de extensión
+// Configurar Swagger usando mï¿½todo de extensiï¿½n
 builder.Services.ConfigureSwagger();
 
 // Configurar JsonOptions para manejar referencias circulares
@@ -78,25 +75,25 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 // Configurar JWT
-string jwtKey = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("La clave JWT no está configurada en appsettings.json");
+string jwtKey = builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException("La clave JWT no estï¿½ configurada en appsettings.json");
 var key = Encoding.ASCII.GetBytes(jwtKey);
 
 builder.Services.AddAuthorization(options =>
 {
-    // Políticas para roles dentro de los grupos
+    // Polï¿½ticas para roles dentro de los grupos
     options.AddPolicy("GrupoAdmin", policy =>
         policy.RequireClaim("role", "Admin"));
 
     options.AddPolicy("GrupoMember", policy =>
         policy.RequireClaim("role", "Member", "Admin"));
 
-    // Políticas para acciones específicas
+    // Polï¿½ticas para acciones especï¿½ficas
     options.AddPolicy("CanDeleteGasto", policy =>
         policy.RequireAssertion(context =>
             context.User.HasClaim("role", "Admin") ||
             context.User.HasClaim(c =>
                 c.Type == "idMiembroPagador" &&
-                c.Value == context.Resource.ToString())));
+                c.Value == (context.Resource != null ? context.Resource.ToString() : string.Empty))));
 
     options.AddPolicy("CanManageGroup", policy =>
         policy.RequireClaim("role", "Admin"));
@@ -109,7 +106,7 @@ builder.Services.AddAuthentication(x =>
 })
 .AddJwtBearer(x =>
 {
-    x.RequireHttpsMetadata = false; // En producción, establecer a true
+    x.RequireHttpsMetadata = false; // En producciï¿½n, establecer a true
     x.SaveToken = true;
     x.TokenValidationParameters = new TokenValidationParameters
     {
@@ -141,9 +138,32 @@ builder.Services.AddCors(options =>
 // Agregar IMemoryCache al contenedor de servicios
 builder.Services.AddMemoryCache();
 
+// Registrar el servicio de compresiÃ³n Brotli y Gzip
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true;
+    options.Providers.Add<BrotliCompressionProvider>();
+    options.Providers.Add<GzipCompressionProvider>();
+    options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[]
+    {
+        "application/javascript",
+        "text/css",
+        "application/json",
+        "image/svg+xml"
+    });
+});
 
+// ConfiguraciÃ³n opcional de nivel de compresiÃ³n
+builder.Services.Configure<BrotliCompressionProviderOptions>(options =>
+{
+    options.Level = System.IO.Compression.CompressionLevel.Fastest;
+});
+builder.Services.Configure<GzipCompressionProviderOptions>(options =>
+{
+    options.Level = System.IO.Compression.CompressionLevel.Fastest;
+});
 
-// Configurar optimización de Entity Framework
+// Configurar optimizaciï¿½n de Entity Framework
 builder.Services.AddDbContext<ApplicationDbContext>(options => {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
         sqlOptions => {
@@ -154,14 +174,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => {
             sqlOptions.CommandTimeout(30);
         });
 
-    // Sólo habilitar en desarrollo para ayudar con la depuración
+    // Sï¿½lo habilitar en desarrollo para ayudar con la depuraciï¿½n
     if (builder.Environment.IsDevelopment())
     {
         options.EnableSensitiveDataLogging();
     }
 });
 
-// Registrar repositorios y servicios usando los métodos de extensión actualizados
+// Registrar repositorios y servicios usando los mï¿½todos de extensiï¿½n actualizados
 builder.Services.RegisterRepositories()
                 .RegisterServices();
 
@@ -193,7 +213,7 @@ builder.Services.AddRateLimiter(options =>
 {
     options.AddFixedWindowLimiter("GlobalLimiter", config =>
     {
-        config.PermitLimit = 10; // Máximo 10 requests
+        config.PermitLimit = 10; // Mï¿½ximo 10 requests
         config.Window = TimeSpan.FromSeconds(1); // Por segundo
         config.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
         config.QueueLimit = 0; // Sin cola, rechaza con 429
@@ -221,13 +241,31 @@ app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Habilitar compresiÃ³n de respuestas
+app.UseResponseCompression();
+
 app.UseMiddleware<PaginationMiddleware>();
 
-// Añadir esta línea al pipeline después de app.UseAuthorization()
+// AÃ±adir esta lÃ­nea al pipeline despuÃ©s de app.UseAuthorization()
 app.UseResponseCaching();
 
-// Ruta para archivos estáticos (como imágenes de comprobantes)
+// Ruta para archivos estÃ¡ticos (como imÃ¡genes de comprobantes)
+app.UseDefaultFiles();
 app.UseStaticFiles();
+
+app.Use(async (context, next) =>
+{
+    if (!context.Request.Path.Value.StartsWith("/api") &&
+        !System.IO.Path.HasExtension(context.Request.Path.Value))
+    {
+        context.Request.Path = "/index.html";
+        await next();
+    }
+    else
+    {
+        await next();
+    }
+});
 
 app.MapControllers();
 
