@@ -63,7 +63,7 @@ export class RecentGroupsComponent implements OnInit, OnDestroy {
     this.error = null;
     this.cdr.markForCheck();
 
-    console.log('🔄 Cargando grupos recientes...');
+    // console.log('🔄 Cargando grupos recientes...');
 
     this.grupoService.obtenerGrupos()
       .pipe(takeUntil(this.destroy$))
@@ -72,7 +72,7 @@ export class RecentGroupsComponent implements OnInit, OnDestroy {
           this.cargando = false;
           
           if (response.exito && Array.isArray(response.data)) {
-            console.log('👥 Grupos REALES obtenidos:', response.data);
+            // console.log('👥 Grupos REALES obtenidos:', response.data);
             
             // ✅ FILTRAR, ORDENAR Y LIMITAR
             this.grupos = response.data
@@ -98,7 +98,7 @@ export class RecentGroupsComponent implements OnInit, OnDestroy {
           this.cdr.markForCheck();
         },
         error: (error) => {
-          console.error('❌ Error al cargar grupos recientes:', error);
+          // console.error('❌ Error al cargar grupos recientes:', error);
           this.error = 'Error al cargar los grupos recientes.';
           this.grupos = [];
           this.cargando = false;
@@ -108,7 +108,7 @@ export class RecentGroupsComponent implements OnInit, OnDestroy {
   }
 
   verGrupo(idGrupo: string): void {
-    console.log('🔗 Navegando a grupo:', idGrupo);
+    // console.log('🔗 Navegando a grupo:', idGrupo);
     this.router.navigate(['/grupos', idGrupo]);
   }
 
@@ -136,3 +136,7 @@ export class RecentGroupsComponent implements OnInit, OnDestroy {
 
   trackByGrupoId = (index: number, grupo: GrupoDto): string => grupo.idGrupo;
 }
+
+// ENDPOINT CONSUMIDO: GET /api/grupos (Grupos recientes)
+// Servicio: GrupoService.obtenerGrupos()
+// Feedback visual y manejo de errores implementado.

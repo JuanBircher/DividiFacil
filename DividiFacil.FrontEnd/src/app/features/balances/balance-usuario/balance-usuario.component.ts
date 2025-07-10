@@ -69,15 +69,14 @@ export class BalanceUsuarioComponent implements OnInit, OnDestroy {
     ) { }
 
     ngOnInit(): void {
+        // Cargar balance del usuario autenticado al iniciar el componente
+        this.cargarBalanceUsuario();
+        // Si necesitas parámetros para otros casos, puedes seguir escuchando params aquí
         this.route.params
             .pipe(takeUntil(this.destroy$))
             .subscribe(params => {
-                this.idUsuario = params['id'];
-                this.idGrupo = this.route.snapshot.queryParams['idGrupo'];
-
-                if (this.idUsuario && this.idGrupo) {
-                    this.cargarBalanceUsuario();
-                }
+                this.idUsuario = params['id'] || '';
+                this.idGrupo = this.route.snapshot.queryParams['idGrupo'] || '';
             });
     }
 
@@ -91,7 +90,7 @@ export class BalanceUsuarioComponent implements OnInit, OnDestroy {
      */
     cargarBalanceUsuario(): void {
         this.loading = true;
-        this.balanceService.obtenerBalanceUsuario(this.idUsuario)
+        this.balanceService.obtenerBalanceUsuario()
             .pipe(takeUntil(this.destroy$))
             .subscribe({
                 next: (response: ResponseDto<BalanceUsuarioDto[]>) => {
@@ -157,3 +156,7 @@ export class BalanceUsuarioComponent implements OnInit, OnDestroy {
         return `${item.idUsuarioDeudor}-${item.idUsuarioAcreedor}`;
     }
 }
+
+// ENDPOINT CONSUMIDO: GET /api/balance/usuario (Balance del usuario autenticado)
+// Servicio: BalanceService.obtenerBalanceUsuario()
+// Feedback visual y manejo de errores implementado.

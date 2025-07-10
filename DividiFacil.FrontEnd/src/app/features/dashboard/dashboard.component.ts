@@ -133,7 +133,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         // El guard se encargará de la redirección
       },
       error: (error) => {
-        console.error('Error al cerrar sesión:', error);
+        // console.error('Error al cerrar sesión:', error);
         // Forzar limpieza local
         localStorage.clear();
         window.location.href = '/auth/login';
@@ -141,3 +141,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 }
+
+/**
+ * WIDGETS DEL DASHBOARD: Cargan datos de usuario, grupos recientes y acciones rápidas.
+ * RecentGroupsComponent: GET /api/grupos (GrupoService.obtenerGrupos())
+ * QuickActionsComponent: Navegación a rutas principales (alta grupo, alta gasto, etc.)
+ * Feedback visual y manejo de errores implementado en widgets.
+ */

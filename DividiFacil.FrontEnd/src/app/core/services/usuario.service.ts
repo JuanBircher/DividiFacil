@@ -17,12 +17,11 @@ export class UsuarioService {
 
   constructor(private http: HttpClient) {}
 
-  // ✅ MÉTODO 1: GetByIdAsync - CORREGIDO
+  // ✅ MÉTODO 1: GetByIdAsync
   obtenerUsuario(idUsuario: string): Observable<ResponseDto<UsuarioDto>> {
     return this.http.get<ResponseDto<UsuarioDto>>(`${this.apiUrl}/${idUsuario}`)
       .pipe(
         catchError(error => {
-          console.error('Error obteniendo usuario:', error);
           return of({ 
             exito: false, 
             data: undefined, 
@@ -32,12 +31,11 @@ export class UsuarioService {
       );
   }
 
-  // ✅ MÉTODO 2: ActualizarAsync - CORREGIDO
+  // ✅ MÉTODO 2: ActualizarAsync 
   actualizarUsuario(idUsuario: string, usuario: UsuarioActualizacionDto): Observable<ResponseDto<void>> {
     return this.http.put<ResponseDto<void>>(`${this.apiUrl}/${idUsuario}`, usuario)
       .pipe(
         catchError(error => {
-          console.error('Error actualizando usuario:', error);
           return of({ 
             exito: false, 
             data: undefined, 
@@ -47,12 +45,11 @@ export class UsuarioService {
       );
   }
 
-  // ✅ MÉTODO 3: BuscarPorEmailAsync - CORREGIDO
+  // ✅ MÉTODO 3: BuscarPorEmailAsync 
   buscarPorEmail(email: string): Observable<ResponseDto<UsuarioDto>> {
     return this.http.get<ResponseDto<UsuarioDto>>(`${this.apiUrl}/buscar/${encodeURIComponent(email)}`)
       .pipe(
         catchError(error => {
-          console.error('Error buscando usuario:', error);
           return of({ 
             exito: false, 
             data: undefined, 
@@ -62,7 +59,7 @@ export class UsuarioService {
       );
   }
 
-  // ✅ MÉTODO 4: SubirImagenAsync - CORREGIDO
+  // ✅ MÉTODO 4: SubirImagenAsync 
   subirImagen(idUsuario: string, archivo: File): Observable<ResponseDto<{ urlImagen: string }>> {
     const formData = new FormData();
     formData.append('archivo', archivo);
@@ -72,7 +69,6 @@ export class UsuarioService {
       formData
     ).pipe(
       catchError(error => {
-        console.error('Error subiendo imagen:', error);
         return of({ 
           exito: false, 
           data: undefined, 
@@ -82,7 +78,7 @@ export class UsuarioService {
     );
   }
 
-  // ✅ MÉTODO 5: CambiarPasswordAsync - NUEVO
+  // ✅ MÉTODO 5: CambiarPasswordAsync 
   cambiarPassword(idUsuario: string, passwordActual: string, passwordNuevo: string): Observable<ResponseDto<void>> {
     const datos = {
       passwordActual,
@@ -92,7 +88,6 @@ export class UsuarioService {
     return this.http.put<ResponseDto<void>>(`${this.apiUrl}/${idUsuario}/password`, datos)
       .pipe(
         catchError(error => {
-          console.error('Error cambiando password:', error);
           return of({ 
             exito: false, 
             data: undefined, 
@@ -102,12 +97,11 @@ export class UsuarioService {
       );
   }
 
-  // ✅ MÉTODO 6: DesactivarCuentaAsync - NUEVO
+  // ✅ MÉTODO 6: DesactivarCuentaAsync
   desactivarCuenta(idUsuario: string): Observable<ResponseDto<void>> {
     return this.http.delete<ResponseDto<void>>(`${this.apiUrl}/${idUsuario}`)
       .pipe(
         catchError(error => {
-          console.error('Error desactivando cuenta:', error);
           return of({ 
             exito: false, 
             data: undefined, 
@@ -117,12 +111,11 @@ export class UsuarioService {
       );
   }
 
-  // ✅ MÉTODO 7: GetEstadisticasAsync - NUEVO
+  // ✅ MÉTODO 7: GetEstadisticasAsync 
   obtenerEstadisticas(idUsuario: string): Observable<ResponseDto<any>> {
     return this.http.get<ResponseDto<any>>(`${this.apiUrl}/${idUsuario}/estadisticas`)
       .pipe(
         catchError(error => {
-          console.error('Error obteniendo estadísticas:', error);
           return of({ 
             exito: false, 
             data: undefined, 
@@ -137,7 +130,6 @@ export class UsuarioService {
     return this.http.get<ResponseDto<UsuarioDto>>(`${this.apiUrl}/actual`)
       .pipe(
         catchError(error => {
-          console.error('Error obteniendo usuario actual:', error);
           return of({ 
             exito: false, 
             data: undefined, 

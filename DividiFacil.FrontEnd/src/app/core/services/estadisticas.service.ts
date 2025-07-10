@@ -31,7 +31,7 @@ export class EstadisticasService {
    * Combina múltiples servicios ya que no existe endpoint unificado
    */
   obtenerEstadisticasUsuario(idUsuario: string): Observable<EstadisticasUsuario> {
-    console.log('[EstadisticasService] obtenerEstadisticasUsuario', { idUsuario });
+    // console.log('[EstadisticasService] obtenerEstadisticasUsuario', { idUsuario });
     return forkJoin({
       grupos: this.grupoService.getGrupos(),
       notificaciones: this.notificacionService.obtenerPendientes(),

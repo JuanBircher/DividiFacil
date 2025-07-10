@@ -46,9 +46,8 @@ export class AltaGruposComponent implements OnInit, OnDestroy {
   error: string | null = null;
   modoEdicion = false;
   idGrupo: string | null = null;
-  loading = false; // 🔧 AGREGAR
-  
-  // ✅ OPCIONES ALINEADAS CON BACKEND
+  loading = false;
+
   modosOperacion = [
     { value: ModoOperacion.ESTANDAR, label: 'Estándar', descripcion: 'Distribución básica' },
     { value: ModoOperacion.EQUITATIVO, label: 'Equitativo', descripcion: 'Todos pagan lo mismo' },

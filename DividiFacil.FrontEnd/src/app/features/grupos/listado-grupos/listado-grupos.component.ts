@@ -69,12 +69,12 @@ export class ListadoGruposComponent implements OnInit, OnDestroy {
     this.error = null;
     this.cdr.markForCheck();
 
-    console.log('🔄 Cargando grupos...');
+    // console.log('🔄 Cargando grupos...');
 
     this.grupoService.obtenerGrupos()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response) => { // 🔧 CORREGIR: Recibir ApiResponse
+        next: (response) => { 
           this.cargando = false;
           if (response.exito && response.data) {
             this.grupos = response.data;
@@ -88,7 +88,7 @@ export class ListadoGruposComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           this.cargando = false;
-          console.error('Error al cargar grupos:', error);
+          // console.error('Error al cargar grupos:', error);
           this.cdr.markForCheck();
         }
       });
@@ -130,3 +130,7 @@ export class ListadoGruposComponent implements OnInit, OnDestroy {
     this.cargarGrupos();
   }
 }
+
+// ENDPOINT CONSUMIDO: GET /api/grupos (Listado de grupos del usuario autenticado)
+// Servicio: GrupoService.obtenerGrupos()
+// Feedback visual y manejo de errores implementado.

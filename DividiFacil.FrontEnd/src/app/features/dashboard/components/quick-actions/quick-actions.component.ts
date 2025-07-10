@@ -6,6 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatBadgeModule } from '@angular/material/badge';
 import { Router, RouterModule } from '@angular/router';
 import { Subject } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { CardComponent } from '../../../../shared/components/card/card.component';
 
 // ✅ INTERFACE CORREGIDA
@@ -47,7 +48,8 @@ export class QuickActionsComponent implements OnInit, OnDestroy {
 
   constructor(
     public router: Router, // ✅ HACER PÚBLICO PARA TEMPLATE
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -126,8 +128,16 @@ export class QuickActionsComponent implements OnInit, OnDestroy {
    * 🔗 EJECUTAR ACCIÓN
    */
   ejecutarAccion(action: QuickAction): void {
-    console.log('🚀 Ejecutando acción:', action.titulo);
-    
+    if (action.id === 'registrar-gasto') {
+      // Permitir acceso aunque no haya grupoActivo, el formulario lo resolverá
+      const grupoActivo = localStorage.getItem('grupoActivo');
+      if (grupoActivo) {
+        this.router.navigate(['/gastos/alta'], { queryParams: { grupo: grupoActivo } });
+      } else {
+        this.router.navigate(['/gastos/alta']);
+      }
+      return;
+    }
     if (action.ruta) {
       this.router.navigate([action.ruta]);
     } else if (action.accion) {
@@ -140,3 +150,6 @@ export class QuickActionsComponent implements OnInit, OnDestroy {
    */
   trackByActionId = (index: number, action: QuickAction): string => action.id;
 }
+
+// ACCIONES RÁPIDAS: Navegación a rutas principales (alta grupo, alta gasto, etc.)
+// Cada acción debe tener una ruta válida y consistente con el router.

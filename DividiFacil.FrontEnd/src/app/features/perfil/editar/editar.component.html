@@ -1,23 +1,23 @@
 <div class="editar-container">
   <app-card>
     <ng-container card-header>
-      <button mat-icon-button (click)="cancelar()" class="back-button">
-        <mat-icon>arrow_back</mat-icon>
+      <button mat-icon-button (click)="cancelar()" class="back-button" aria-label="Volver" tabindex="0">
+        <mat-icon aria-hidden="true">arrow_back</mat-icon>
       </button>
-      <mat-icon>edit</mat-icon>
-      <span>Editar Perfil</span>
+      <mat-icon aria-hidden="true">edit</mat-icon>
+      <span id="editar-perfil-title">Editar Perfil</span>
     </ng-container>
     <ng-container card-content>
       <ng-container *ngIf="loading; else editarForm">
         <app-loading-spinner text="Cargando datos del perfil..."></app-loading-spinner>
       </ng-container>
       <ng-template #editarForm>
-        <form [formGroup]="perfilForm" (ngSubmit)="guardarCambios()">
+        <form [formGroup]="perfilForm" (ngSubmit)="guardarCambios()" aria-labelledby="editar-perfil-title">
           <!-- IMAGEN DE PERFIL -->
           <mat-card class="imagen-card">
             <mat-card-header>
               <mat-card-title>
-                <mat-icon>photo_camera</mat-icon>
+                <mat-icon aria-hidden="true">photo_camera</mat-icon>
                 Foto de Perfil
               </mat-card-title>
             </mat-card-header>
@@ -28,96 +28,91 @@
                     <img 
                       *ngIf="imagenPreview" 
                       [src]="imagenPreview" 
-                      alt="Preview"
+                      alt="Preview de imagen de perfil"
                       loading="lazy">
-                    <span *ngIf="!imagenPreview" class="avatar-initials">
+                    <span *ngIf="!imagenPreview" class="avatar-initials" aria-label="Iniciales de usuario">
                       {{ obtenerIniciales() }}
                     </span>
-                    
-                    <div class="avatar-overlay" *ngIf="subiendoImagen">
+                    <div class="avatar-overlay" *ngIf="subiendoImagen" role="status" aria-live="polite">
                       <app-loading-spinner [diameter]="30"></app-loading-spinner>
                     </div>
                   </div>
                 </div>
-                
                 <div class="imagen-controls">
                   <input 
                     #fileInput 
                     type="file" 
                     accept="image/*" 
                     (change)="onImagenSeleccionada($event)"
-                    style="display: none;">
-                  
+                    style="display: none;"
+                    aria-label="Seleccionar imagen de perfil">
                   <button 
                     type="button"
                     mat-raised-button 
                     color="primary"
                     (click)="fileInput.click()"
-                    [disabled]="subiendoImagen">
-                    <mat-icon>upload</mat-icon>
+                    [disabled]="subiendoImagen"
+                    aria-label="Seleccionar imagen"
+                    tabindex="0">
+                    <mat-icon aria-hidden="true">upload</mat-icon>
                     Seleccionar Imagen
                   </button>
-                  
                   <button 
                     type="button"
                     mat-button 
                     color="warn"
                     (click)="eliminarImagen()"
-                    [disabled]="!imagenPreview || subiendoImagen">
-                    <mat-icon>delete</mat-icon>
+                    [disabled]="!imagenPreview || subiendoImagen"
+                    aria-label="Eliminar imagen de perfil"
+                    tabindex="0">
+                    <mat-icon aria-hidden="true">delete</mat-icon>
                     Eliminar
                   </button>
                 </div>
               </div>
-              
               <p class="imagen-help">
                 Selecciona una imagen JPG, PNG o GIF. Tamaño máximo: 5MB
               </p>
             </mat-card-content>
           </mat-card>
-
           <!-- DATOS PERSONALES -->
           <mat-card class="datos-card">
             <mat-card-header>
               <mat-card-title>
-                <mat-icon>person</mat-icon>
+                <mat-icon aria-hidden="true">person</mat-icon>
                 Información Personal
               </mat-card-title>
             </mat-card-header>
             <mat-card-content>
               <div class="form-grid">
-                
                 <!-- Nombre -->
                 <mat-form-field appearance="outline" class="full-width">
                   <mat-label id="label-nombre">Nombre completo</mat-label>
-                  <input matInput formControlName="nombre" placeholder="Ingresa tu nombre completo" aria-labelledby="label-nombre" aria-describedby="error-nombre">
-                  <mat-icon matSuffix>person</mat-icon>
-                  <mat-error *ngIf="perfilForm.get('nombre')?.hasError('required')" id="error-nombre">
+                  <input matInput formControlName="nombre" placeholder="Ingresa tu nombre completo" aria-labelledby="label-nombre" aria-describedby="error-nombre" aria-required="true">
+                  <mat-icon matSuffix aria-hidden="true">person</mat-icon>
+                  <mat-error *ngIf="perfilForm.get('nombre')?.hasError('required')" id="error-nombre" role="alert">
                     El nombre es requerido
                   </mat-error>
-                  <mat-error *ngIf="perfilForm.get('nombre')?.hasError('minlength')">
+                  <mat-error *ngIf="perfilForm.get('nombre')?.hasError('minlength')" role="alert">
                     El nombre debe tener al menos 2 caracteres
                   </mat-error>
                 </mat-form-field>
-
                 <!-- Email (solo lectura) -->
                 <mat-form-field appearance="outline" class="full-width">
                   <mat-label id="label-email">Email</mat-label>
                   <input matInput [value]="usuario?.email" readonly aria-labelledby="label-email" aria-describedby="hint-email">
-                  <mat-icon matSuffix>email</mat-icon>
+                  <mat-icon matSuffix aria-hidden="true">email</mat-icon>
                   <mat-hint id="hint-email">El email no se puede modificar</mat-hint>
                 </mat-form-field>
-
                 <!-- Teléfono -->
                 <mat-form-field appearance="outline" class="full-width">
                   <mat-label id="label-telefono">Teléfono</mat-label>
                   <input matInput formControlName="telefono" placeholder="Número de teléfono (opcional)" aria-labelledby="label-telefono">
-                  <mat-icon matSuffix>phone</mat-icon>
+                  <mat-icon matSuffix aria-hidden="true">phone</mat-icon>
                 </mat-form-field>
               </div>
             </mat-card-content>
           </mat-card>
-
           <!-- ACCIONES -->
           <mat-card class="acciones-card">
             <mat-card-content>
@@ -126,18 +121,22 @@
                   type="button"
                   mat-button 
                   (click)="cancelar()"
-                  [disabled]="guardando || subiendoImagen">
-                  <mat-icon>close</mat-icon>
+                  [disabled]="guardando || subiendoImagen"
+                  aria-label="Cancelar edición"
+                  tabindex="0">
+                  <mat-icon aria-hidden="true">close</mat-icon>
                   Cancelar
                 </button>
-                
                 <button 
                   type="submit"
                   mat-raised-button 
                   color="primary"
-                  [disabled]="!perfilForm.valid || guardando || subiendoImagen">
-                  <mat-icon *ngIf="!guardando && !subiendoImagen">save</mat-icon>
-                  <mat-icon *ngIf="guardando || subiendoImagen" class="spinning">hourglass_empty</mat-icon>
+                  [disabled]="!perfilForm.valid || guardando || subiendoImagen"
+                  aria-label="Guardar cambios de perfil"
+                  [attr.aria-busy]="guardando || subiendoImagen ? 'true' : null"
+                  tabindex="0">
+                  <mat-icon *ngIf="!guardando && !subiendoImagen" aria-hidden="true">save</mat-icon>
+                  <mat-icon *ngIf="guardando || subiendoImagen" class="spinning" aria-hidden="true">hourglass_empty</mat-icon>
                   {{ guardando ? 'Guardando...' : (subiendoImagen ? 'Subiendo imagen...' : 'Guardar Cambios') }}
                 </button>
               </div>

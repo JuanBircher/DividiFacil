@@ -10,7 +10,6 @@ export interface Pago {
   fechaConfirmacion?: string;
   comprobantePath?: string;
   motivoRechazo?: string;
-  // Propiedades calculadas del backend
   nombreGrupo?: string;
   nombrePagador?: string;
   nombreReceptor?: string;

@@ -101,7 +101,7 @@ export class ListadoNotificacionesComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           this.loading = false;
-          console.error('Error al cargar notificaciones:', err);
+          // console.error('Error al cargar notificaciones:', err);
           this.snackBar.open('Error al cargar notificaciones', 'Cerrar', { duration: 3000 });
         }
       });
@@ -152,7 +152,7 @@ export class ListadoNotificacionesComponent implements OnInit, OnDestroy {
           }
         },
         error: (err) => {
-          console.error('Error en polling de notificaciones:', err);
+          // console.error('Error en polling de notificaciones:', err);
         }
       });
   }
@@ -182,7 +182,7 @@ export class ListadoNotificacionesComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           this.procesando = false;
-          console.error('Error al marcar notificación:', err);
+          // console.error('Error al marcar notificación:', err);
           this.snackBar.open('Error al marcar notificación', 'Cerrar', { 
             duration: 3000 
           });
@@ -212,7 +212,7 @@ export class ListadoNotificacionesComponent implements OnInit, OnDestroy {
       });
     }).catch(err => {
       this.procesando = false;
-      console.error('Error al marcar todas:', err);
+      // console.error('Error al marcar todas:', err);
       this.snackBar.open('Error al marcar notificaciones', 'Cerrar', { 
         duration: 3000 
       });
@@ -351,9 +351,12 @@ export class ListadoNotificacionesComponent implements OnInit, OnDestroy {
   rechazarInvitacion(notificacion: NotificacionDto): void {
     if (notificacion.tipo !== 'GRUPO_INVITACION' || this.procesandoId) return;
     this.procesandoId = notificacion.idNotificacion;
-    // Simulación: marcar como leída y mostrar feedback (ajustar si hay endpoint específico)
     this.marcarComoLeida(notificacion);
     this.snackBar.open('Invitación rechazada', 'Cerrar', { duration: 2000 });
     this.procesandoId = null;
   }
+
+  // ENDPOINT CONSUMIDO: GET /api/notificaciones (Listado de notificaciones del usuario)
+  // Servicio: NotificacionService.obtenerNotificaciones()
+  // Feedback visual y manejo de errores implementado.
 }

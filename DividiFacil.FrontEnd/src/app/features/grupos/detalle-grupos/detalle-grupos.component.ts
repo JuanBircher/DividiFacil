@@ -60,7 +60,7 @@ interface ActividadReciente {
   standalone: true,
   templateUrl: './detalle-grupos.component.html',
   styleUrls: ['./detalle-grupos.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush, // 🚀 AGREGAR ESTO
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     FormsModule,
@@ -79,7 +79,7 @@ interface ActividadReciente {
     LoadingSpinnerComponent,
     DateFormatPipe,
     CurrencyFormatPipe,
-    ConfiguracionesComponent // ✅ AGREGAR: Import del componente
+    ConfiguracionesComponent
   ]
 })
 export class DetalleGruposComponent implements OnInit {
@@ -137,12 +137,12 @@ export class DetalleGruposComponent implements OnInit {
     private balanceService: BalanceService,
     private authService: AuthService,
     private snackBar: MatSnackBar,
-    private cdr: ChangeDetectorRef // 🚀 AGREGAR ESTO
+    private cdr: ChangeDetectorRef 
   ) {}
 
   ngOnInit(): void {
     this.usuarioActual = this.authService.obtenerUsuario();
-    // ✅ USAR PARÁMETRO CORRECTO
+    
     this.idGrupo = this.route.snapshot.paramMap.get('idGrupo') || '';
     
     console.log('🔍 ID Grupo obtenido de ruta:', this.idGrupo);
@@ -164,7 +164,6 @@ export class DetalleGruposComponent implements OnInit {
     this.error = null;
     this.cdr.markForCheck();
 
-    // 🔧 CORREGIDO: Usar método correcto
     this.grupoService.obtenerGrupoConMiembros(this.idGrupo).subscribe({
       next: (response) => {
         console.log('📦 Respuesta grupo:', response);
@@ -579,3 +578,7 @@ export class DetalleGruposComponent implements OnInit {
 
 // NOTA: Se corrigieron las rutas de pagos para alinearlas con el checklist y las rutas definidas en app.routes.ts.
 // Antes: '/listado-pagos', '/alta-pagos' | Ahora: '/pagos', '/pagos/alta'
+
+// ENDPOINT CONSUMIDO: GET /api/grupos/{idGrupo}/con-miembros (Detalle de grupo con miembros)
+// Servicio: GrupoService.obtenerGrupoConMiembros()
+// Feedback visual y manejo de errores implementado.

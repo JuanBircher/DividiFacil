@@ -54,7 +54,7 @@ export class AltaPagosComponent implements OnInit, OnDestroy {
   // Datos
   pagoForm: FormGroup;
   gruposDisponibles: Grupo[] = [];
-  miembrosGrupo: MiembroGrupoDto[] = []; // Simplificado temporalmente
+  miembrosGrupo: MiembroGrupoDto[] = [];
   usuarioActual: any;
 
   // Filtros
@@ -131,13 +131,11 @@ export class AltaPagosComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // ✅ CORREGIDO: obtenerMiembros() devuelve ApiResponse<MiembroDto[]>
     this.grupoService.obtenerMiembros(idGrupo)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response: ResponseDto<any>) => {
           if (response.exito && response.data) {
-            // Simplificado temporalmente
             this.miembrosGrupo = (response.data.miembros || [])
               .filter((miembro: MiembroGrupoDto) => miembro.idUsuario !== this.usuarioActual?.idUsuario);
           }
@@ -150,7 +148,7 @@ export class AltaPagosComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * 💾 CREAR PAGO - CORREGIDO
+   * 💾 CREAR PAGO
    */
   crearPago(): void {
     if (!this.pagoForm.valid) return;
@@ -175,7 +173,7 @@ export class AltaPagosComponent implements OnInit, OnDestroy {
               panelClass: ['success-snackbar']
             });
 
-            // ✅ CORREGIDO: Navegar a listado-pagos
+            // Navegar a listado-pagos
             this.router.navigate(['/listado-pagos'], {
               queryParams: { idGrupo: pagoData.idGrupo }
             });
@@ -192,7 +190,7 @@ export class AltaPagosComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * 🔙 CANCELAR - CORREGIDO
+   * 🔙 CANCELAR
    */
   cancelar(): void {
     if (this.idGrupoPreseleccionado) {
@@ -217,6 +215,6 @@ export class AltaPagosComponent implements OnInit, OnDestroy {
    */
   obtenerNombreMiembro(idUsuario: string): string {
     const miembro = this.miembrosGrupo.find(m => m.idUsuario === idUsuario);
-    return miembro?.nombre || ''; // ✅ CORREGIDO: MiembroDto usa 'nombre', no 'nombreUsuario'
+    return miembro?.nombre || '';
   }
 }

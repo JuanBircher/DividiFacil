@@ -1,4 +1,3 @@
-// src/app/features/balances/balance-grupo/balance-grupo.component.ts
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -54,13 +53,13 @@ export class BalanceGrupoComponent implements OnInit, OnDestroy {
   procesando = false;
   
   // Datos
-  balanceGrupo: any = null;  // ✅ USAR ESTRUCTURA REAL DEL BACKEND
+  balanceGrupo: any = null; 
   idGrupo = '';
   error: string | null = null;
 
   
   // Configuración tabla
-  displayedColumnsBalance = ['usuario', 'totalPagado', 'deberiaHaberPagado', 'balance', 'acciones']; // ✅ CORREGIDO
+  displayedColumnsBalance = ['usuario', 'totalPagado', 'deberiaHaberPagado', 'balance', 'acciones'];
   displayedColumnsDeudas = ['deudor', 'acreedor', 'monto', 'acciones'];
 
   constructor(
@@ -119,7 +118,7 @@ export class BalanceGrupoComponent implements OnInit, OnDestroy {
   /**
    * 💰 CREAR PAGO DESDE DEUDA
    */
-  crearPagoDesdeDeuda(deuda: DeudaSimplificadaDto): void { // ✅ CORREGIDO
+  crearPagoDesdeDeuda(deuda: DeudaSimplificadaDto): void { 
     this.router.navigate(['/alta-pagos'], {
       queryParams: {
         idGrupo: this.idGrupo,
@@ -187,3 +186,7 @@ export class BalanceGrupoComponent implements OnInit, OnDestroy {
     return `${item.idUsuarioDeudor}-${item.idUsuarioAcreedor}`;
   }
 }
+
+// ENDPOINT CONSUMIDO: GET /api/balance/grupo/{idGrupo} (Balance de grupo)
+// Servicio: BalanceService.obtenerBalanceGrupo()
+// Feedback visual y manejo de errores implementado.

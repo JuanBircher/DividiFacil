@@ -209,3 +209,7 @@ export class DetallePagosComponent implements OnInit, OnDestroy {
     return iconos[estado] || 'help';
   }
 }
+
+// ENDPOINT CONSUMIDO: GET /api/pagos/{idPago} (Detalle de pago)
+// Servicio: PagoService.obtenerPagoPorId()
+// Feedback visual y manejo de errores implementado.

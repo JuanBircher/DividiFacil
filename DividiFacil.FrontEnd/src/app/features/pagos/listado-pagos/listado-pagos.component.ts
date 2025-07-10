@@ -41,7 +41,7 @@ import { LoadingSpinnerComponent } from '../../../shared/components/loading-spin
   standalone: true,
   templateUrl: './listado-pagos.component.html',
   styleUrls: ['./listado-pagos.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush, // 🚀 OPTIMIZACIÓN AGREGADA
+  changeDetection: ChangeDetectionStrategy.OnPush, 
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -88,7 +88,7 @@ export class ListadoPagosComponent implements OnInit, OnDestroy {
   // Configuración tabla
   displayedColumns = ['fecha', 'concepto', 'receptor', 'monto', 'estado', 'acciones'];
 
-  // ✅ NUEVO: Mapas para nombres de usuarios y grupos
+  // Mapas para nombres de usuarios y grupos
   usuariosMap = new Map<string, string>();
   gruposMap = new Map<string, string>();
 
@@ -104,7 +104,7 @@ export class ListadoPagosComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private snackBar: MatSnackBar,
-    private cdr: ChangeDetectorRef, // 🚀 AGREGAR SOLO ESTO
+    private cdr: ChangeDetectorRef,
     private usuarioService: UsuarioService
   ) {
     this.filtrosForm = this.fb.group({
@@ -147,8 +147,6 @@ export class ListadoPagosComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (response) => {
           if (response.exito && response.data) {
-            // Si necesitas mapear de GrupoDto a Grupo, hazlo aquí
-            // Suponiendo que response.data es GrupoDto[] y necesitas convertirlo a Grupo[]
             this.gruposDisponibles = (response.data as any[]).map(dto => ({
               idGrupo: dto.idGrupo,
               nombreGrupo: dto.nombreGrupo,
@@ -164,7 +162,7 @@ export class ListadoPagosComponent implements OnInit, OnDestroy {
           }
         },
         error: (err: any) => {
-          console.error('Error al cargar grupos:', err);
+          // console.error('Error al cargar grupos:', err);
           this.cdr.markForCheck();
         }
       });
@@ -175,7 +173,7 @@ export class ListadoPagosComponent implements OnInit, OnDestroy {
    */
   cargarPagos(): void {
     this.loading = true;
-    this.cdr.markForCheck(); // 🚀 AGREGAR SOLO ESTO
+    this.cdr.markForCheck();
     
     const filtros = this.filtrosForm.value;
 
@@ -185,7 +183,6 @@ export class ListadoPagosComponent implements OnInit, OnDestroy {
         next: (response: any) => {
           this.loading = false;
           if (response.exito && response.data) {
-            // Si response.data es un solo Pago, conviértelo en array
             const pagosArray = Array.isArray(response.data) ? response.data : [response.data];
             this.todosLosPagos = pagosArray;
             this.separarPagos(pagosArray);
@@ -195,7 +192,7 @@ export class ListadoPagosComponent implements OnInit, OnDestroy {
         },
         error: (err: any) => {
           this.loading = false;
-          console.error('Error al cargar pagos:', err);
+          // console.error('Error al cargar pagos:', err);
           this.snackBar.open('Error al cargar pagos', 'Cerrar', { duration: 3000 });
           this.cdr.markForCheck();
         }
@@ -285,7 +282,7 @@ export class ListadoPagosComponent implements OnInit, OnDestroy {
    */
   rechazarPago(pago: Pago): void {
     this.procesando = true;
-    this.cdr.markForCheck(); // 🚀 AGREGAR SOLO ESTO
+    this.cdr.markForCheck();
 
     this.pagoService.rechazarPago(pago.idPago)
       .pipe(takeUntil(this.destroy$))
@@ -299,13 +296,13 @@ export class ListadoPagosComponent implements OnInit, OnDestroy {
             });
             this.cargarPagos();
           }
-          this.cdr.markForCheck(); // 🚀 AGREGAR SOLO ESTO
+          this.cdr.markForCheck(); 
         },
         (err: any) => {
           this.procesando = false;
-          console.error('Error al rechazar pago:', err);
+          // console.error('Error al rechazar pago:', err);
           this.snackBar.open('Error al rechazar pago', 'Cerrar', { duration: 3000 });
-          this.cdr.markForCheck(); // 🚀 AGREGAR SOLO ESTO
+          this.cdr.markForCheck();
         }
       );
   }
@@ -332,7 +329,7 @@ export class ListadoPagosComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * ✅ CORREGIDO: Método verDetalle
+   *  Método verDetalle
    */
   verDetalle(pago: Pago): void {
     this.router.navigate(['/detalle-pagos', pago.idPago]);
@@ -340,14 +337,14 @@ export class ListadoPagosComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * ✅ NUEVO: Obtener nombre de usuario por ID
+   * Obtener nombre de usuario por ID
    */
   obtenerNombreUsuario(idUsuario: string): string {
     return this.usuariosMap.get(idUsuario) || `Usuario ${idUsuario.substring(0, 8)}`;
   }
 
   /**
-   * ✅ CORREGIDO: Obtener nombre grupo
+   * CORREGIDO: Obtener nombre grupo
    */
   obtenerNombreGrupo(idGrupo: string): string {
     const grupo = this.gruposDisponibles.find(g => g.idGrupo === idGrupo);
@@ -355,28 +352,28 @@ export class ListadoPagosComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * ✅ NUEVO: Método recargar
+   *  Método recargar
    */
   recargar(): void {
     this.cargarPagos();
   }
 
   /**
-   * 🔢 TRACKBY FUNCTIONS
+   *  TRACKBY FUNCTIONS
    */
   trackByPago(index: number, pago: Pago): string {
     return pago.idPago;
   }
 
   /**
-   * 🔄 PUEDE CONFIRMAR PAGO
+   * PUEDE CONFIRMAR PAGO
    */
   puedeConfirmarPago(pago: Pago): boolean {
     return pago.estado === 'Pendiente' && pago.idReceptor === this.usuarioActual?.idUsuario;
   }
 
   /**
-   * 🔄 PUEDE RECHAZAR PAGO
+   * PUEDE RECHAZAR PAGO
    */
   puedeRechazarPago(pago: Pago): boolean {
     return pago.estado === 'Pendiente' && pago.idReceptor === this.usuarioActual?.idUsuario;
@@ -410,7 +407,6 @@ obtenerIconoEstado(estado: string): string {
 }
 
   volver(): void {
-    // Implementa aquí la lógica para volver atrás, por ejemplo navegar a la vista anterior
     window.history.back();
   }
 
@@ -426,7 +422,10 @@ obtenerIconoEstado(estado: string): string {
    * ❌ ELIMINAR PAGO
    */
   eliminarPago(pago: Pago): void {
-    // Implementar lógica de eliminación
     this.snackBar.open('Pago eliminado correctamente', 'Cerrar', { duration: 3000 });
   }
 }
+
+// ENDPOINT CONSUMIDO: GET /api/pagos (Listado de pagos del usuario o grupo)
+// Servicio: PagoService.obtenerPagos()
+// Feedback visual y manejo de errores implementado.

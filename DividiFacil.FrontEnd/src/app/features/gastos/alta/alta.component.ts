@@ -15,11 +15,13 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 import { GastoService } from '../../../core/services/gasto.service';
 import { GrupoService } from '../../../core/services/grupo.service';
 import { GastoCreacionDto, DetalleGastoCreacionDto, GastoDto } from '../../../core/models/gasto.model';
 import { GrupoConMiembrosDto, MiembroGrupoDto, MiembroGrupoSimpleDto } from '../../../core/models/grupo.model';
+import { GrupoDto } from '../../../core/models/grupo.model';
 import { CardComponent } from '../../../shared/components/card/card.component';
 
 interface ParticipanteGasto {
@@ -34,7 +36,7 @@ interface ParticipanteGasto {
   standalone: true,
   templateUrl: './alta.component.html',
   styleUrls: ['./alta.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush, // 🚀 AGREGAR ESTO
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -48,9 +50,9 @@ interface ParticipanteGasto {
     MatSelectModule,
     MatTooltipModule,
     MatChipsModule,
-    
     MatCheckboxModule,
-    CardComponent // <-- Importar CardComponent para <app-card>
+    MatProgressBarModule,
+    CardComponent
   ]
 })
 export class AltaGastosComponent implements OnInit, OnDestroy {
@@ -64,6 +66,9 @@ export class AltaGastosComponent implements OnInit, OnDestroy {
   grupo: GrupoConMiembrosDto | null = null;
   participantes: ParticipanteGasto[] = [];
   idGrupo: string = '';
+  gruposDisponibles: GrupoDto[] = [];
+  grupoSeleccionadoId: string = '';
+  esperandoSeleccionGrupo: boolean = false;
   
   // Estados
   loading = false;
@@ -81,7 +86,7 @@ export class AltaGastosComponent implements OnInit, OnDestroy {
     'Compras', 'Salud', 'Viajes', 'Otros'
   ];
 
-  // ✅ AGREGAR: Variables para modo edición
+  // Variables para modo edición
   modoEdicion: boolean = false;
   gastoOriginal: GastoDto | null = null;
   idGastoEditar: string = '';
@@ -93,7 +98,7 @@ export class AltaGastosComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar,
     private router: Router,
     private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef // 🚀 AGREGAR ESTO
+    private cdr: ChangeDetectorRef
   ) {
     this.detallesForm = this.fb.group({
       descripcion: ['', [Validators.required, Validators.minLength(3)]],
@@ -112,8 +117,6 @@ export class AltaGastosComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(params => {
         this.idGrupo = params['grupo'];
-        
-        // ✅ DETECTAR MODO EDICIÓN
         const urlSegments = this.route.snapshot.url;
         if (urlSegments.length > 1 && urlSegments[1]?.path === 'editar') {
           this.modoEdicion = true;
@@ -124,23 +127,49 @@ export class AltaGastosComponent implements OnInit, OnDestroy {
           if (this.idGrupo) {
             this.cargarGrupo();
           } else {
-            this.router.navigate(['/grupos']);
+            // No redirigir, mostrar selector de grupo
+            this.esperandoSeleccionGrupo = true;
+            this.cargarGruposDisponibles();
           }
         }
       });
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+  cargarGruposDisponibles(): void {
+    this.loading = true;
+    this.grupoService.obtenerGrupos().pipe(takeUntil(this.destroy$)).subscribe({
+      next: (response) => {
+        this.loading = false;
+        if (response.exito && response.data) {
+          this.gruposDisponibles = response.data;
+        } else {
+          this.snackBar.open('No se pudieron cargar los grupos', 'Cerrar', { duration: 3000 });
+        }
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        this.loading = false;
+        this.snackBar.open('Error al cargar grupos', 'Cerrar', { duration: 3000 });
+        console.error('Error:', err);
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  onSeleccionGrupo(): void {
+    if (this.grupoSeleccionadoId) {
+      this.idGrupo = this.grupoSeleccionadoId;
+      this.esperandoSeleccionGrupo = false;
+      this.cargarGrupo();
+    }
   }
 
   /**
-   * 🔄 CARGAR DATOS DEL GRUPO - OPTIMIZADO
+   * 🔄 CARGAR DATOS DEL GRUPO 
    */
   cargarGrupo(): void {
     this.loading = true;
-    this.cdr.markForCheck(); // 🚀 AGREGAR ESTO
+    this.cdr.markForCheck();
     
     this.grupoService.obtenerMiembros(this.idGrupo)
       .pipe(takeUntil(this.destroy$))
@@ -154,14 +183,14 @@ export class AltaGastosComponent implements OnInit, OnDestroy {
             this.snackBar.open('Error al cargar grupo', 'Cerrar', { duration: 3000 });
             this.router.navigate(['/grupos']);
           }
-          this.cdr.markForCheck(); // 🚀 AGREGAR ESTO
+          this.cdr.markForCheck();
         },
         error: (err) => {
           this.loading = false;
           this.snackBar.open('Error al cargar grupo', 'Cerrar', { duration: 3000 });
           console.error('Error:', err);
           this.router.navigate(['/grupos']);
-          this.cdr.markForCheck(); // 🚀 AGREGAR ESTO
+          this.cdr.markForCheck();
         }
       });
   }
@@ -183,7 +212,7 @@ export class AltaGastosComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * 🧮 CALCULAR DIVISIÓN SEGUN TIPO SELECCIONADO - OPTIMIZADO
+   * 🧮 CALCULAR DIVISIÓN SEGUN TIPO SELECCIONADO
    */
   calcularDivision(): void {
     const tipoDivision = this.participantesForm.get('tipoDivision')?.value;
@@ -204,7 +233,7 @@ export class AltaGastosComponent implements OnInit, OnDestroy {
         break;
     }
     
-    this.cdr.markForCheck(); // 🚀 AGREGAR ESTO
+    this.cdr.markForCheck();
   }
 
   /**
@@ -261,7 +290,7 @@ export class AltaGastosComponent implements OnInit, OnDestroy {
   onPorcentajeChange(participante: ParticipanteGasto): void {
     const montoTotal = this.detallesForm.get('monto')?.value || 0;
     participante.monto = Math.round((montoTotal * participante.porcentaje / 100) * 100) / 100;
-    this.cdr.markForCheck(); // 🚀 AGREGAR ESTO
+    this.cdr.markForCheck(); 
   }
 
   onMontoParticipanteChange(participante: ParticipanteGasto): void {
@@ -269,7 +298,7 @@ export class AltaGastosComponent implements OnInit, OnDestroy {
     if (montoTotal > 0) {
       participante.porcentaje = Math.round((participante.monto / montoTotal) * 100);
     }
-    this.cdr.markForCheck(); // 🚀 AGREGAR ESTO
+    this.cdr.markForCheck(); 
   }
 
   /**
@@ -512,4 +541,9 @@ export class AltaGastosComponent implements OnInit, OnDestroy {
 
   // Exponer Math para el template
   Math = Math;
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 }

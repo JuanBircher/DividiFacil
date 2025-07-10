@@ -329,4 +329,7 @@ export class DetalleGastoComponent implements OnInit, OnDestroy {
 
 /**
  * NOTA: Se corrigió la ruta de edición de gasto para alinearla con el checklist y app.routes.ts: '/gastos/:idGasto/editar'
+ * ENDPOINT CONSUMIDO: GET /api/gastos/{idGasto} (Detalle de gasto)
+ * Servicio: GastoService.obtenerGastoPorId()
+ * Feedback visual y manejo de errores implementado.
  */

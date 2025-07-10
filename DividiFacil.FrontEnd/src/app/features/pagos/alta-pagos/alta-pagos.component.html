@@ -2,7 +2,7 @@
   
   <!-- HEADER -->
   <div class="header-section">
-    <button mat-icon-button (click)="cancelar()" class="back-button">
+    <button mat-icon-button (click)="cancelar()" class="back-button" aria-label="Volver a listado de pagos">
       <mat-icon>arrow_back</mat-icon>
     </button>
     <h1 id="main-title">
@@ -25,7 +25,7 @@
 
       <!-- FORMULARIO -->
       <ng-template #altaPagoForm>
-        <form [formGroup]="pagoForm" (ngSubmit)="crearPago()">
+        <form [formGroup]="pagoForm" (ngSubmit)="crearPago()" aria-labelledby="card-title">
           
           <!-- SELECCIÓN DE GRUPO -->
           <div class="form-card">
@@ -33,13 +33,13 @@
             <span>Información del Grupo</span>
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>Seleccionar Grupo</mat-label>
-              <mat-select formControlName="idGrupo" (selectionChange)="onGrupoSeleccionado()">
+              <mat-select formControlName="idGrupo" (selectionChange)="onGrupoSeleccionado()" aria-label="Seleccionar grupo" aria-required="true">
                 <mat-option *ngFor="let grupo of gruposDisponibles" [value]="grupo.idGrupo">
                   {{ grupo.nombreGrupo }}
                 </mat-option>
               </mat-select>
               <mat-icon matSuffix>group</mat-icon>
-              <mat-error *ngIf="pagoForm.get('idGrupo')?.hasError('required')">
+              <mat-error *ngIf="pagoForm.get('idGrupo')?.hasError('required')" role="alert">
                 Debes seleccionar un grupo
               </mat-error>
             </mat-form-field>
@@ -54,15 +54,13 @@
               <!-- Receptor -->
               <mat-form-field appearance="outline" class="full-width">
                 <mat-label id="label-receptor">Pagar a</mat-label>
-                <mat-select formControlName="idReceptor" [disabled]="miembrosGrupo.length === 0" aria-labelledby="label-receptor" aria-describedby="error-receptor">
+                <mat-select formControlName="idReceptor" [disabled]="miembrosGrupo.length === 0" aria-labelledby="label-receptor" aria-describedby="error-receptor" aria-label="Seleccionar receptor" aria-required="true">
                   <mat-option *ngFor="let miembro of miembrosGrupo" [value]="miembro.idUsuario">
                     {{ miembro.nombre }}
                   </mat-option>
                 </mat-select>
-                <mat-icon matSuffix>person</mat-icon>
-                <mat-hint *ngIf="miembrosGrupo.length === 0">Selecciona un grupo primero</mat-hint>
-                <mat-error *ngIf="pagoForm.get('idReceptor')?.hasError('required')" id="error-receptor">
-                  Debes seleccionar a quién pagarle
+                <mat-error *ngIf="pagoForm.get('idReceptor')?.hasError('required')" id="error-receptor" role="alert">
+                  Debes seleccionar un receptor
                 </mat-error>
               </mat-form-field>
 

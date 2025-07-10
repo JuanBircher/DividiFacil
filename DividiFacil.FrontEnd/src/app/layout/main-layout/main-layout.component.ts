@@ -76,7 +76,6 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   horaActual: string = '';
   gruposMenuAbierto = false;
   
-  // ✅ CORRECCIÓN: Declarar como Observable sin inicializar inmediatamente
   contadorNotificaciones$: Observable<number>;
   mostrarOnboarding = false;
 
@@ -90,7 +89,6 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     private onboardingService: OnboardingService
   ) {
     console.log('[MainLayoutComponent] Constructor ejecutado');
-    // ✅ CORRECCIÓN: Inicializar en constructor después de inyección
     this.contadorNotificaciones$ = this.notificacionService.contadorNoLeidas$;
   }
 

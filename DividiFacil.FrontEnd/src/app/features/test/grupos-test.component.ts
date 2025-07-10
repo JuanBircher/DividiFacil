@@ -106,7 +106,7 @@ export class GruposTestComponent implements OnInit {
     const grupoTest: GrupoCreacionDto = {
       nombreGrupo: `Grupo Test ${Date.now()}`,
       descripcion: 'Grupo creado para pruebas',
-      modoOperacion: 'EQUITATIVO' // Valor válido según backend
+      modoOperacion: 'Equitativo' // Valor correcto según backend
     };
 
     this.grupoService.crearGrupo(grupoTest).subscribe({

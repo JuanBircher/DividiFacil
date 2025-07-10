@@ -4,31 +4,30 @@
     <span>Alta de Grupo</span>
   </ng-container>
   <ng-container card-content>
-    <form [formGroup]="grupoForm" (ngSubmit)="submit()">
+    <form [formGroup]="grupoForm" (ngSubmit)="submit()" aria-labelledby="alta-grupo-title">
       <div>
         <label for="NombreGrupo">Nombre del Grupo</label>
-        <input id="NombreGrupo" formControlName="NombreGrupo" type="text" maxlength="50" />
-        <div *ngIf="grupoForm.get('NombreGrupo')?.touched && grupoForm.get('NombreGrupo')?.invalid" class="error">
+        <input id="NombreGrupo" formControlName="NombreGrupo" type="text" maxlength="50" aria-required="true" aria-label="Nombre del Grupo" />
+        <div *ngIf="grupoForm.get('NombreGrupo')?.touched && grupoForm.get('NombreGrupo')?.invalid" class="error" role="alert">
           Nombre es requerido y debe tener máximo 50 caracteres.
         </div>
       </div>
 
       <div>
         <label for="Descripcion">Descripción</label>
-        <textarea id="Descripcion" formControlName="Descripcion" maxlength="200"></textarea>
-        <div *ngIf="grupoForm.get('Descripcion')?.touched && grupoForm.get('Descripcion')?.invalid" class="error">
+        <textarea id="Descripcion" formControlName="Descripcion" maxlength="200" aria-label="Descripción del grupo"></textarea>
+        <div *ngIf="grupoForm.get('Descripcion')?.touched && grupoForm.get('Descripcion')?.invalid" class="error" role="alert">
           Máximo 200 caracteres.
         </div>
       </div>
 
-      <!-- ModoOperacion podría ser un select si quieres variar el valor -->
       <input type="hidden" formControlName="ModoOperacion" />
 
-      <button type="submit" [disabled]="loading">Crear Grupo</button>
+      <button type="submit" [disabled]="loading" aria-label="Crear grupo">Crear Grupo</button>
       <div *ngIf="loading">
         <app-loading-spinner text="Creando grupo..."></app-loading-spinner>
       </div>
-      <div *ngIf="error" class="error">{{ error }}</div>
+      <div *ngIf="error" class="error" role="alert">{{ error }}</div>
     </form>
   </ng-container>
 </app-card>

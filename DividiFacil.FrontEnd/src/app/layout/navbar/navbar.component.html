@@ -1,36 +1,36 @@
 <mat-toolbar color="primary" role="navigation" [attr.aria-label]="ariaLabel || 'Barra de navegación principal'">
   <button mat-icon-button (click)="toggleMenu.emit()" class="hide-desktop" tabindex="0" aria-label="Abrir menú lateral">
-    <mat-icon>menu</mat-icon>
+    <mat-icon aria-hidden="true">menu</mat-icon>
   </button>
   <img src="assets/logo.svg" alt="Logo DividiFácil" class="navbar-logo" />
-  <span class="navbar-title">DividiFácil</span>
-  <button mat-flat-button color="accent" class="navbar-action hide-mobile" (click)="accionRapida.emit()" aria-label="Nuevo Gasto">
-    <mat-icon>add</mat-icon>
+  <span class="navbar-title" tabindex="0">DividiFácil</span>
+  <button mat-flat-button color="accent" class="navbar-action hide-mobile" (click)="accionRapida.emit()" aria-label="Nuevo Gasto" tabindex="0">
+    <mat-icon aria-hidden="true">add</mat-icon>
     Nuevo Gasto
   </button>
   <span class="flex-spacer"></span>
   <button mat-icon-button (click)="onToggleDarkMode()" [attr.aria-label]="darkMode ? 'Desactivar modo oscuro' : 'Activar modo oscuro'" tabindex="0">
-    <mat-icon>{{ darkMode ? 'dark_mode' : 'light_mode' }}</mat-icon>
+    <mat-icon aria-hidden="true">{{ darkMode ? 'dark_mode' : 'light_mode' }}</mat-icon>
   </button>
-  <div class="navbar-user-menu" [matMenuTriggerFor]="userMenu" tabindex="0" aria-label="Menú de usuario">
+  <div class="navbar-user-menu" [matMenuTriggerFor]="userMenu" tabindex="0" aria-label="Menú de usuario" role="button" aria-haspopup="true" aria-expanded="false">
     <span class="navbar-badge-wrapper">
-      <img src="assets/avatar-default.png" alt="Avatar" class="navbar-avatar" />
-      <span *ngIf="notificaciones > 0" class="navbar-badge">{{ notificaciones }}</span>
+      <img src="assets/avatar-default.png" alt="Avatar de usuario" class="navbar-avatar" />
+      <span *ngIf="notificaciones > 0" class="navbar-badge animate-fadeIn" [attr.aria-label]="notificaciones + ' notificaciones nuevas'">{{ notificaciones }}</span>
     </span>
-    <span *ngIf="nombreUsuario" class="navbar-username hide-mobile">{{ nombreUsuario }}</span>
-    <mat-icon>expand_more</mat-icon>
+    <span *ngIf="nombreUsuario" class="navbar-username hide-mobile" tabindex="0">{{ nombreUsuario }}</span>
+    <mat-icon aria-hidden="true">expand_more</mat-icon>
   </div>
-  <mat-menu #userMenu="matMenu">
-    <button mat-menu-item aria-label="Perfil">
-      <mat-icon>person</mat-icon>
+  <mat-menu #userMenu="matMenu" class="animate-fadeIn">
+    <button mat-menu-item aria-label="Perfil" tabindex="0">
+      <mat-icon aria-hidden="true">person</mat-icon>
       Perfil
     </button>
-    <button mat-menu-item aria-label="Configuración">
-      <mat-icon>settings</mat-icon>
+    <button mat-menu-item aria-label="Configuración" tabindex="0">
+      <mat-icon aria-hidden="true">settings</mat-icon>
       Configuración
     </button>
-    <button mat-menu-item (click)="logout.emit()" aria-label="Cerrar sesión">
-      <mat-icon>logout</mat-icon>
+    <button mat-menu-item (click)="logout.emit()" aria-label="Cerrar sesión" tabindex="0">
+      <mat-icon aria-hidden="true">logout</mat-icon>
       Cerrar sesión
     </button>
   </mat-menu>

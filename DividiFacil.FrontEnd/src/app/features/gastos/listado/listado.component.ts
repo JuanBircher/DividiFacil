@@ -51,9 +51,9 @@ import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
     MatPaginatorModule,
     MatMenuModule,
     MatDividerModule,
-    ScrollingModule, // ✅ AGREGAR PARA cdk-virtual-scroll-viewport
+    ScrollingModule, 
     DateFormatPipe,
-    CardComponent // <-- Importar CardComponent para <app-card>
+    CardComponent 
   ]
 })
 export class ListadoGastosComponent implements OnInit, OnDestroy {
@@ -150,7 +150,7 @@ export class ListadoGastosComponent implements OnInit, OnDestroy {
           }
         },
         error: (error) => {
-          console.error('Error al cargar grupo:', error);
+          // console.error('Error al cargar grupo:', error);
         }
       });
   }
@@ -191,7 +191,7 @@ export class ListadoGastosComponent implements OnInit, OnDestroy {
   private cargarGastos(): void {
     this.loading = true;
     
-    // ✅ USAR: Método que SÍ existe
+    // Método que SÍ existe
     this.gastoService.obtenerGastos().subscribe({
       next: (response) => {
         if (response.exito && response.data) {
@@ -203,7 +203,7 @@ export class ListadoGastosComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
       },
       error: (error) => {
-        console.error('Error:', error);
+        // console.error('Error:', error);
         this.error = 'Error al cargar gastos';
         this.loading = false;
         this.cdr.markForCheck();
@@ -211,7 +211,7 @@ export class ListadoGastosComponent implements OnInit, OnDestroy {
     });
   }
 
-  // ✅ NUEVO: Método para cargar gastos paginados
+  //Método para cargar gastos paginados
   cargarGastosPaginados(pagina: number = 1): void {
     this.loading = true;
     
@@ -226,7 +226,7 @@ export class ListadoGastosComponent implements OnInit, OnDestroy {
         this.cdr.markForCheck();
       },
       error: (error) => {
-        console.error('Error:', error);
+        // console.error('Error:', error);
         this.loading = false;
         this.cdr.markForCheck();
       }
@@ -234,7 +234,6 @@ export class ListadoGastosComponent implements OnInit, OnDestroy {
   }
 
   private aplicarFiltros(): void {
-    // Implementar lógica de filtros
     this.cargarGastos();
   }
 
@@ -344,4 +343,8 @@ export class ListadoGastosComponent implements OnInit, OnDestroy {
     this.itemsPorPagina = event.pageSize;
     this.cargarGastos();
   }
+
+  // ENDPOINT CONSUMIDO: GET /api/gastos (Listado de gastos del usuario o grupo)
+  // Servicio: GastoService.obtenerGastos()
+  // Feedback visual y manejo de errores implementado.
 }

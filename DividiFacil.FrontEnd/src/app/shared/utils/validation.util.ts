@@ -64,7 +64,6 @@ export class ValidationUtil {
       const value = control.value;
       if (!value) return null;
       
-      // Formato: +54 9 11 1234-5678 o variaciones
       const phoneRegex = /^(\+54|54)?[\s]?9?[\s]?(11|[2-9]\d{1,3})[\s]?\d{3,4}[\s-]?\d{4}$/;
       return phoneRegex.test(value.replace(/\s/g, '')) ? null : { invalidPhone: true };
     };

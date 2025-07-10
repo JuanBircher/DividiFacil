@@ -1,16 +1,11 @@
-/**
- * 🔧 CORREGIDO: Estructura genérica que coincide con el backend (camelCase)
- */
+
 export interface ResponseDto<T = undefined> {
   exito: boolean;
   mensaje?: string;
   data?: T;
 }
 
-/**
- * 🔧 MANTENER: Para compatibilidad con código existente
- * Pero usar ResponseDto<T> en servicios nuevos
- */
+
 export interface ApiResponse<T = any> {
   exito: boolean;
   data: T;
@@ -19,7 +14,7 @@ export interface ApiResponse<T = any> {
 }
 
 /**
- * 🔧 NUEVO: Para respuestas paginadas
+ * 🔧 Para respuestas paginadas
  */
 export interface PaginatedResponseDto<T> extends ResponseDto {
   items: T[];
@@ -29,7 +24,7 @@ export interface PaginatedResponseDto<T> extends ResponseDto {
   totalPaginas: number;
 }
 
-// ✅ AGREGAR: Interface para respuestas paginadas específicas de gastos
+//  Interface para respuestas paginadas específicas de gastos
 export interface PaginatedResponse<T> extends ResponseDto<T[]> {
   totalRegistros: number;
   totalPaginas: number;
@@ -40,10 +35,10 @@ export interface PaginatedResponse<T> extends ResponseDto<T[]> {
   itemsPorPagina?: number;
 }
 
-// ✅ AGREGAR: Interface para paginación
+// Interface para paginación
 export interface PaginacionDto {
   pagina: number;
   limite: number;
-  // 🔧 ALIAS para compatibilidad con backend
+  // ALIAS para compatibilidad con backend
   tamanioPagina?: number;
 }

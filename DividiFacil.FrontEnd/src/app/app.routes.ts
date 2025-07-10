@@ -67,7 +67,7 @@ export const routes: Routes = [
         loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent)
       },
 
-      // ✅ GRUPOS - RUTAS COMPLETAS Y CONSISTENTES
+      // ✅ GRUPOS
       {
         path: 'grupos',
         children: [
@@ -84,7 +84,7 @@ export const routes: Routes = [
             loadComponent: () => import('./features/grupos/unirse-codigo/unirse-codigo.component').then(m => m.UnirseCodigoComponent)
           },
           {
-            path: ':idGrupo', // ✅ CONSISTENTE CON BACKEND
+            path: ':idGrupo',
             loadComponent: () => import('./features/grupos/detalle-grupos/detalle-grupos.component').then(m => m.DetalleGruposComponent)
           },
           {
@@ -98,7 +98,7 @@ export const routes: Routes = [
         ]
       },
 
-      // ✅ GASTOS - RUTAS CONSISTENTES
+      // ✅ GASTOS
       {
         path: 'gastos',
         children: [
@@ -121,7 +121,7 @@ export const routes: Routes = [
         ]
       },
 
-      // ✅ PAGOS - RUTAS CONSISTENTES
+      // ✅ PAGOS
       {
         path: 'pagos',
         children: [
@@ -134,7 +134,7 @@ export const routes: Routes = [
             loadComponent: () => import('./features/pagos/alta-pagos/alta-pagos.component').then(m => m.AltaPagosComponent)
           },
           {
-            path: ':idPago', // ✅ CONSISTENTE CON BACKEND
+            path: ':idPago',
             loadComponent: () => import('./features/pagos/detalle-pagos/detalle-pagos.component').then(m => m.DetallePagosComponent)
           }
         ]

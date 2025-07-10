@@ -254,13 +254,8 @@ export class DashboardTestComponent implements OnInit {
   }
 
   probarBalanceUsuario(): void {
-    const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
-    const idUsuario = usuario.idUsuario;
-    if (!idUsuario) {
-      this.balanceUsuario = { error: 'Usuario no autenticado' };
-      return;
-    }
-    this.balanceService.obtenerBalanceUsuario(idUsuario).subscribe({
+    // Ya no se requiere idUsuario, el backend lo toma del token
+    this.balanceService.obtenerBalanceUsuario().subscribe({
       next: (response) => {
         this.balanceUsuario = response;
         console.log('✅ Balance usuario:', response);

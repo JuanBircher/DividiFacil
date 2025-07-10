@@ -98,7 +98,7 @@ export class EditarComponent implements OnInit, OnDestroy {
     this.usuarioService.obtenerUsuario(this.idUsuario)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (response) => {  // 🔧 CAMBIAR: response es ResponseDto<UsuarioDto>
+        next: (response) => {
           this.loading = false;
           if (response.exito && response.data) {
             this.usuario = response.data;
@@ -174,7 +174,6 @@ export class EditarComponent implements OnInit, OnDestroy {
       const response = await this.usuarioService.subirImagen(this.idUsuario, this.imagenSeleccionada).toPromise();
       this.subiendoImagen = false;
       
-      // 🔧 CAMBIAR: response es ResponseDto<{ urlImagen: string }>
       if (response?.exito && response.data) {
         return response.data.urlImagen;
       }

@@ -33,6 +33,10 @@
       🚀 Probar Todos
     </button>
     
+    <button (click)="testAllEndpointsAndNavigation()" [disabled]="loading" class="test-all">
+      🚀 Probar Endpoints + Navegación
+    </button>
+    
     <button (click)="clearResults()" [disabled]="loading" class="clear">
       🧹 Limpiar
     </button>
@@ -71,6 +75,33 @@
       <pre>{{ notificacionesTestResult.data | json }}</pre>
     </div>
     
+  </div>
+  
+  <!-- Reporte visual de resultados -->
+  <div class="visual-report" *ngIf="authTestResult || gruposTestResult || gastosTestResult || pagosTestResult || notificacionesTestResult">
+    <h3>📊 Resumen Visual</h3>
+    <div class="report-grid">
+      <div class="report-item" [class.success]="authTestResult?.success" [class.error]="authTestResult && !authTestResult.success">
+        <span>🔐 Autenticación</span>
+        <span class="status">{{ authTestResult ? (authTestResult.success ? '✅ OK' : '❌ Error') : '⏳' }}</span>
+      </div>
+      <div class="report-item" [class.success]="gruposTestResult?.success" [class.error]="gruposTestResult && !gruposTestResult.success">
+        <span>👥 Grupos</span>
+        <span class="status">{{ gruposTestResult ? (gruposTestResult.success ? '✅ OK' : '❌ Error') : '⏳' }}</span>
+      </div>
+      <div class="report-item" [class.success]="gastosTestResult?.success" [class.error]="gastosTestResult && !gastosTestResult.success">
+        <span>💰 Gastos</span>
+        <span class="status">{{ gastosTestResult ? (gastosTestResult.success ? '✅ OK' : '❌ Error') : '⏳' }}</span>
+      </div>
+      <div class="report-item" [class.success]="pagosTestResult?.success" [class.error]="pagosTestResult && !pagosTestResult.success">
+        <span>💳 Pagos</span>
+        <span class="status">{{ pagosTestResult ? (pagosTestResult.success ? '✅ OK' : '❌ Error') : '⏳' }}</span>
+      </div>
+      <div class="report-item" [class.success]="notificacionesTestResult?.success" [class.error]="notificacionesTestResult && !notificacionesTestResult.success">
+        <span>🔔 Notificaciones</span>
+        <span class="status">{{ notificacionesTestResult ? (notificacionesTestResult.success ? '✅ OK' : '❌ Error') : '⏳' }}</span>
+      </div>
+    </div>
   </div>
   
   <div *ngIf="loading" class="loading">

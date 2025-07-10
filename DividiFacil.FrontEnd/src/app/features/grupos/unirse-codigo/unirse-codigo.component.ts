@@ -53,8 +53,8 @@ export class UnirseCodigoComponent implements OnInit {
   /**
    * 🎨 FORMATEAR CÓDIGO MIENTRAS ESCRIBE
    */
-  onCodigoInput(event: any): void {
-    let valor = event.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  onCodigoInput(event: Event): void {
+    let valor = (event.target as HTMLInputElement).value.toUpperCase().replace(/[^A-Z0-9]/g, '');
     if (valor.length > 8) {
       valor = valor.substring(0, 8);
     }

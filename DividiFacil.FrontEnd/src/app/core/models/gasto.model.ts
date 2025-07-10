@@ -1,56 +1,55 @@
-// src/app/core/models/gasto.model.ts
-// 🔧 MODELOS TOTALMENTE ALINEADOS CON BACKEND
 
-// ✅ INTERFACE PRINCIPAL - EXACTAMENTE IGUAL AL BACKEND
+
+// ✅ INTERFACE PRINCIPAL 
 export interface GastoDto {
-  idGasto: string;                      // Guid -> string
-  idGrupo: string;                      // Guid -> string
-  nombreGrupo: string;                  // ✅ Correcto
-  descripcion: string;                  // ✅ Correcto
-  idMiembroPagador: string;             // Guid -> string
-  nombreMiembroPagador: string;         // ✅ Correcto
-  monto: number;                        // decimal -> number
-  categoria?: string;                   // ✅ Correcto
-  fechaCreacion: string;                // DateTime -> string (ISO format)
-  fechaGasto: string;                   // DateTime -> string (ISO format)
-  comprobantePath?: string;             // ✅ Correcto
-  detalles?: DetalleGastoDto[];         // ✅ Correcto
+  idGasto: string;                      
+  idGrupo: string;                      
+  nombreGrupo: string;                  
+  descripcion: string;                  
+  idMiembroPagador: string;             
+  nombreMiembroPagador: string;         
+  monto: number;                        
+  categoria?: string;                  
+  fechaCreacion: string;                
+  fechaGasto: string;                   
+  comprobantePath?: string;            
+  detalles?: DetalleGastoDto[];         
 }
 
-// ✅ DTO PARA CREACIÓN - EXACTAMENTE IGUAL AL BACKEND
+// ✅ DTO PARA CREACIÓN
 export interface GastoCreacionDto {
-  idGrupo: string;                      // Guid -> string
-  monto: number;                        // decimal -> number
-  descripcion: string;                  // ✅ Correcto
-  categoria: string;                    // ✅ Correcto
-  fechaGasto?: string;                  // DateTime -> string (ISO format)
-  comprobantePath?: string;             // ✅ Correcto
-  detalles: DetalleGastoCreacionDto[];  // ✅ Correcto
+  idGrupo: string;                     
+  monto: number;                       
+  descripcion: string;                  
+  categoria: string;                   
+  fechaGasto?: string;                  
+  comprobantePath?: string;             
+  detalles: DetalleGastoCreacionDto[];
 }
 
-// ✅ DTO PARA DETALLES - EXACTAMENTE IGUAL AL BACKEND
+// ✅ DTO PARA DETALLES 
 export interface DetalleGastoDto {
-  idDetalleGasto: string;               // Guid -> string
-  idMiembroDeudor: string;              // Guid -> string
-  nombreMiembroDeudor: string;          // ✅ Correcto
-  monto: number;                        // decimal -> number
-  pagado: boolean;                      // ✅ Correcto
+  idDetalleGasto: string;              
+  idMiembroDeudor: string;              
+  nombreMiembroDeudor: string;          
+  monto: number;                      
+  pagado: boolean;                     
 }
 
-// ✅ DTO PARA CREACIÓN DE DETALLES - EXACTAMENTE IGUAL AL BACKEND
+// ✅ DTO PARA CREACIÓN DE DETALLES 
 export interface DetalleGastoCreacionDto {
-  idMiembroDeudor: string;              // Guid -> string
-  monto: number;                        // decimal -> number
+  idMiembroDeudor: string;              
+  monto: number;                       
 }
 
-// ✅ DTO PARA SALDOS - EXACTAMENTE IGUAL AL BACKEND
+// ✅ DTO PARA SALDOS 
 export interface SaldoUsuarioDto {
-  idUsuario: string;                    // Guid -> string
-  nombreUsuario: string;                // ✅ Correcto
-  imagenPerfil?: string;                // ✅ Correcto
-  totalPagado: number;                  // decimal -> number
-  totalAPagar: number;                  // decimal -> number
-  saldo: number;                        // decimal -> number
+  idUsuario: string;                    
+  nombreUsuario: string;                
+  imagenPerfil?: string;               
+  totalPagado: number;                 
+  totalAPagar: number;                  
+  saldo: number;                        
 }
 
 // ✅ INTERFACES AUXILIARES PARA FORMULARIOS

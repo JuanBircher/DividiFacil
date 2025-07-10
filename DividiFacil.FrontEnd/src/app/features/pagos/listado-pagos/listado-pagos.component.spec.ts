@@ -1,8 +1,3 @@
-// ------------------------------------------------------------
-// Test de integración de ListadoPagosComponent
-// - Verifica creación básica del componente.
-// - Recomendado: agregar tests de interacción, feedback visual y mocks de servicios.
-// ------------------------------------------------------------
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ListadoPagosComponent } from './listado-pagos.component';

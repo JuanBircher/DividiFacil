@@ -9,7 +9,7 @@ import { routes } from './app/app.routes';
 import { isDevMode } from '@angular/core';
 import { provideServiceWorker } from '@angular/service-worker';
 
-console.log('Iniciando bootstrap de Angular...');
+// console.log('Iniciando bootstrap de Angular...');
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -20,5 +20,5 @@ bootstrapApplication(AppComponent, {
           }),
   ]
 })
-  .then(() => console.log('Bootstrap completado'))
-  .catch((err) => console.error(err));
+  .then(() => { })
+  .catch((err) => { });

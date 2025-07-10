@@ -1,4 +1,3 @@
-// src/app/core/models/balance.model.ts
 export interface BalanceGrupoDto {
   idGrupo: string;
   nombreGrupo: string;

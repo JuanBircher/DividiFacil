@@ -1,10 +1,10 @@
 export interface UsuarioDto {
-  idUsuario: string;        // Guid -> string
-  nombre: string;           // ✅ Correcto
-  email: string;            // ✅ Correcto
+  idUsuario: string;        
+  nombre: string;          
+  email: string;            
   urlImagen?: string; 
-  telefono?: string;        // ✅ Correcto
-  fechaRegistro: string;    // ✅ Correcto (ISO format)
+  telefono?: string;       
+  fechaRegistro: string;    
 
 }
 
@@ -27,10 +27,10 @@ export interface UsuarioActualizacionDto {
   urlImagen?: string;
 }
 
-// 🔧 ALIAS para compatibilidad
+// ALIAS para compatibilidad
 export interface Usuario extends UsuarioDto {}
 
-// 🔧 AGREGAR: Interfaces para nuevos métodos
+// AGREGAR: Interfaces para nuevos métodos
 export interface CambiarPasswordDto {
   passwordActual: string;
   passwordNuevo: string;

@@ -13,7 +13,7 @@
 <mat-nav-list role="navigation" [attr.aria-label]="ariaLabel || 'Menú lateral de navegación'">
   <mat-divider></mat-divider>
   <a mat-list-item routerLink="/dashboard" routerLinkActive="active-link" tabindex="0" aria-current="page">
-    <mat-icon>dashboard</mat-icon>
+    <mat-icon aria-hidden="true">dashboard</mat-icon>
     <span>Inicio</span>
   </a>
   <mat-divider></mat-divider>
@@ -22,32 +22,32 @@
     [attr.aria-expanded]="gruposMenuAbierto ? 'true' : 'false'"
     aria-controls="submenu-grupos"
     aria-label="Abrir menú de grupos">
-    <mat-icon>groups</mat-icon>
+    <mat-icon aria-hidden="true">groups</mat-icon>
     <span>Grupos</span>
-    <mat-icon style="margin-left:auto;">{{ gruposMenuAbierto ? 'expand_less' : 'expand_more' }}</mat-icon>
+    <mat-icon aria-hidden="true" style="margin-left:auto;">{{ gruposMenuAbierto ? 'expand_less' : 'expand_more' }}</mat-icon>
   </a>
   <div *ngIf="gruposMenuAbierto" id="submenu-grupos" class="sidebar-submenu">
     <a mat-list-item routerLink="/grupos" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact:true}" tabindex="0">
-      <mat-icon>list</mat-icon>
+      <mat-icon aria-hidden="true">list</mat-icon>
       <span>Ver Grupos</span>
     </a>
     <a mat-list-item routerLink="/grupos/alta" routerLinkActive="active-link" tabindex="0">
-      <mat-icon>add</mat-icon>
+      <mat-icon aria-hidden="true">add</mat-icon>
       <span>Alta Grupos</span>
     </a>
   </div>
   <mat-divider></mat-divider>
   <div class="sidebar-section-title">Finanzas</div>
   <a mat-list-item routerLink="/gastos" routerLinkActive="active-link" tabindex="0">
-    <mat-icon>receipt_long</mat-icon>
+    <mat-icon aria-hidden="true">receipt_long</mat-icon>
     <span>Gastos</span>
   </a>
   <a mat-list-item routerLink="/pagos" routerLinkActive="active-link" tabindex="0">
-    <mat-icon>payments</mat-icon>
+    <mat-icon aria-hidden="true">payments</mat-icon>
     <span>Pagos</span>
   </a>
   <a mat-list-item routerLink="/caja" routerLinkActive="active-link" tabindex="0">
-    <mat-icon>savings</mat-icon>
+    <mat-icon aria-hidden="true">savings</mat-icon>
     <span>Caja Común</span>
   </a>
   <mat-divider></mat-divider>
@@ -59,13 +59,15 @@
      matBadgeColor="warn"
      matBadgeSize="small"
      tabindex="0"
-     aria-label="Notificaciones no leídas">
-    <mat-icon>notifications</mat-icon>
+     aria-label="Notificaciones no leídas"
+     [attr.aria-label]="contadorNotificaciones > 0 ? contadorNotificaciones + ' notificaciones no leídas' : 'Sin notificaciones nuevas'"
+     class="animate-fadeIn">
+    <mat-icon aria-hidden="true">notifications</mat-icon>
     <span>Notificaciones</span>
   </a>
   <mat-divider></mat-divider>
   <a mat-list-item routerLink="/perfil" routerLinkActive="active-link" tabindex="0">
-    <mat-icon>person</mat-icon>
+    <mat-icon aria-hidden="true">person</mat-icon>
     <span>Mi Perfil</span>
   </a>
 </mat-nav-list>

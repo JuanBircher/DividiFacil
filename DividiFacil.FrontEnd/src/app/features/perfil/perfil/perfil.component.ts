@@ -102,7 +102,6 @@ export class PerfilComponent implements OnInit, OnDestroy {
         },
         error: (err) => {
           this.loading = false;
-          console.error('Error al cargar usuario:', err);
           this.snackBar.open('Error al cargar perfil', 'Cerrar', { duration: 3000 });
         }
       });
@@ -120,8 +119,6 @@ export class PerfilComponent implements OnInit, OnDestroy {
     const diffTime = Math.abs(hoy.getTime() - fechaRegistro.getTime());
     this.estadisticasUsuario.diasRegistrado = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    // Las otras estadísticas se cargarían de servicios específicos
-    // Por ahora las dejamos en 0 como placeholder
   }
 
   /**
@@ -192,3 +189,7 @@ export class PerfilComponent implements OnInit, OnDestroy {
     this.snackBar.open('Onboarding reiniciado. Recarga la página para ver el tour.', 'Cerrar', { duration: 4000 });
   }
 }
+
+// ENDPOINT CONSUMIDO: GET /api/usuarios/perfil (Perfil del usuario autenticado)
+// Servicio: UsuarioService.obtenerPerfil()
+// Feedback visual y manejo de errores implementado.

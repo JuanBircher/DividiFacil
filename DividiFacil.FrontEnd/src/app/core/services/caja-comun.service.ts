@@ -21,7 +21,7 @@ export class CajaComunService {
    * Crear caja común para un grupo
    */
   crearCajaComun(idGrupo: string, idUsuarioAdmin: string): Observable<ResponseDto<CajaComunDto>> {
-    console.log('[CajaComunService] crearCajaComun', { idGrupo, idUsuarioAdmin });
+    // console.log('[CajaComunService] crearCajaComun', { idGrupo, idUsuarioAdmin });
     return this.http.post<ResponseDto<CajaComunDto>>(
       `${this.apiUrl}/grupo/${idGrupo}/crear`, 
       { idUsuarioAdmin }
@@ -32,7 +32,7 @@ export class CajaComunService {
    * Obtener caja común de un grupo
    */
   obtenerCajaPorGrupo(idGrupo: string, idUsuarioSolicitante: string): Observable<ResponseDto<CajaComunDto>> {
-    console.log('[CajaComunService] obtenerCajaPorGrupo', { idGrupo, idUsuarioSolicitante });
+    // console.log('[CajaComunService] obtenerCajaPorGrupo', { idGrupo, idUsuarioSolicitante });
     return this.http.get<ResponseDto<CajaComunDto>>(
       `${this.apiUrl}/grupo/${idGrupo}?idUsuarioSolicitante=${idUsuarioSolicitante}`
     );
@@ -42,7 +42,7 @@ export class CajaComunService {
    * Registrar movimiento en caja común
    */
   registrarMovimiento(movimiento: MovimientoCajaCreacionDto, idUsuarioCreador: string): Observable<ResponseDto<MovimientoCajaDto>> {
-    console.log('[CajaComunService] registrarMovimiento', { movimiento, idUsuarioCreador });
+    // console.log('[CajaComunService] registrarMovimiento', { movimiento, idUsuarioCreador });
     return this.http.post<ResponseDto<MovimientoCajaDto>>(
       `${this.apiUrl}/movimientos`, 
       { ...movimiento, idUsuarioCreador }
@@ -53,7 +53,7 @@ export class CajaComunService {
    * Obtener movimientos de una caja común
    */
   obtenerMovimientos(idCaja: string, idUsuarioSolicitante: string): Observable<ResponseDto<MovimientoCajaDto[]>> {
-    console.log('[CajaComunService] obtenerMovimientos', { idCaja, idUsuarioSolicitante });
+    // console.log('[CajaComunService] obtenerMovimientos', { idCaja, idUsuarioSolicitante });
     return this.http.get<ResponseDto<MovimientoCajaDto[]>>(
       `${this.apiUrl}/${idCaja}/movimientos?idUsuarioSolicitante=${idUsuarioSolicitante}`
     );
@@ -63,7 +63,7 @@ export class CajaComunService {
    * Eliminar movimiento de caja común
    */
   eliminarMovimiento(idMovimiento: string, idUsuarioSolicitante: string): Observable<ResponseDto<void>> {
-    console.log('[CajaComunService] eliminarMovimiento', { idMovimiento, idUsuarioSolicitante });
+    // console.log('[CajaComunService] eliminarMovimiento', { idMovimiento, idUsuarioSolicitante });
     return this.http.delete<ResponseDto<void>>(
       `${this.apiUrl}/movimientos/${idMovimiento}?idUsuarioSolicitante=${idUsuarioSolicitante}`
     );

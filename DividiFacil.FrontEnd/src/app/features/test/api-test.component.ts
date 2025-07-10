@@ -175,6 +175,21 @@ export class ApiTestComponent implements OnInit {
     }, 2000);
   }
 
+  // ✅ MÉTODO PARA PROBAR TODOS LOS ENDPOINTS Y NAVEGACIÓN AUTOMÁTICA
+  testAllEndpointsAndNavigation() {
+    console.log('🧪 Iniciando pruebas automáticas de endpoints y rutas...');
+    this.testAuthentication();
+    setTimeout(() => {
+      this.testGrupos();
+      this.testGastos();
+      this.testPagos();
+      this.testNotificaciones();
+    }, 2000);
+    setTimeout(() => {
+      this.testNavigation();
+    }, 4000);
+  }
+
   // ✅ MÉTODO PARA LIMPIAR RESULTADOS
   clearResults() {
     this.authTestResult = null;
@@ -219,20 +234,25 @@ export class ApiTestComponent implements OnInit {
   }
 
   private testNavigation(): void {
-    console.log('🧪 Probando navegación...');
-    
-    // Simular navegación
+    console.log('🧪 Probando navegación automática...');
     const testRoutes = [
+      '/dashboard',
       '/grupos',
       '/grupos/alta',
-      '/grupos/detalle/123',
-      '/gastos?grupo=123',
-      '/balances/grupo/123',
-      '/pagos?idGrupo=123'
+      '/gastos',
+      '/gastos/alta',
+      '/pagos',
+      '/pagos/alta',
+      '/balances/usuario',
+      '/notificaciones',
+      '/caja',
+      '/perfil'
     ];
-    
     testRoutes.forEach(route => {
-      console.log(`🔗 Ruta: ${route}`);
+      setTimeout(() => {
+        window.history.pushState({}, '', route);
+        console.log(`🔗 Ruta navegada: ${route}`);
+      }, 500);
     });
   }
 

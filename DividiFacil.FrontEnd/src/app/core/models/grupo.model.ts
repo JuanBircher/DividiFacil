@@ -1,40 +1,39 @@
-// 🔧 MODELO TOTALMENTE ALINEADO CON BACKEND
 
-// ✅ DTO PRINCIPAL - EXACTAMENTE IGUAL AL BACKEND
+// ✅ DTO PRINCIPAL
 export interface GrupoDto {
-  idGrupo: string;              // Guid -> string
-  nombreGrupo: string;          // ✅ Correcto
-  descripcion?: string;         // ✅ Correcto
-  modoOperacion: string;        // ✅ Correcto (Backend usa "Estandar")
-  idUsuarioCreador: string;     // Guid -> string
-  nombreCreador: string;        // ✅ Correcto
-  fechaCreacion: string;        // DateTime -> string (ISO format)
-  codigoAcceso?: string;        // ✅ Correcto
-  cantidadMiembros: number;     // ✅ Correcto
-  totalGastos: number;          // decimal -> number
+  idGrupo: string;              
+  nombreGrupo: string;          
+  descripcion?: string;         
+  modoOperacion: string;        
+  idUsuarioCreador: string;    
+  nombreCreador: string;       
+  fechaCreacion: string;        
+  codigoAcceso?: string;        
+  cantidadMiembros: number;     
+  totalGastos: number;         
 }
 
-// 🔧 AGREGAR: Interface Grupo (alias para retrocompatibilidad)
+// Interface Grupo (alias para retrocompatibilidad)
 export interface Grupo extends GrupoDto {}
 
-// 🔧 AGREGAR: Interfaces de miembros faltantes
+// Interfaces de miembros faltantes
 export interface MiembroDto {
-  idMiembro: string;            // Guid -> string
-  idUsuario: string;            // Guid -> string
-  nombre: string;               // ✅ Correcto
-  email: string;                // ✅ Correcto
-  urlImagen?: string;           // 🔧 CAMBIAR: de imagenUsuario a urlImagen
-  rol: string;                  // ✅ Correcto
-  fechaUnion: string;           // DateTime -> string (ISO format)
+  idMiembro: string;            
+  idUsuario: string;            
+  nombre: string;               
+  email: string;                
+  urlImagen?: string;          
+  rol: string;                  
+  fechaUnion: string;         
 }
 
 export interface MiembroGrupoSimpleDto {
-  idMiembro: string;            // Guid -> string
-  idUsuario: string;            // Guid -> string
-  nombreUsuario: string;        // ✅ Correcto
-  emailUsuario: string;         // ✅ Correcto
-  rol: string;                  // ✅ Correcto
-  fechaUnion: string;           // DateTime -> string (ISO format)
+  idMiembro: string;            
+  idUsuario: string;           
+  nombreUsuario: string;        
+  emailUsuario: string;        
+  rol: string;                
+  fechaUnion: string;         
 }
 
 export interface MiembroGrupoDto extends MiembroDto {}
@@ -43,32 +42,31 @@ export interface GrupoConMiembrosDto extends GrupoDto {
   miembros: MiembroGrupoSimpleDto[];
 }
 
-// ✅ DTO PARA CREAR GRUPOS - EXACTAMENTE IGUAL AL BACKEND
+// ✅ DTO PARA CREAR GRUPOS 
 export interface GrupoCreacionDto {
-  nombreGrupo: string;          // Backend: string NombreGrupo
-  descripcion?: string;         // Backend: string? Descripcion
-  modoOperacion: string;        // Default "Estandar"
+  nombreGrupo: string;          
+  descripcion?: string;        
+  modoOperacion: string;       
 }
 
-// ✅ DTO PARA INVITACIONES - EXACTAMENTE IGUAL AL BACKEND
+// ✅ DTO PARA INVITACIONES
 export interface InvitacionDto {
-  emailInvitado: string;        // 🔧 CAMBIAR: de email a emailInvitado
-  // 🔧 ELIMINAR: mensaje (no existe en backend)
+  emailInvitado: string;       
 }
 
-// ✅ AGREGAR: Interface para cambio de rol
+// ✅ Interface para cambio de rol
 export interface CambioRolDto {
   nuevoRol: string;
 }
 
 // ✅ ENUMS PARA CONSISTENCIA
 export enum ModoOperacion {
-  ESTANDAR = 'Estandar',        // Backend: "Estandar"
-  EQUITATIVO = 'Equitativo',    // Backend: "Equitativo"
-  PROPORCIONAL = 'Proporcional' // Backend: "Proporcional"
+  ESTANDAR = 'Estandar',        
+  EQUITATIVO = 'Equitativo',    
+  PROPORCIONAL = 'Proporcional' 
 }
 
 export enum RolMiembro {
-  ADMIN = 'Admin',              // Backend: "Admin"
-  MIEMBRO = 'Miembro'           // Backend: "Miembro"
+  ADMIN = 'Admin',            
+  MIEMBRO = 'Miembro'         
 }

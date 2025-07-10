@@ -1,5 +1,3 @@
-// 🚀 CREAR MÓDULO COMPARTIDO DE MATERIAL DESIGN
-
 import { NgModule } from '@angular/core';
 
 // Core Material

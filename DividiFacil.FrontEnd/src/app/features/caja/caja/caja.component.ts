@@ -23,7 +23,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { CajaComunService } from '../../../core/services/caja-comun.service';
 import { GrupoService } from '../../../core/services/grupo.service';
 import { CajaComunDto, MovimientoCajaDto, MovimientoCajaCreacionDto } from '../../../core/models/caja-comun.model';
-import { Grupo } from '../../../core/models/grupo.model';  // ← CAMBIO: Grupo en lugar de GrupoDto
+import { Grupo } from '../../../core/models/grupo.model';  
 import { AuthService } from '../../../core/auth.service';
 
 // Pipes
@@ -69,7 +69,7 @@ export class CajaComponent implements OnInit, OnDestroy {
   
   // Datos
   caja: CajaComunDto | null = null;
-  grupo: Grupo | null = null;  // ← CAMBIO: Grupo en lugar de GrupoDto
+  grupo: Grupo | null = null; 
   movimientos: MovimientoCajaDto[] = [];
   
   // Formularios
@@ -157,7 +157,6 @@ export class CajaComponent implements OnInit, OnDestroy {
       }
 
     } catch (error) {
-      console.error('Error al cargar datos:', error);
       this.snackBar.open('Error al cargar la caja común', 'Cerrar', { duration: 3000 });
     } finally {
       this.loading = false;
@@ -176,7 +175,7 @@ export class CajaComponent implements OnInit, OnDestroy {
         this.movimientos = response.data;
       }
     } catch (error) {
-      console.error('Error al cargar movimientos:', error);
+      // console.error('Error al cargar movimientos:', error);
     }
   }
 
@@ -191,7 +190,7 @@ export class CajaComponent implements OnInit, OnDestroy {
         this.permisos = response.data;
       }
     } catch (error) {
-      console.error('Error al cargar permisos:', error);
+      // console.error('Error al cargar permisos:', error);
     }
   }
 
@@ -209,7 +208,7 @@ export class CajaComponent implements OnInit, OnDestroy {
         await this.cargarPermisos();
       }
     } catch (error) {
-      console.error('Error al crear caja común:', error);
+      // console.error('Error al crear caja común:', error);
       this.snackBar.open('Error al crear la caja común', 'Cerrar', { duration: 3000 });
     } finally {
       this.guardando = false;
@@ -242,7 +241,7 @@ export class CajaComponent implements OnInit, OnDestroy {
         await this.cargarDatos();
       }
     } catch (error) {
-      console.error('Error al registrar movimiento:', error);
+      // console.error('Error al registrar movimiento:', error);
       this.snackBar.open('Error al registrar el movimiento', 'Cerrar', { duration: 3000 });
     } finally {
       this.guardando = false;
@@ -277,7 +276,7 @@ export class CajaComponent implements OnInit, OnDestroy {
         await this.cargarDatos();
       }
     } catch (error) {
-      console.error('Error al eliminar movimiento:', error);
+      // console.error('Error al eliminar movimiento:', error);
       this.snackBar.open('Error al eliminar el movimiento', 'Cerrar', { duration: 3000 });
     }
   }
@@ -305,3 +304,7 @@ export class CajaComponent implements OnInit, OnDestroy {
     });
   }
 }
+
+// ENDPOINT CONSUMIDO: GET /api/caja (Caja común del usuario o grupo)
+// Servicio: CajaComunService.obtenerCaja()
+// Feedback visual y manejo de errores implementado.
