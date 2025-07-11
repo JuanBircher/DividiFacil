@@ -388,12 +388,27 @@ namespace DividiFacil.Services.Implementations
                     return response;
                 }
 
-                var usuarioInvitado = await _usuarioRepository.GetByEmailAsync(invitacionDto.EmailInvitado);
-                if (usuarioInvitado == null)
+                // --- NUEVO: Permitir unirse a sí mismo si el email está vacío ---
+                Usuario? usuarioInvitado;
+                if (string.IsNullOrWhiteSpace(invitacionDto.EmailInvitado))
                 {
-                    response.Exito = false;
-                    response.Mensaje = "El usuario con el email especificado no existe";
-                    return response;
+                    usuarioInvitado = await _usuarioRepository.GetByIdAsync(idUsuarioAdminGuid);
+                    if (usuarioInvitado == null)
+                    {
+                        response.Exito = false;
+                        response.Mensaje = "Usuario autenticado no encontrado";
+                        return response;
+                    }
+                }
+                else
+                {
+                    usuarioInvitado = await _usuarioRepository.GetByEmailAsync(invitacionDto.EmailInvitado ?? string.Empty);
+                    if (usuarioInvitado == null)
+                    {
+                        response.Exito = false;
+                        response.Mensaje = "El usuario con el email especificado no existe";
+                        return response;
+                    }
                 }
 
                 // Verificar que el usuario no sea ya miembro del grupo

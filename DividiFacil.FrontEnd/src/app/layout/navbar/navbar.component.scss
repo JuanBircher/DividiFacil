@@ -1,13 +1,16 @@
 @use '../../shared/styles/variables' as *;
 
-// Estilos para navbar accesible, dark mode y animaciones sutiles
+// === NAVBAR Y MENÚ USUARIO PROFESIONAL Y SOBRIO ===
 mat-toolbar {
+  background: #fff !important;
+  color: #222 !important;
+  box-shadow: 0 2px 12px 0 rgba(30,40,90,0.07);
+  border-bottom: 1px solid #e5e7eb;
+  font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 1.08rem;
   font-weight: 600;
-  font-size: 1.05rem;
   letter-spacing: 0.5px;
-  background: $color-primary;
-  color: #fff;
-  transition: background 0.3s, color 0.3s;
+  z-index: 1000;
 }
 body.dark-mode mat-toolbar {
   background: $color-primary-darkmode;
@@ -54,43 +57,133 @@ body.dark-mode button[mat-icon-button] {
   font-size: 1.15rem;
   font-weight: 700;
   letter-spacing: 0.5px;
-  color: #fff;
+  color: #234567;
   margin-right: 16px;
 }
+
+// === TRIGGER DEL MENÚ DE USUARIO (BOTÓN CLARO Y MODERNO) ===
 .navbar-user-menu {
+  background: #fff !important;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px 0 rgba(30,40,90,0.08);
+  padding: 4px 16px 4px 8px;
+  color: #234567;
+  min-height: 44px;
+  min-width: 120px;
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-left: 12px;
-  .navbar-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: 2px solid #1976d2;
-    background: #fff;
-    object-fit: cover;
-  }
-  .navbar-username {
-    font-weight: 600;
-    color: #fff;
-    font-size: 1rem;
-    margin-right: 4px;
+  gap: 10px;
+  cursor: pointer;
+  transition: box-shadow 0.18s, border 0.18s, background 0.18s;
+  &:hover, &:focus-visible {
+    background: #f3f6fa !important;
+    border-color: #234567;
+    box-shadow: 0 8px 32px 0 rgba(35,69,103,0.13);
+    color: #234567;
   }
 }
-@media (max-width: 800px) {
-  .navbar-logo {
-    width: 24px;
-    height: 24px;
-  }
-  .navbar-title {
-    font-size: 1rem;
-    margin-right: 8px;
-  }
-  .navbar-user-menu .navbar-avatar {
-    width: 24px;
-    height: 24px;
-  }
-  .navbar-user-menu .navbar-username {
-    font-size: 0.95rem;
-  }
+
+.navbar-user-menu mat-icon {
+  color: #234567 !important;
+  font-size: 2.1em !important;
+  margin-left: 2px;
+  vertical-align: middle;
+  transition: color 0.18s;
+}
+
+// Menú desplegable usuario
+::ng-deep .mat-menu-panel {
+  background: #fff !important;
+  color: #222 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px 0 rgba(30,40,90,0.13), 0 2px 8px 0 rgba(30,40,90,0.07) !important;
+  min-width: 210px !important;
+  border: 1px solid #e5e7eb !important;
+  padding: 10px 0 10px 0 !important;
+  font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif !important;
+  opacity: 1 !important;
+  z-index: 99999 !important;
+}
+::ng-deep .mat-menu-item {
+  font-size: 1.05rem;
+  font-weight: 500;
+  padding: 12px 28px;
+  border-radius: 8px;
+  transition: background 0.18s, color 0.18s;
+  outline: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: none !important;
+  color: #234567 !important;
+}
+::ng-deep .mat-menu-item:hover, ::ng-deep .mat-menu-item.cdk-focused, ::ng-deep .mat-menu-item.cdk-program-focused {
+  background: #f3f6fa !important;
+  color: #234567 !important;
+}
+body.dark-mode ::ng-deep .mat-menu-item:hover, 
+body.dark-mode ::ng-deep .mat-menu-item.cdk-focused, 
+body.dark-mode ::ng-deep .mat-menu-item.cdk-program-focused {
+  background: #313a5c !important;
+  color: #90caf9 !important;
+}
+
+// Íconos grandes y alineados
+::ng-deep .mat-menu-item mat-icon {
+  color: #b0b8c9 !important;
+  font-size: 1.25em;
+  margin-right: 10px;
+}
+
+// Badge de notificaciones destacado
+.navbar-badge-wrapper {
+  position: relative;
+  display: inline-block;
+}
+.navbar-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #e53935;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border-radius: 50%;
+  padding: 2px 6px;
+  min-width: 20px;
+  min-height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 4px rgba(30,40,90,0.10);
+  border: 2px solid #fff;
+  z-index: 2;
+  animation: badgePop 0.25s cubic-bezier(.4,0,.2,1);
+}
+@keyframes badgePop {
+  0% { transform: scale(0.7); opacity: 0; }
+  80% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+// Avatar con borde y sombra
+.navbar-avatar {
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.10);
+  border: 2px solid #1976d2;
+  background: #fff;
+  transition: border 0.2s;
+}
+body.dark-mode .navbar-avatar {
+  border: 2px solid #90caf9;
+  background: #23263a;
+}
+
+// Foco visible accesible
+::ng-deep .mat-menu-item:focus-visible {
+  outline: 2px solid #234567;
+  outline-offset: 2px;
+}
+body.dark-mode ::ng-deep .mat-menu-item:focus-visible {
+  outline: 2px solid #90caf9;
 }

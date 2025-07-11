@@ -35,5 +35,12 @@ namespace DividiFacil.Data.Repositories.Implementations
             return await _context.Usuarios
                 .AnyAsync(u => u.Email.ToLower() == email.ToLower());
         }
+
+        public async Task<Usuario?> GetByIdAsync(Guid idUsuario)
+        {
+            return await _context.Usuarios
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.IdUsuario == idUsuario);
+        }
     }
 }

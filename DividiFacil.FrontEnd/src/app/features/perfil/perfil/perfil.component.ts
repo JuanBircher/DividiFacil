@@ -21,7 +21,6 @@ import { OnboardingService } from '../../../shared/services/onboarding.service';
 // Pipes
 import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
 import { CardComponent } from '../../../shared/components/card/card.component';
-import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-perfil',
@@ -38,8 +37,8 @@ import { LoadingSpinnerComponent } from '../../../shared/components/loading-spin
     MatSnackBarModule,
     MatChipsModule,
     DateFormatPipe,
-    CardComponent,
-    LoadingSpinnerComponent
+    CardComponent
+    // LoadingSpinnerComponent eliminado porque no se usa directamente
   ]
 })
 export class PerfilComponent implements OnInit, OnDestroy {
@@ -75,20 +74,11 @@ export class PerfilComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * 🔄 CARGAR DATOS DEL USUARIO
+   * 🔄 CARGAR DATOS DEL USUARIO (usando el usuario autenticado)
    */
   cargarDatosUsuario(): void {
     this.loading = true;
-    
-    // Obtener usuario actual del AuthService
-    const usuarioToken = this.authService.obtenerUsuario();
-    if (!usuarioToken?.idUsuario) {
-      this.router.navigate(['/auth/login']);
-      return;
-    }
-
-    // Cargar datos completos del usuario
-    this.usuarioService.obtenerUsuario(usuarioToken.idUsuario)
+    this.usuarioService.obtenerUsuarioActual()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {

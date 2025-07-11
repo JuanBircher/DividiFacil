@@ -1,204 +1,124 @@
 <div class="perfil-container">
   <!-- HEADER -->
-  <app-card>
+  <app-card class="perfil-principal-card">
     <ng-container card-header>
-      <mat-icon aria-hidden="true">account_circle</mat-icon>
-      <span id="perfil-title">Mi Perfil</span>
-      <button 
-        mat-button 
-        (click)="recargar()" 
-        [disabled]="loading"
-        aria-label="Actualizar perfil"
-        [attr.aria-busy]="loading ? 'true' : null"
-        tabindex="0">
-        <mat-icon aria-hidden="true">refresh</mat-icon>
-        Actualizar
-      </button>
-      <button 
-        mat-raised-button 
-        color="primary"
-        (click)="editarPerfil()"
-        [disabled]="loading"
-        aria-label="Editar perfil"
-        tabindex="0">
-        <mat-icon aria-hidden="true">edit</mat-icon>
-        Editar Perfil
-      </button>
+      <div class="perfil-header">
+        <div class="avatar-section">
+          <div class="avatar" [class.with-image]="usuario?.urlImagen">
+            <img *ngIf="usuario?.urlImagen as url" [src]="url" [alt]="usuario?.nombre || 'Avatar'" loading="lazy" (error)="onImageError($event)">
+            <span *ngIf="!usuario?.urlImagen" class="avatar-iniciales" aria-label="Iniciales de usuario">
+              {{ obtenerIniciales() }}
+            </span>
+          </div>
+          <button mat-icon-button class="avatar-edit-btn" (click)="editarPerfil()" title="Cambiar foto" aria-label="Cambiar foto de perfil" tabindex="0">
+            <mat-icon aria-hidden="true">photo_camera</mat-icon>
+          </button>
+        </div>
+        <div class="perfil-info">
+          <div class="nombre-usuario">{{ usuario?.nombre }}</div>
+          <div class="email-usuario">{{ usuario?.email }}</div>
+          <div class="usuario-meta">
+            <mat-chip [color]="obtenerEstadoUsuario().color" [attr.aria-label]="'Estado de usuario: ' + obtenerEstadoUsuario().texto">
+              {{ obtenerEstadoUsuario().texto }}
+            </mat-chip>
+            <span class="fecha-registro" aria-label="Fecha de registro">
+              <mat-icon aria-hidden="true">schedule</mat-icon>
+              Registrado el {{ usuario?.fechaRegistro | dateFormat }}
+            </span>
+          </div>
+        </div>
+      </div>
     </ng-container>
     <ng-container card-content>
-      <!-- LOADING -->
-      <ng-container *ngIf="loading; else perfilContent">
-        <app-loading-spinner text="Cargando perfil..."></app-loading-spinner>
-      </ng-container>
-      <!-- CONTENIDO DEL PERFIL -->
-      <ng-template #perfilContent>
-        <ng-container *ngIf="usuario; else emptyState">
-          <!-- INFORMACIÓN PRINCIPAL -->
-          <div class="perfil-header">
-            <div class="avatar-section">
-              <div class="avatar" [class.with-image]="usuario.urlImagen">
-                <img 
-                  *ngIf="usuario.urlImagen" 
-                  [src]="usuario.urlImagen" 
-                  [alt]="usuario.nombre"
-                  loading="lazy"
-                  (error)="onImageError($event)">
-                <span *ngIf="!usuario.urlImagen" class="avatar-iniciales" aria-label="Iniciales de usuario">
-                  {{ obtenerIniciales() }}
-                </span>
+      <div class="perfil-details">
+        <mat-card class="datos-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon aria-hidden="true">person</mat-icon>
+              Datos Personales
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="datos-grid">
+              <div class="dato-item">
+                <mat-icon aria-hidden="true">email</mat-icon>
+                <div class="dato-content">
+                  <span class="dato-label">Email</span>
+                  <span class="dato-value">{{ usuario?.email }}</span>
+                </div>
               </div>
-              <button 
-                mat-icon-button 
-                class="avatar-edit-btn"
-                (click)="editarPerfil()"
-                title="Cambiar foto"
-                aria-label="Cambiar foto de perfil"
-                tabindex="0">
-                <mat-icon aria-hidden="true">photo_camera</mat-icon>
-              </button>
-            </div>
-            <div class="info-section">
-              <h2 tabindex="0">{{ usuario.nombre }}</h2>
-              <p tabindex="0">{{ usuario.email }}</p>
-              <div class="usuario-meta">
-                <mat-chip [color]="obtenerEstadoUsuario().color" [attr.aria-label]="'Estado de usuario: ' + obtenerEstadoUsuario().texto">
-                  {{ obtenerEstadoUsuario().texto }}
-                </mat-chip>
-                <span class="fecha-registro" aria-label="Fecha de registro">
-                  <mat-icon aria-hidden="true">schedule</mat-icon>
-                  Registrado el {{ usuario.fechaRegistro | dateFormat }}
-                </span>
+              <div class="dato-item" *ngIf="usuario?.telefono">
+                <mat-icon aria-hidden="true">phone</mat-icon>
+                <div class="dato-content">
+                  <span class="dato-label">Teléfono</span>
+                  <span class="dato-value">{{ usuario?.telefono }}</span>
+                </div>
+              </div>
+              <div class="dato-item">
+                <mat-icon aria-hidden="true">today</mat-icon>
+                <div class="dato-content">
+                  <span class="dato-label">Fecha de Registro</span>
+                  <span class="dato-value">{{ usuario?.fechaRegistro | dateFormat }}</span>
+                </div>
+              </div>
+              <div class="dato-item">
+                <mat-icon aria-hidden="true">verified_user</mat-icon>
+                <div class="dato-content">
+                  <span class="dato-label">Estado</span>
+                  <span class="dato-value">{{ obtenerEstadoUsuario().texto }}</span>
+                </div>
               </div>
             </div>
-          </div>
-          <!-- INFORMACIÓN DETALLADA -->
-          <div class="perfil-details">
-            <!-- DATOS PERSONALES -->
-            <mat-card class="datos-card">
-              <mat-card-header>
-                <mat-card-title>
-                  <mat-icon aria-hidden="true">person</mat-icon>
-                  Datos Personales
-                </mat-card-title>
-              </mat-card-header>
-              <mat-card-content>
-                <div class="datos-grid">
-                  <div class="dato-item">
-                    <mat-icon aria-hidden="true">email</mat-icon>
-                    <div class="dato-content">
-                      <span class="dato-label">Email</span>
-                      <span class="dato-value">{{ usuario.email }}</span>
-                    </div>
-                  </div>
-                  <div class="dato-item" *ngIf="usuario.telefono">
-                    <mat-icon aria-hidden="true">phone</mat-icon>
-                    <div class="dato-content">
-                      <span class="dato-label">Teléfono</span>
-                      <span class="dato-value">{{ usuario.telefono }}</span>
-                    </div>
-                  </div>
-                  <div class="dato-item">
-                    <mat-icon aria-hidden="true">today</mat-icon>
-                    <div class="dato-content">
-                      <span class="dato-label">Fecha de Registro</span>
-                      <span class="dato-value">{{ usuario.fechaRegistro | dateFormat }}</span>
-                    </div>
-                  </div>
-                  <div class="dato-item">
-                    <mat-icon aria-hidden="true">verified_user</mat-icon>
-                    <div class="dato-content">
-                      <span class="dato-label">Estado</span>
-                      <span class="dato-value">{{ obtenerEstadoUsuario().texto }}</span>
-                    </div>
-                  </div>
+          </mat-card-content>
+        </mat-card>
+        <mat-card class="estadisticas-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon aria-hidden="true">analytics</mat-icon>
+              Estadísticas
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="stats-grid">
+              <div class="stat-item">
+                <mat-icon color="primary" aria-hidden="true">group</mat-icon>
+                <div class="stat-content">
+                  <span class="stat-number">{{ estadisticasUsuario.gruposActivos }}</span>
+                  <span class="stat-label">Grupos Activos</span>
                 </div>
-              </mat-card-content>
-            </mat-card>
-            <!-- ESTADÍSTICAS -->
-            <mat-card class="estadisticas-card">
-              <mat-card-header>
-                <mat-card-title>
-                  <mat-icon aria-hidden="true">analytics</mat-icon>
-                  Estadísticas
-                </mat-card-title>
-              </mat-card-header>
-              <mat-card-content>
-                <div class="stats-grid">
-                  <div class="stat-item">
-                    <mat-icon color="primary" aria-hidden="true">group</mat-icon>
-                    <div class="stat-content">
-                      <span class="stat-number">{{ estadisticasUsuario.gruposActivos }}</span>
-                      <span class="stat-label">Grupos Activos</span>
-                    </div>
-                  </div>
-                  <div class="stat-item">
-                    <mat-icon color="accent" aria-hidden="true">receipt</mat-icon>
-                    <div class="stat-content">
-                      <span class="stat-number">{{ estadisticasUsuario.gastosRegistrados }}</span>
-                      <span class="stat-label">Gastos Registrados</span>
-                    </div>
-                  </div>
-                  <div class="stat-item">
-                    <mat-icon color="warn" aria-hidden="true">schedule</mat-icon>
-                    <div class="stat-content">
-                      <span class="stat-number">{{ estadisticasUsuario.diasRegistrado }}</span>
-                      <span class="stat-label">Días Registrado</span>
-                    </div>
-                  </div>
+              </div>
+              <div class="stat-item">
+                <mat-icon color="accent" aria-hidden="true">receipt</mat-icon>
+                <div class="stat-content">
+                  <span class="stat-number">{{ estadisticasUsuario.gastosRegistrados }}</span>
+                  <span class="stat-label">Gastos Registrados</span>
                 </div>
-              </mat-card-content>
-            </mat-card>
-          </div>
-          <!-- ACCIONES -->
-          <div class="acciones-grid">
-            <button 
-              mat-raised-button 
-              color="primary"
-              (click)="editarPerfil()"
-              aria-label="Editar información personal"
-              tabindex="0">
-              <mat-icon aria-hidden="true">edit</mat-icon>
-              Editar Información
-            </button>
-            <button 
-              mat-stroked-button 
-              color="primary"
-              routerLink="/notificaciones"
-              aria-label="Configurar notificaciones"
-              tabindex="0">
-              <mat-icon aria-hidden="true">notifications</mat-icon>
-              Configurar Notificaciones
-            </button>
-            <button 
-              mat-stroked-button 
-              color="warn"
-              (click)="cerrarSesion()"
-              aria-label="Cerrar sesión"
-              tabindex="0">
-              <mat-icon aria-hidden="true">logout</mat-icon>
-              Cerrar Sesión
-            </button>
-            <button 
-              mat-stroked-button 
-              color="accent"
-              (click)="reiniciarOnboarding()"
-              matTooltip="Reiniciar el tour de bienvenida para ver la ayuda paso a paso nuevamente"
-              aria-label="Reiniciar onboarding"
-              tabindex="0"
-              class="animate-fadeIn">
-              <mat-icon aria-hidden="true">replay</mat-icon>
-              Reiniciar Onboarding
-            </button>
-          </div>
-        </ng-container>
-        <!-- EMPTY STATE -->
-        <ng-template #emptyState>
-          <div class="empty-state" role="alert" aria-live="polite">
-            <mat-icon aria-hidden="true">person_off</mat-icon>
-            <h2>No se encontró el perfil</h2>
-          </div>
-        </ng-template>
-      </ng-template>
+              </div>
+              <div class="stat-item">
+                <mat-icon color="warn" aria-hidden="true">schedule</mat-icon>
+                <div class="stat-content">
+                  <span class="stat-number">{{ estadisticasUsuario.diasRegistrado }}</span>
+                  <span class="stat-label">Días Registrado</span>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <div class="acciones-grid">
+        <button mat-raised-button color="primary" (click)="editarPerfil()" aria-label="Editar información personal" tabindex="0">
+          <mat-icon aria-hidden="true">edit</mat-icon>
+          Editar Información
+        </button>
+        <button mat-raised-button color="accent" (click)="reiniciarOnboarding()" aria-label="Reiniciar onboarding" tabindex="0">
+          <mat-icon aria-hidden="true">replay</mat-icon>
+          Ver Tour de la App
+        </button>
+        <button mat-raised-button color="warn" (click)="cerrarSesion()" aria-label="Cerrar sesión" tabindex="0">
+          <mat-icon aria-hidden="true">logout</mat-icon>
+          Cerrar Sesión
+        </button>
+      </div>
     </ng-container>
   </app-card>
 </div>

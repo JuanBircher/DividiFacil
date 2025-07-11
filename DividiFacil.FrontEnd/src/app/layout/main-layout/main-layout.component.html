@@ -16,6 +16,8 @@
       (toggleMenu)="drawer.toggle()" 
       [darkMode]="darkMode" 
       (toggleDarkMode)="toggleDarkMode()"
+      (goToPerfil)="goToPerfil()"
+      (goToConfiguracion)="goToConfiguracion()"
     ></app-navbar>
     <div class="content" style="position:relative; min-height:60vh;">
       <router-outlet @routeAnimations #outlet="outlet" [attr.data-animation]="getRouteAnimationData(outlet)"></router-outlet>

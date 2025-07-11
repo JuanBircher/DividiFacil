@@ -108,8 +108,15 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   }
 
   logout() {
-    this.authService.logout();
-    this.router.navigate(['/auth/login']);
+    this.authService.logout().subscribe({
+      next: () => {
+        this.router.navigate(['/auth/login']);
+      },
+      error: () => {
+        // Incluso si hay error, limpiar sesión y navegar
+        this.router.navigate(['/auth/login']);
+      }
+    });
   }
 
   toggleGruposMenu() {
@@ -145,5 +152,13 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   onFinishOnboarding() {
     this.onboardingService.completeOnboarding();
     this.mostrarOnboarding = false;
+  }
+
+  goToPerfil() {
+    this.router.navigate(['/perfil']);
+  }
+
+  goToConfiguracion() {
+    this.router.navigate(['/dashboard']);
   }
 }

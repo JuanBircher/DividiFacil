@@ -21,13 +21,9 @@
     <mat-icon aria-hidden="true">expand_more</mat-icon>
   </div>
   <mat-menu #userMenu="matMenu" class="animate-fadeIn">
-    <button mat-menu-item aria-label="Perfil" tabindex="0">
+    <button mat-menu-item aria-label="Perfil" tabindex="0" (click)="onGoToPerfil()">
       <mat-icon aria-hidden="true">person</mat-icon>
       Perfil
-    </button>
-    <button mat-menu-item aria-label="Configuración" tabindex="0">
-      <mat-icon aria-hidden="true">settings</mat-icon>
-      Configuración
     </button>
     <button mat-menu-item (click)="logout.emit()" aria-label="Cerrar sesión" tabindex="0">
       <mat-icon aria-hidden="true">logout</mat-icon>

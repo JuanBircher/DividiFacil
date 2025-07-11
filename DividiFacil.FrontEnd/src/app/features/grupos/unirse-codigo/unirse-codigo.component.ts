@@ -90,11 +90,30 @@ export class UnirseCodigoComponent implements OnInit {
   }
 
   /**
-   * 🎯 UNIRSE AL GRUPO
+   * 🎯 UNIRSE AL GRUPO (agrega al usuario como miembro y navega al detalle)
    */
   unirseAlGrupo(): void {
     if (!this.grupoEncontrado) return;
-    this.router.navigate(['/grupos/detalle', this.grupoEncontrado.idGrupo]);
+    this.buscando = true;
+    this.grupoService.agregarMiembro(this.grupoEncontrado.idGrupo, { emailInvitado: '' }).subscribe({
+      next: (response) => {
+        this.buscando = false;
+        if (response.exito) {
+          this.snackBar.open('¡Te has unido al grupo!', 'Cerrar', { duration: 2500 });
+          this.router.navigate(['/grupos/detalle', this.grupoEncontrado!.idGrupo]);
+        } else if (response.mensaje && response.mensaje.toLowerCase().includes('ya es miembro')) {
+          // Si ya es miembro, navegar igual
+          this.snackBar.open('Ya eres miembro del grupo', 'Cerrar', { duration: 2500 });
+          this.router.navigate(['/grupos/detalle', this.grupoEncontrado!.idGrupo]);
+        } else {
+          this.snackBar.open(response.mensaje || 'No se pudo unir al grupo', 'Cerrar', { duration: 3500 });
+        }
+      },
+      error: (err) => {
+        this.buscando = false;
+        this.snackBar.open('Error al intentar unirse al grupo', 'Cerrar', { duration: 3500 });
+      }
+    });
   }
 
   /**

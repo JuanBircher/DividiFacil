@@ -26,11 +26,21 @@ export class NavbarComponent {
   @Output() toggleDarkMode = new EventEmitter<void>();
   @Output() logout = new EventEmitter<void>();
   @Output() accionRapida = new EventEmitter<void>();
+  @Output() goToPerfil = new EventEmitter<void>();
+  @Output() goToConfiguracion = new EventEmitter<void>();
   // Accesibilidad
   ariaLabel: string = 'Barra de navegación principal';
 
   // Método para emitir el evento correctamente desde el template
   onToggleDarkMode() {
     this.toggleDarkMode.emit();
+  }
+
+  onGoToPerfil() {
+    this.goToPerfil.emit();
+  }
+
+  onGoToConfiguracion() {
+    this.goToConfiguracion.emit();
   }
 }
