@@ -239,10 +239,10 @@ C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFac
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\obj\Debug\net9.0\staticwebassets.build.json.cache
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\obj\Debug\net9.0\staticwebassets.development.json
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\obj\Debug\net9.0\staticwebassets.build.endpoints.json
+C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\obj\Debug\net9.0\DividiFa.C3E3156C.Up2Date
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\obj\Debug\net9.0\DividiFacil.API.dll
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\obj\Debug\net9.0\refint\DividiFacil.API.dll
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\obj\Debug\net9.0\DividiFacil.API.pdb
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\obj\Debug\net9.0\DividiFacil.API.genruntimeconfig.cache
 C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\obj\Debug\net9.0\ref\DividiFacil.API.dll
-C:\Users\juanb\OneDrive\Escritorio\Programar\Desarrollando\DividiFacil\DividiFacil.Backend\DividiFacil.API\obj\Debug\net9.0\staticwebassets.upToDateCheck.txt

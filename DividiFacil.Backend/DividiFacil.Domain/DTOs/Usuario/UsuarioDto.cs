@@ -10,5 +10,8 @@ namespace DividiFacil.Domain.DTOs.Usuario
         public string? UrlImagen { get; set; }
         public string? Telefono { get; set; }
         public DateTime FechaRegistro { get; set; }
+
+        // Plan del usuario (Free, Premium, Pro)
+        public string Plan { get; set; } = "Free";
     }
 }

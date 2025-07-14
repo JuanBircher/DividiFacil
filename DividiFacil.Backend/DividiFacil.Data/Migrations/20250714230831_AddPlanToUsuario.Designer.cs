@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DividiFacil.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250708132246_SincronizarModelo")]
-    partial class SincronizarModelo
+    [Migration("20250714230831_AddPlanToUsuario")]
+    partial class AddPlanToUsuario
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -496,6 +496,13 @@ namespace DividiFacil.Data.Migrations
                     b.Property<string>("PasswordHash")
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Plan")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasDefaultValue("Free");
 
                     b.Property<string>("ProveedorAuth")
                         .HasMaxLength(50)

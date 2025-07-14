@@ -18,6 +18,9 @@ namespace DividiFacil.Domain.Models
         public string? TokenNotificacion { get; set; }
         public string? Telefono { get; set; }
 
+        // Plan del usuario (Free, Premium, Pro)
+        public string Plan { get; set; } = "Free";
+
         // Relaciones de navegación
         public virtual ICollection<MiembroGrupo>? MiembrosGrupo { get; set; }
         public virtual ICollection<Gasto>? GastosPagados { get; set; }

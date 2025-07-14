@@ -494,6 +494,13 @@ namespace DividiFacil.Data.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<string>("Plan")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
+                        .HasDefaultValue("Free");
+
                     b.Property<string>("ProveedorAuth")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");

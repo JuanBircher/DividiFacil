@@ -44,6 +44,8 @@ namespace DividiFacil.Data
                 entity.Property(e => e.UrlImagen).HasMaxLength(500);
                 entity.Property(e => e.TokenNotificacion).HasMaxLength(500);
                 entity.Property(e => e.Telefono).HasMaxLength(20);
+                entity.Property(e => e.Plan).HasMaxLength(20).IsRequired().HasDefaultValue("Free");
+
             });
 
             // Configuración Grupo

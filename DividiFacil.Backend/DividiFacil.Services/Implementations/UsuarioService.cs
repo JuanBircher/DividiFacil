@@ -40,7 +40,8 @@ namespace DividiFacil.Services.Implementations
                     Email = usuario.Email,
                     UrlImagen = usuario.UrlImagen,
                     FechaRegistro = usuario.FechaRegistro,
-                    Telefono = usuario.Telefono
+                    Telefono = usuario.Telefono,
+                    Plan = usuario.Plan
                 }
             };
         }
@@ -59,7 +60,8 @@ namespace DividiFacil.Services.Implementations
                     Email = usuario.Email,
                     UrlImagen = usuario.UrlImagen,
                     FechaRegistro = usuario.FechaRegistro,
-                    Telefono = usuario.Telefono
+                    Telefono = usuario.Telefono,
+                    Plan = usuario.Plan
                 });
             }
 
@@ -110,7 +112,8 @@ namespace DividiFacil.Services.Implementations
                     Email = usuario.Email,
                     UrlImagen = usuario.UrlImagen,
                     FechaRegistro = usuario.FechaRegistro,
-                    Telefono = usuario.Telefono
+                    Telefono = usuario.Telefono,
+                    Plan = usuario.Plan
                 }
             };
         }

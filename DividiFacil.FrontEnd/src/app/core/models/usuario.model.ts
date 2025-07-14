@@ -5,7 +5,7 @@ export interface UsuarioDto {
   urlImagen?: string; 
   telefono?: string;       
   fechaRegistro: string;    
-
+  plan: string; // free, premium, pro
 }
 
 export interface UsuarioRegistroDto {
