@@ -14,6 +14,7 @@ import { RecentActivityComponent } from './components/recent-activity/recent-act
 
 import { AuthService } from '../../core/auth.service';
 import { Subject } from 'rxjs';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-dashboard',
@@ -29,17 +30,19 @@ import { Subject } from 'rxjs';
     MatTabsModule,
     RouterModule,
     DashboardStatsComponent,
-    RecentGroupsComponent,
     QuickActionsComponent,
-    RecentActivityComponent
+    RecentActivityComponent,
+    MatProgressSpinnerModule
   ]
 })
+
 export class DashboardComponent implements OnInit, OnDestroy {
   nombreUsuario: string = 'Usuario';
   saludoPersonalizado: string = '';
   horaActual: string = '';
   idUsuario: string = '';
-  
+  fabLoading = false;
+
   private intervalId?: number;
   private destroy$ = new Subject<void>();
 
@@ -53,11 +56,27 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.cargarDatosUsuario();
     this.configurarSaludo();
     this.actualizarHora();
-    
+
     // ✅ ACTUALIZAR HORA CADA MINUTO
     this.intervalId = window.setInterval(() => {
       this.actualizarHora();
     }, 60000);
+
+  }
+
+  /**
+   * Maneja el click del FAB con feedback visual y protección de doble click
+   */
+  onFabClick(): void {
+    if (this.fabLoading) return;
+    this.fabLoading = true;
+    this.cdr.markForCheck();
+    this.router.navigate(['/gastos/alta']).then(() => {
+      setTimeout(() => {
+        this.fabLoading = false;
+        this.cdr.markForCheck();
+      }, 800); // Breve delay para UX
+    });
   }
 
   ngOnDestroy(): void {

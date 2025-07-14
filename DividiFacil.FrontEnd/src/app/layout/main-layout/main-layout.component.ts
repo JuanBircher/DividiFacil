@@ -1,3 +1,4 @@
+ 
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterOutlet, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -88,7 +89,6 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     private notificacionService: NotificacionService,
     private onboardingService: OnboardingService
   ) {
-    console.log('[MainLayoutComponent] Constructor ejecutado');
     this.contadorNotificaciones$ = this.notificacionService.contadorNoLeidas$;
   }
 
@@ -152,6 +152,9 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   onFinishOnboarding() {
     this.onboardingService.completeOnboarding();
     this.mostrarOnboarding = false;
+  }
+  goToNuevoGasto() {
+    this.router.navigate(['/gastos/alta']);
   }
 
   goToPerfil() {

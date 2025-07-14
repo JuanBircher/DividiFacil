@@ -84,6 +84,14 @@ export class RecentActivityComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.cargarActividadReal();
   }
+  
+  /**
+   * Mostrar mensaje de error amigable si ocurre un error de carga
+   */
+  mostrarError(mensaje: string) {
+    this.error = mensaje || 'No se pudo cargar la actividad reciente. Intenta nuevamente.';
+    this.cdr.markForCheck();
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next();

@@ -53,6 +53,12 @@ export class EditarComponent implements OnInit, OnDestroy {
   
   // Formularios
   perfilForm: FormGroup;
+
+  // Alias público requerido por los tests
+  public actualizarPerfil(): void {
+    // Llama a la lógica real
+    this.guardarCambios();
+  }
   
   // Imagen
   imagenSeleccionada: File | null = null;

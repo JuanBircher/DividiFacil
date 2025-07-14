@@ -49,6 +49,14 @@ export class RecentGroupsComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.cargarGruposRecientes();
   }
+  
+  /**
+   * Mostrar mensaje de error amigable si ocurre un error de carga
+   */
+  mostrarError(mensaje: string) {
+    this.error = mensaje || 'No se pudieron cargar los grupos recientes. Intenta nuevamente.';
+    this.cdr.markForCheck();
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next();

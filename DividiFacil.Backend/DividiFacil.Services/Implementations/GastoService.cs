@@ -106,7 +106,11 @@ namespace DividiFacil.Services.Implementations
                 Descripcion = gastoDto.Descripcion,
                 Categoria = gastoDto.Categoria,
                 FechaCreacion = DateTime.UtcNow,
-                FechaGasto = gastoDto.FechaGasto ?? DateTime.UtcNow,
+                FechaGasto = gastoDto.FechaGasto.HasValue
+                    ? (gastoDto.FechaGasto.Value.Kind == DateTimeKind.Unspecified
+                        ? DateTime.SpecifyKind(gastoDto.FechaGasto.Value, DateTimeKind.Local).ToUniversalTime()
+                        : gastoDto.FechaGasto.Value.ToUniversalTime())
+                    : DateTime.UtcNow,
                 ComprobantePath = gastoDto.ComprobantePath
             };
 

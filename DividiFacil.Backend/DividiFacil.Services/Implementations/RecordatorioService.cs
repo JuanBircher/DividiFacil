@@ -210,7 +210,7 @@ namespace DividiFacil.Services.Implementations
                     Mensaje = recordatorioDto.Mensaje,
                     Tipo = recordatorioDto.Tipo,
                     FechaCreacion = DateTime.UtcNow,
-                    FechaRecordatorio = recordatorioDto.FechaRecordatorio,
+                    FechaRecordatorio = recordatorioDto.FechaRecordatorio.ToUniversalTime(),
                     Completado = false,
                     Repetir = recordatorioDto.Repetir,
                     FrecuenciaRepeticion = recordatorioDto.FrecuenciaRepeticion,

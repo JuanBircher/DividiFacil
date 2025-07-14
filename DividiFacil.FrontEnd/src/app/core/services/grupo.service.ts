@@ -63,7 +63,7 @@ export class GrupoService {
   // ✅ MÉTODO 3: GetConMiembrosAsync
   obtenerGrupoConMiembros(idGrupo: string): Observable<ResponseDto<GrupoConMiembrosDto>> {
     // console.log('[GrupoService] obtenerGrupoConMiembros', { idGrupo });
-    return this.http.get<ResponseDto<GrupoConMiembrosDto>>(`${this.apiUrl}/${idGrupo}/con-miembros`)
+    return this.http.get<ResponseDto<GrupoConMiembrosDto>>(`${this.apiUrl}/${idGrupo}/miembros`)
       .pipe(
         catchError(error => {
           // console.error('Error obteniendo grupo con miembros:', error);

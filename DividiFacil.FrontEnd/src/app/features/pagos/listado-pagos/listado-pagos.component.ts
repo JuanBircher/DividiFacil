@@ -66,6 +66,7 @@ import { LoadingSpinnerComponent } from '../../../shared/components/loading-spin
 ]
 })
 export class ListadoPagosComponent implements OnInit, OnDestroy {
+  error: string | null = null;
   private destroy$ = new Subject<void>();
 
   // Estados
@@ -173,10 +174,9 @@ export class ListadoPagosComponent implements OnInit, OnDestroy {
    */
   cargarPagos(): void {
     this.loading = true;
+    this.error = null;
     this.cdr.markForCheck();
-    
     const filtros = this.filtrosForm.value;
-
     this.pagoService.obtenerPago(filtros)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -187,13 +187,18 @@ export class ListadoPagosComponent implements OnInit, OnDestroy {
             this.todosLosPagos = pagosArray;
             this.separarPagos(pagosArray);
             this.cargarNombresUsuarios(pagosArray);
+            this.error = null;
+          } else {
+            this.todosLosPagos = [];
+            this.error = response.mensaje || 'No se pudieron cargar los pagos. Intenta nuevamente.';
           }
           this.cdr.markForCheck();
         },
         error: (err: any) => {
           this.loading = false;
-          // console.error('Error al cargar pagos:', err);
-          this.snackBar.open('Error al cargar pagos', 'Cerrar', { duration: 3000 });
+          this.todosLosPagos = [];
+          this.error = 'Error al cargar pagos. Intenta nuevamente.';
+          this.snackBar.open(this.error, 'Cerrar', { duration: 3000 });
           this.cdr.markForCheck();
         }
       });

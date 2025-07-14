@@ -9,13 +9,22 @@
     </button>
   </ng-container>
   <ng-container card-content>
+    <!-- Mensaje de error persistente -->
+    <div *ngIf="!cargando && error" class="error-message">
+      <mat-icon color="warn">error</mat-icon>
+      <span>{{ error }}</span>
+      <button mat-stroked-button color="primary" (click)="refrescar()">
+        <mat-icon>refresh</mat-icon>
+        Reintentar
+      </button>
+    </div>
     <ng-container *ngIf="cargando; else gruposContent">
       <app-loading-spinner text="Cargando grupos..."></app-loading-spinner>
     </ng-container>
     <ng-template #gruposContent>
       <ng-container *ngIf="grupos && grupos.length > 0; else emptyState">
-        <div class="grupo-list">
-          <div class="grupo-item" *ngFor="let grupo of grupos" tabindex="0" attr.aria-label="Grupo {{ grupo.nombreGrupo }}">
+        <div class="grupo-list" role="list">
+          <div class="grupo-item" *ngFor="let grupo of grupos" tabindex="0" attr.aria-label="Grupo {{ grupo.nombreGrupo }}" role="listitem">
             <div class="icon"><mat-icon>groups</mat-icon></div>
             <div class="info">
               <div class="nombre">{{ grupo.nombreGrupo }}</div>
@@ -27,7 +36,7 @@
               </div>
             </div>
             <div class="actions">
-              <button mat-icon-button color="primary" [routerLink]="['/grupos', grupo.idGrupo]" attr.aria-label="Ver detalles del grupo {{ grupo.nombreGrupo }}">
+              <button mat-icon-button color="primary" [routerLink]="['/grupos', grupo.idGrupo]" attr.aria-label="Ver detalles del grupo {{ grupo.nombreGrupo }}" [disabled]="cargando">
                 <mat-icon>visibility</mat-icon>
               </button>
             </div>

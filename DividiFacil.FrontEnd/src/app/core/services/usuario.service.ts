@@ -127,7 +127,8 @@ export class UsuarioService {
 
   // ✅ MÉTODO AUXILIAR: Para mantener compatibilidad
   obtenerUsuarioActual(): Observable<ResponseDto<UsuarioDto>> {
-    return this.http.get<ResponseDto<UsuarioDto>>(`${this.apiUrl}/actual`)
+    // Ahora apunta al endpoint correcto del backend
+    return this.http.get<ResponseDto<UsuarioDto>>(`${environment.apiUrl}/api/auth/me`)
       .pipe(
         catchError(error => {
           return of({ 

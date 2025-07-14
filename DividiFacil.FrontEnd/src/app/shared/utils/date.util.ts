@@ -1,4 +1,13 @@
 export class DateUtil {
+  /**
+   * Obtener fecha local en formato YYYY-MM-DD (sin desfase UTC)
+   */
+  static getLocalDateString(date: Date = new Date()): string {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
   
   /**
    * Formatear fecha para input datetime-local

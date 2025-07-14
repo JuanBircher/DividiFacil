@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { MatStepperModule } from '@angular/material/stepper';
+import { CdkStepper, CdkStepperModule } from '@angular/cdk/stepper';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,6 +21,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { GastoService } from '../../../core/services/gasto.service';
 import { GrupoService } from '../../../core/services/grupo.service';
 import { GastoCreacionDto, DetalleGastoCreacionDto, GastoDto } from '../../../core/models/gasto.model';
+import { DateUtil } from '../../../shared/utils/date.util';
 import { GrupoConMiembrosDto, MiembroGrupoDto, MiembroGrupoSimpleDto } from '../../../core/models/grupo.model';
 import { GrupoDto } from '../../../core/models/grupo.model';
 import { CardComponent } from '../../../shared/components/card/card.component';
@@ -36,12 +38,14 @@ interface ParticipanteGasto {
   standalone: true,
   templateUrl: './alta.component.html',
   styleUrls: ['./alta.component.scss'],
+    providers: [CdkStepper],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
     MatStepperModule,
+    CdkStepperModule,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
@@ -104,7 +108,7 @@ export class AltaGastosComponent implements OnInit, OnDestroy {
       descripcion: ['', [Validators.required, Validators.minLength(3)]],
       monto: [0, [Validators.required, Validators.min(0.01)]],
       categoria: [''],
-      fechaGasto: [new Date().toISOString().split('T')[0]]
+      fechaGasto: [DateUtil.getLocalDateString()]
     });
 
     this.participantesForm = this.fb.group({
@@ -414,8 +418,8 @@ export class AltaGastosComponent implements OnInit, OnDestroy {
       monto: this.gastoOriginal.monto,
       categoria: this.gastoOriginal.categoria || '',
       fechaGasto: this.gastoOriginal.fechaGasto ? 
-        new Date(this.gastoOriginal.fechaGasto).toISOString().split('T')[0] : 
-        new Date().toISOString().split('T')[0]
+        DateUtil.getLocalDateString(new Date(this.gastoOriginal.fechaGasto)) : 
+        DateUtil.getLocalDateString()
     });
 
     // Configurar participantes basado en detalles existentes

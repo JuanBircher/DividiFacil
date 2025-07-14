@@ -1,4 +1,3 @@
-<div class="perfil-container">
   <!-- HEADER -->
   <app-card class="perfil-principal-card">
     <ng-container card-header>
@@ -11,6 +10,81 @@
             </span>
           </div>
           <button mat-icon-button class="avatar-edit-btn" (click)="editarPerfil()" title="Cambiar foto" aria-label="Cambiar foto de perfil" tabindex="0">
+            <mat-icon aria-hidden="true">photo_camera</mat-icon>
+          </button>
+        </div>
+        <div class="perfil-info">
+          <div class="nombre-usuario">{{ usuario?.nombre }}</div>
+          <div class="email-usuario">{{ usuario?.email }}</div>
+          <div class="usuario-meta">
+            <mat-chip [color]="obtenerEstadoUsuario().color" [attr.aria-label]="'Estado de usuario: ' + obtenerEstadoUsuario().texto">
+              {{ obtenerEstadoUsuario().texto }}
+            </mat-chip>
+            <span class="fecha-registro" aria-label="Fecha de registro">
+              <mat-icon aria-hidden="true">schedule</mat-icon>
+              Registrado el {{ usuario?.fechaRegistro | dateFormat }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <ng-container card-content>
+      <div class="perfil-details">
+        <mat-card class="datos-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon aria-hidden="true">person</mat-icon>
+              Datos Personales
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="datos-grid">
+              <div class="dato-item">
+                <mat-icon aria-hidden="true">email</mat-icon>
+                <div class="dato-content">
+                  <span class="dato-label">Email</span>
+                  <span class="dato-value">{{ usuario?.email }}</span>
+                </div>
+              </div>
+              <div class="dato-item" *ngIf="usuario?.telefono">
+                <mat-icon aria-hidden="true">phone</mat-icon>
+                <div class="dato-content">
+                  <span class="dato-label">Teléfono</span>
+                  <span class="dato-value">{{ usuario?.telefono }}</span>
+                </div>
+              </div>
+              <div class="dato-item">
+                <mat-icon aria-hidden="true">today</mat-icon>
+                <div class="dato-content">
+                  <span class="dato-label">Fecha de Registro</span>
+<div class="perfil-container">
+  <!-- Feedback de carga -->
+  <div *ngIf="loading" class="loading-container">
+    <app-loading-spinner [message]="'Cargando perfil...'" [variant]="'centered'" [ariaLabel]="'Cargando perfil'" [showMessage]="true"></app-loading-spinner>
+  </div>
+
+  <!-- Mensaje de error persistente -->
+  <div *ngIf="!loading && error" class="error-message">
+    <mat-icon color="warn">error</mat-icon>
+    <span>{{ error }}</span>
+    <button mat-stroked-button color="primary" (click)="recargar()">
+      <mat-icon>refresh</mat-icon>
+      Reintentar
+    </button>
+  </div>
+
+  <!-- HEADER y contenido solo si no hay error -->
+  <app-card class="perfil-principal-card" *ngIf="!loading && !error">
+    <ng-container card-header>
+      <div class="perfil-header">
+        <div class="avatar-section">
+          <div class="avatar" [class.with-image]="usuario?.urlImagen">
+            <img *ngIf="usuario?.urlImagen as url" [src]="url" [alt]="usuario?.nombre || 'Avatar'" loading="lazy" (error)="onImageError($event)">
+            <span *ngIf="!usuario?.urlImagen" class="avatar-iniciales" aria-label="Iniciales de usuario">
+              {{ obtenerIniciales() }}
+            </span>
+          </div>
+          <button mat-icon-button class="avatar-edit-btn" (click)="editarPerfil()" title="Cambiar foto" aria-label="Cambiar foto de perfil" tabindex="0" role="button">
             <mat-icon aria-hidden="true">photo_camera</mat-icon>
           </button>
         </div>

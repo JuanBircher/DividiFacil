@@ -32,4 +32,38 @@ describe('ListadoGastosComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('debe inicializar el formulario de filtros correctamente', () => {
+    expect(component.filtrosForm).toBeDefined();
+    expect(component.filtrosForm.get('busqueda')).toBeDefined();
+    expect(component.filtrosForm.get('ordenamiento')).toBeDefined();
+  });
+
+  it('debe mostrar error si no hay grupo y se intenta cargar datos', () => {
+    component['idGrupoActual'] = null;
+    const spy = spyOn(component['grupoService'], 'obtenerGrupoConMiembros');
+    (component as any).cargarDatosGrupo();
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  it('debe aplicar filtros al cambiar el formulario', () => {
+    const spy = spyOn(component as any, 'aplicarFiltros');
+    component.filtrosForm.get('busqueda')?.setValue('test');
+    component.filtrosForm.get('ordenamiento')?.setValue('monto_asc');
+    component.filtrosForm.updateValueAndValidity();
+    // Esperar debounceTime (simulado)
+    setTimeout(() => {
+      expect(spy).toHaveBeenCalled();
+    }, 350);
+  });
+
+  it('debe mostrar un snackBar en error al cargar gastos', () => {
+    const snackSpy = spyOn(component['snackBar'], 'open');
+    component.loading = true;
+    component.error = 'Error de API';
+    component['snackBar'].open('Error al cargar gastos', 'Cerrar', { duration: 3000 });
+    expect(snackSpy).toHaveBeenCalled();
+  });
+
+  // Puedes agregar más tests para paginación, interacción de usuario, mocks de servicios, etc.
 });

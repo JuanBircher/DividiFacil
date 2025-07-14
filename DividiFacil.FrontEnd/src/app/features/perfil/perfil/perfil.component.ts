@@ -15,12 +15,15 @@ import { MatChipsModule } from '@angular/material/chips';
 // Services y Models
 import { AuthService } from '../../../core/auth.service';
 import { UsuarioService } from '../../../core/services/usuario.service';
+import { GrupoService } from '../../../core/services/grupo.service';
+import { GastoService } from '../../../core/services/gasto.service';
 import { Usuario } from '../../../core/models/usuario.model';
 import { OnboardingService } from '../../../shared/services/onboarding.service';
 
 // Pipes
 import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
 import { CardComponent } from '../../../shared/components/card/card.component';
+import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-perfil',
@@ -37,16 +40,18 @@ import { CardComponent } from '../../../shared/components/card/card.component';
     MatSnackBarModule,
     MatChipsModule,
     DateFormatPipe,
-    CardComponent
+    CardComponent,
+    LoadingSpinnerComponent
     // LoadingSpinnerComponent eliminado porque no se usa directamente
   ]
 })
 export class PerfilComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-  
+
   // Estados
   loading = false;
-  
+  error: string | null = null;
+
   // Datos
   usuario: Usuario | null = null;
   estadisticasUsuario = {
@@ -59,6 +64,8 @@ export class PerfilComponent implements OnInit, OnDestroy {
   constructor(
     private authService: AuthService,
     private usuarioService: UsuarioService,
+    private grupoService: GrupoService,
+    private gastoService: GastoService,
     private router: Router,
     private snackBar: MatSnackBar,
     private onboardingService: OnboardingService
@@ -78,21 +85,56 @@ export class PerfilComponent implements OnInit, OnDestroy {
    */
   cargarDatosUsuario(): void {
     this.loading = true;
+    this.error = null;
     this.usuarioService.obtenerUsuarioActual()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          this.loading = false;
           if (response.exito && response.data) {
-            this.usuario = response.data;
-            this.calcularEstadisticas();
+            this.usuario = {
+              ...response.data,
+              nombre: response.data.nombre || 'Usuario',
+              email: response.data.email || '',
+              urlImagen: response.data.urlImagen || '',
+              telefono: response.data.telefono || '',
+              fechaRegistro: typeof response.data.fechaRegistro === 'string'
+                ? response.data.fechaRegistro
+                : (response.data.fechaRegistro ? new Date(response.data.fechaRegistro).toISOString() : '')
+            };
+            // Obtener grupos activos y gastos registrados en paralelo
+            this.grupoService.obtenerGrupos().pipe(takeUntil(this.destroy$)).subscribe({
+              next: (gruposResp) => {
+                this.estadisticasUsuario.gruposActivos = gruposResp.exito && gruposResp.data ? gruposResp.data.length : 0;
+                this.calcularEstadisticas();
+              },
+              error: () => {
+                this.estadisticasUsuario.gruposActivos = 0;
+                this.calcularEstadisticas();
+              }
+            });
+            this.gastoService.obtenerGastos().pipe(takeUntil(this.destroy$)).subscribe({
+              next: (gastosResp) => {
+                this.estadisticasUsuario.gastosRegistrados = gastosResp.exito && gastosResp.data ? gastosResp.data.length : 0;
+                this.loading = false;
+              },
+              error: () => {
+                this.estadisticasUsuario.gastosRegistrados = 0;
+                this.loading = false;
+              }
+            });
+            this.error = null;
           } else {
-            this.snackBar.open(response.mensaje || 'Error al cargar perfil', 'Cerrar', { duration: 3000 });
+            this.loading = false;
+            this.error = response.mensaje || 'Error al cargar perfil';
+            this.usuario = null;
+            this.snackBar.open(this.error, 'Cerrar', { duration: 3000 });
           }
         },
         error: (err) => {
           this.loading = false;
-          this.snackBar.open('Error al cargar perfil', 'Cerrar', { duration: 3000 });
+          this.error = 'Error al cargar perfil';
+          this.usuario = null;
+          this.snackBar.open(this.error, 'Cerrar', { duration: 3000 });
         }
       });
   }
@@ -144,6 +186,11 @@ export class PerfilComponent implements OnInit, OnDestroy {
   /**
    * 🎨 OBTENER INICIALES PARA AVATAR
    */
+  
+  // Alias público requerido por los tests
+  public logout(): void {
+    this.cerrarSesion();
+  }
   obtenerIniciales(): string {
     if (!this.usuario?.nombre) return 'U';
 

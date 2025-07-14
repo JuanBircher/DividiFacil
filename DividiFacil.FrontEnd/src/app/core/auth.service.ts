@@ -27,7 +27,7 @@ export class AuthService {
     private http: HttpClient,
     private router: Router
   ) {
-    console.log('AuthService inicializado');
+    // console.log('AuthService inicializado');
     this.inicializarUsuario();
   }
 
@@ -48,7 +48,7 @@ export class AuthService {
     return this.http.post<ApiResponse<LoginResponseDto>>(`${this.apiUrl}/login`, credenciales)
       .pipe(
         tap(response => {
-          console.log('[AuthService] Respuesta login:', response);
+          // console.log('[AuthService] Respuesta login:', response);
           const exito = response.exito;
           const data = response.data;
           if (exito && data) {

@@ -4,7 +4,7 @@
     <span>Alta de Grupo</span>
   </ng-container>
   <ng-container card-content>
-    <form [formGroup]="grupoForm" (ngSubmit)="submit()" aria-labelledby="alta-grupo-title">
+    <form [formGroup]="grupoForm" (ngSubmit)="submit()" aria-labelledby="alta-grupo-title" role="form">
       <div>
         <label for="NombreGrupo">Nombre del Grupo</label>
         <input id="NombreGrupo" formControlName="NombreGrupo" type="text" maxlength="50" aria-required="true" aria-label="Nombre del Grupo" />
@@ -21,10 +21,19 @@
         </div>
       </div>
 
-      <input type="hidden" formControlName="ModoOperacion" />
 
-      <button type="submit" [disabled]="loading" aria-label="Crear grupo">Crear Grupo</button>
-      <div *ngIf="loading">
+      <!-- Selección visible de modo de operación -->
+      <div>
+        <label for="ModoOperacion">Modo de Operación</label>
+        <select id="ModoOperacion" formControlName="ModoOperacion" aria-label="Modo de operación" required>
+          <option *ngFor="let modo of modosOperacion" [value]="modo.value">{{ modo.label }} - {{ modo.descripcion }}</option>
+        </select>
+      </div>
+
+      <button type="submit" [disabled]="procesando || grupoForm.invalid" aria-label="Crear grupo" role="button">Crear Grupo</button>
+      <button type="button" (click)="cancelar()" [disabled]="procesando" aria-label="Cancelar y volver" role="button">Cancelar</button>
+
+      <div *ngIf="procesando">
         <app-loading-spinner text="Creando grupo..."></app-loading-spinner>
       </div>
       <div *ngIf="error" class="error" role="alert">{{ error }}</div>

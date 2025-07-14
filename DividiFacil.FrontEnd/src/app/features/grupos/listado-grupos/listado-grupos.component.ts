@@ -69,8 +69,6 @@ export class ListadoGruposComponent implements OnInit, OnDestroy {
     this.error = null;
     this.cdr.markForCheck();
 
-    // console.log('🔄 Cargando grupos...');
-
     this.grupoService.obtenerGrupos()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -80,15 +78,19 @@ export class ListadoGruposComponent implements OnInit, OnDestroy {
             this.grupos = response.data;
             this.gruposFiltrados = [...this.grupos];
             this.aplicarFiltros();
+            this.error = null;
           } else {
             this.grupos = [];
             this.gruposFiltrados = [];
+            this.error = response.mensaje || 'No se pudieron cargar los grupos. Intenta nuevamente.';
           }
           this.cdr.markForCheck();
         },
         error: (error) => {
           this.cargando = false;
-          // console.error('Error al cargar grupos:', error);
+          this.error = 'Error al cargar los grupos. Intenta nuevamente.';
+          this.grupos = [];
+          this.gruposFiltrados = [];
           this.cdr.markForCheck();
         }
       });

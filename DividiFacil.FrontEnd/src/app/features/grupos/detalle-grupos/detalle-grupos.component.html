@@ -218,35 +218,34 @@
                     class="miembro-card"
                   >
                     <mat-card-content>
-                      <div class="miembro-content">
+                      <div class="miembro-content" style="display: grid; grid-template-columns: 48px 1fr auto; gap: 0.7rem; align-items: center;">
                         <!-- Avatar -->
                         <div class="miembro-avatar">
                           <mat-icon class="avatar-icon">person</mat-icon>
                         </div>
-
                         <!-- Información del miembro -->
-                        <div class="miembro-info">
-                          <h4>{{ miembro.nombreUsuario }}</h4>
-                          <p class="email">{{ miembro.emailUsuario }}</p>
-                          <p class="fecha-union">
+                        <div class="miembro-info" style="display: flex; flex-direction: column; gap: 0.2rem;">
+                          <h4 style="margin-bottom: 0.1rem;">{{ miembro.nombreUsuario }}</h4>
+                          <p class="email" *ngIf="miembro.emailUsuario">{{ miembro.emailUsuario }}</p>
+                          <p class="fecha-union" *ngIf="miembro.fechaUnion">
                             <mat-icon class="small-icon">schedule</mat-icon>
                             Unido {{ miembro.fechaUnion | dateFormat }}
                           </p>
+                          <div class="miembro-rol" *ngIf="miembro.rol">
+                            <mat-chip [color]="getRolColor(miembro.rol)" selected>
+                              <mat-icon matChipAvatar>{{ getRolIcon(miembro.rol) }}</mat-icon>
+                              {{ miembro.rol }}
+                            </mat-chip>
+                          </div>
+                          <div class="usuario-actual" *ngIf="miembro.idUsuario === usuarioActual?.idUsuario">
+                            <mat-chip color="accent" selected>
+                              <mat-icon matChipAvatar>star</mat-icon>
+                              Tú
+                            </mat-chip>
+                          </div>
                         </div>
-
-                        <!-- Rol -->
-                        <div class="miembro-rol">
-                          <mat-chip
-                            [color]="getRolColor(miembro.rol)"
-                            selected
-                          >
-                            <mat-icon matChipAvatar>{{ getRolIcon(miembro.rol) }}</mat-icon>
-                            {{ miembro.rol }}
-                          </mat-chip>
-                        </div>
-
                         <!-- Acciones (solo para administradores) -->
-                        <div class="miembro-acciones" *ngIf="esAdministrador && miembro.rol !== 'Admin'">
+                        <div class="miembro-acciones" *ngIf="esAdministrador && miembro.rol !== 'Admin'" style="display: flex; flex-direction: column; gap: 0.3rem; align-items: flex-end;">
                           <button
                             mat-icon-button
                             [matMenuTriggerFor]="menuMiembro"
@@ -254,7 +253,6 @@
                           >
                             <mat-icon>more_vert</mat-icon>
                           </button>
-
                           <mat-menu #menuMiembro="matMenu">
                             <button
                               mat-menu-item
@@ -273,14 +271,6 @@
                               Eliminar del Grupo
                             </button>
                           </mat-menu>
-                        </div>
-
-                        <!-- Indicador de usuario actual -->
-                        <div class="usuario-actual" *ngIf="miembro.idUsuario === usuarioActual?.idUsuario">
-                          <mat-chip color="accent" selected>
-                            <mat-icon matChipAvatar>star</mat-icon>
-                            Tú
-                          </mat-chip>
                         </div>
                       </div>
                     </mat-card-content>
