@@ -8,6 +8,9 @@ import { provideRouter } from '@angular/router';
 import { routes } from './app/app.routes';
 import { isDevMode } from '@angular/core';
 import { provideServiceWorker } from '@angular/service-worker';
+import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
+import { provideMessaging, getMessaging } from '@angular/fire/messaging';
+import { environment } from './environments/environment';
 
 // console.log('Iniciando bootstrap de Angular...');
 
@@ -18,6 +21,8 @@ bootstrapApplication(AppComponent, {
             enabled: !isDevMode(),
             registrationStrategy: 'registerWhenStable:30000'
           }),
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideMessaging(() => getMessaging())
   ]
 })
   .then(() => { })

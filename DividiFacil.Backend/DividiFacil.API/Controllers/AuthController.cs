@@ -94,5 +94,24 @@ namespace DividiFacil.API.Controllers
 
             return Ok(resultado);
         }
+
+        [HttpPost("registrar-token-fcm")]
+[Authorize]
+public async Task<IActionResult> RegistrarTokenFcm([FromBody] TokenFcmDto dto)
+{
+    var userId = GetUserId();
+    var usuario = await _authService.GetUsuarioActualAsync(userId);
+    if (!usuario.Exito || usuario.Data == null)
+        return BadRequest("Usuario no encontrado");
+    var plan = usuario.Data.Plan?.ToLowerInvariant() ?? "free";
+    if (plan != "premium" && plan != "pro")
+        return Forbid("Solo Premium/Pro pueden registrar token FCM");
+    var result = await _authService.RegistrarTokenFcmAsync(userId, dto.Token);
+    if (!result.Exito)
+        return BadRequest(result);
+    return Ok();
+}
+
+public class TokenFcmDto { public string Token { get; set; } }
     }
 }

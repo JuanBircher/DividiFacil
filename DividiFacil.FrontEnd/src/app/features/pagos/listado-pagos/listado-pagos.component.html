@@ -9,10 +9,18 @@
         <mat-icon>refresh</mat-icon>
         Actualizar
       </button>
-      <button mat-raised-button color="primary" (click)="crearPago()">
+      <button mat-raised-button color="primary"
+              (click)="crearPago()"
+              [disabled]="superoLimite && planHelper.esFree(usuarioActual)">
         <mat-icon>add</mat-icon>
         Nuevo Pago
       </button>
+      <ng-container *ngIf="superoLimite && planHelper.esFree(usuarioActual)">
+        <button mat-stroked-button color="accent" (click)="irAUpgrade()" class="btn-upgrade">
+          <mat-icon>upgrade</mat-icon>
+          Mejorar plan para más pagos
+        </button>
+      </ng-container>
     </ng-container>
     
     <!-- LOADING & CONTENIDO -->

@@ -9,6 +9,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { GrupoService } from '../../../core/services/grupo.service';
+import { AuthService } from '../../../core/auth.service';
+import { PlanHelperService } from '../../../core/helpers/plan-helper.service';
 import { GrupoDto } from '../../../core/models/grupo.model';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CardComponent } from '../../../shared/components/card/card.component';
@@ -37,18 +39,41 @@ export class UnirseCodigoComponent implements OnInit {
   grupoEncontrado: GrupoDto | null = null;
   errorBusqueda: string | null = null;
 
+  usuarioActual: any = null;
+  gruposUsuario: any[] = [];
+  limiteGruposFree = 1;
+  superoLimite = false;
+
   constructor(
     private fb: FormBuilder,
     private grupoService: GrupoService,
     private snackBar: MatSnackBar,
-    private router: Router
+    private router: Router,
+    private authService: AuthService,
+    private planHelper: PlanHelperService
   ) {
     this.codigoForm = this.fb.group({
       codigo: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(8)]]
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.authService.usuarioActual$.subscribe(usuario => {
+      this.usuarioActual = usuario;
+      if (usuario) {
+        this.grupoService.obtenerGrupos().subscribe(response => {
+          if (response.exito && response.data) {
+            this.gruposUsuario = response.data;
+            if (this.planHelper.esFree(usuario) && this.gruposUsuario.length >= this.limiteGruposFree) {
+              this.superoLimite = true;
+            } else {
+              this.superoLimite = false;
+            }
+          }
+        });
+      }
+    });
+  }
 
   /**
    * 🎨 FORMATEAR CÓDIGO MIENTRAS ESCRIBE
@@ -94,6 +119,11 @@ export class UnirseCodigoComponent implements OnInit {
    */
   unirseAlGrupo(): void {
     if (!this.grupoEncontrado) return;
+    // Limitar unión para usuarios Free
+    if (this.planHelper.esFree(this.usuarioActual) && this.gruposUsuario.length >= this.limiteGruposFree) {
+      this.snackBar.open('Límite de grupos alcanzado para el plan Free. Actualiza tu plan para unirte a más grupos.', 'Cerrar', { duration: 4000 });
+      return;
+    }
     this.buscando = true;
     this.grupoService.agregarMiembro(this.grupoEncontrado.idGrupo, { emailInvitado: '' }).subscribe({
       next: (response) => {

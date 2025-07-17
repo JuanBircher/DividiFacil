@@ -16,6 +16,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 // Servicios y Modelos
 import { GrupoService } from '../../../core/services/grupo.service';
+import { AuthService } from '../../../core/auth.service';
+import { PlanHelperService } from '../../../core/helpers/plan-helper.service';
 import { GrupoCreacionDto, ModoOperacion } from '../../../core/models/grupo.model';
 import { CardComponent } from '../../../shared/components/card/card.component';
 import { LoadingSpinnerComponent } from '../../../shared/components/loading-spinner/loading-spinner.component';
@@ -55,6 +57,10 @@ export class AltaGruposComponent implements OnInit, OnDestroy {
   ];
 
   private destroy$ = new Subject<void>();
+  usuarioActual: any = null;
+  gruposUsuario: any[] = [];
+  limiteGruposFree = 1;
+  superoLimite = false;
 
   constructor(
     private fb: FormBuilder,
@@ -62,7 +68,9 @@ export class AltaGruposComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private snackBar: MatSnackBar,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private authService: AuthService,
+    private planHelper: PlanHelperService
   ) {
     this.grupoForm = this.fb.group({
       NombreGrupo: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
@@ -72,6 +80,24 @@ export class AltaGruposComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Obtener usuario actual y grupos
+    this.authService.usuarioActual$.pipe(takeUntil(this.destroy$)).subscribe(usuario => {
+      this.usuarioActual = usuario;
+      if (usuario) {
+        this.grupoService.obtenerGrupos().pipe(takeUntil(this.destroy$)).subscribe(response => {
+          if (response.exito && response.data) {
+            this.gruposUsuario = response.data;
+            // Limitar solo si es Free
+            if (this.planHelper.esFree(usuario) && this.gruposUsuario.length >= this.limiteGruposFree) {
+              this.superoLimite = true;
+            } else {
+              this.superoLimite = false;
+            }
+            this.cdr.markForCheck();
+          }
+        });
+      }
+    });
     // Detectar si estamos en modo edición
     this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params: any) => {
       if (params['idGrupo']) {
@@ -121,6 +147,11 @@ export class AltaGruposComponent implements OnInit, OnDestroy {
       this.grupoForm.markAllAsTouched();
       return;
     }
+    // Limitar creación para usuarios Free
+    if (this.planHelper.esFree(this.usuarioActual) && this.gruposUsuario.length >= this.limiteGruposFree) {
+      this.snackBar.open('Límite de grupos alcanzado para el plan Free. Actualiza tu plan para crear más grupos.', 'Cerrar', { duration: 4000 });
+      return;
+    }
 
     this.procesando = true;
     this.error = null;
@@ -132,13 +163,10 @@ export class AltaGruposComponent implements OnInit, OnDestroy {
       modoOperacion: this.grupoForm.get('ModoOperacion')?.value
     };
 
-    console.log('🔧 Datos del grupo:', grupoData);
-
     const operacion = this.modoEdicion 
       ? this.grupoService.actualizarGrupo(this.idGrupo!, grupoData)
       : this.grupoService.crearGrupo(grupoData);
 
-    // Forzamos el tipo del observable para que subscribe acepte el objeto de callbacks
     (operacion as any)
       .pipe(takeUntil(this.destroy$))
       .subscribe({

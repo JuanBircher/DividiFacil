@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Usuario } from '../models/usuario.model';
+import { AuthService } from '../auth.service';
+
 
 /**
  * Servicio helper para lógica de planes de usuario.
@@ -7,6 +9,8 @@ import { Usuario } from '../models/usuario.model';
  */
 @Injectable({ providedIn: 'root' })
 export class PlanHelperService {
+  constructor() {}
+
   esFree(usuario: Usuario | null): boolean {
     return usuario?.plan?.toLowerCase() === 'Free';
   }
@@ -34,5 +38,9 @@ export class PlanHelperService {
       pro: ['gastos-basicos', 'grupos-ilimitados', 'reportes', 'exportar', 'soporte-prioritario']
     };
     return featuresPorPlan[plan]?.includes(feature) ?? false;
+  }
+
+  mostrarPush(usuario: Usuario | null): boolean {
+    return this.esPremium(usuario) || this.esPro(usuario);
   }
 }

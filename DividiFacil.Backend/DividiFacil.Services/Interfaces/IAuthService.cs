@@ -13,5 +13,6 @@ namespace DividiFacil.Services.Interfaces
         Task<ResponseDto<LoginResponseDto>> RefreshTokenAsync(string refreshToken);
         Task<ResponseDto> LogoutAsync(string userId);
         Task<ResponseDto<UsuarioDto>> GetUsuarioActualAsync(string userId);
+        Task<ResponseDto> RegistrarTokenFcmAsync(string idUsuario, string tokenFcm);
     }
 }

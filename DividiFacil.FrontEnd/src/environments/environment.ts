@@ -3,6 +3,15 @@ export const environment = {
   apiUrl: 'http://localhost:62734',
   appName: 'DividiFacil',
   version: '1.0.0',
+  firebase: {
+    apiKey: 'AIzaSyAnp4dlsJ0AHz_pV7fXnb59Fw_sOkgH76o',
+    authDomain: 'dividifacil.firebaseapp.com',
+    projectId: 'dividifacil',
+    storageBucket: 'dividifacil.firebasestorage.app',
+    messagingSenderId: '573246144216',
+    appId: '1:573246144216:web:a135d13eb08966481821ad',
+    vapidKey: 'BEU9htYE0QmQd8MbOuQMqd0OnRqvja2Z663SF7aDdtm4maYbaQQ80iN_r2QVF5YkfDnVjZzvo7_HIEnQnn7Ivm4'
+    },
   
   // Configuraciones específicas de desarrollo
   enableDebugMode: true,

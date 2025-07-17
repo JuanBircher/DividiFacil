@@ -25,6 +25,9 @@ import { DateUtil } from '../../../shared/utils/date.util';
 import { GrupoConMiembrosDto, MiembroGrupoDto, MiembroGrupoSimpleDto } from '../../../core/models/grupo.model';
 import { GrupoDto } from '../../../core/models/grupo.model';
 import { CardComponent } from '../../../shared/components/card/card.component';
+import { PlanHelperService } from '../../../core/helpers/plan-helper.service';
+import { AuthService } from '../../../core/auth.service';
+import { Usuario } from '../../../core/models/usuario.model';
 
 interface ParticipanteGasto {
   miembro: MiembroGrupoSimpleDto;
@@ -74,7 +77,6 @@ export class AltaGastosComponent implements OnInit, OnDestroy {
   grupoSeleccionadoId: string = '';
   esperandoSeleccionGrupo: boolean = false;
   
-  // Estados
   loading = false;
   guardando = false;
   
@@ -89,6 +91,10 @@ export class AltaGastosComponent implements OnInit, OnDestroy {
     'Alimentación', 'Transporte', 'Entretenimiento', 'Servicios', 
     'Compras', 'Salud', 'Viajes', 'Otros'
   ];
+  categoriasDisponibles: string[] = [];
+  public usuarioActual: Usuario | null = null;
+  public planHelper: PlanHelperService;
+  public adjuntoFile: File | null = null;
 
   // Variables para modo edición
   modoEdicion: boolean = false;
@@ -102,8 +108,11 @@ export class AltaGastosComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar,
     private router: Router,
     private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    planHelper: PlanHelperService,
+    private authService: AuthService
   ) {
+    this.planHelper = planHelper;
     this.detallesForm = this.fb.group({
       descripcion: ['', [Validators.required, Validators.minLength(3)]],
       monto: [0, [Validators.required, Validators.min(0.01)]],
@@ -116,7 +125,21 @@ export class AltaGastosComponent implements OnInit, OnDestroy {
     });
   }
 
+  public onAdjuntoChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.adjuntoFile = input.files[0];
+    } else {
+      this.adjuntoFile = null;
+    }
+  }
+
   ngOnInit(): void {
+    // Obtener usuario actual y filtrar categorías según plan (síncrono)
+    this.usuarioActual = this.authService.obtenerUsuario();
+    this.categoriasDisponibles = this.filtrarCategoriasPorPlan();
+    this.cdr.markForCheck();
+
     this.route.queryParams
       .pipe(takeUntil(this.destroy$))
       .subscribe(params => {
@@ -137,6 +160,18 @@ export class AltaGastosComponent implements OnInit, OnDestroy {
           }
         }
       });
+  }
+
+  /**
+   * Filtra las categorías según el plan del usuario actual
+   */
+  private filtrarCategoriasPorPlan(): string[] {
+    // Ejemplo: solo 'Alimentación', 'Transporte', 'Otros' para Free
+    if (this.planHelper.esPremium(this.usuarioActual) || this.planHelper.esPro(this.usuarioActual)) {
+      return this.categorias;
+    } else {
+      return this.categorias.filter(cat => ['Alimentación', 'Transporte', 'Otros'].includes(cat));
+    }
   }
 
   cargarGruposDisponibles(): void {
@@ -465,20 +500,33 @@ export class AltaGastosComponent implements OnInit, OnDestroy {
 
     try {
       const participantesSeleccionados = this.obtenerParticipantesSeleccionados();
-      
       const detalles: DetalleGastoCreacionDto[] = participantesSeleccionados.map(p => ({
-        idMiembroDeudor: p.miembro.idMiembro,  
-        monto: p.monto                         
+        idMiembroDeudor: p.miembro.idMiembro,
+        monto: p.monto
       }));
 
       const gastoCreacion: GastoCreacionDto = {
-        idGrupo: this.idGrupo,                 
+        idGrupo: this.idGrupo,
         descripcion: this.detallesForm.get('descripcion')?.value,
         monto: this.detallesForm.get('monto')?.value,
         fechaGasto: this.detallesForm.get('fechaGasto')?.value,
         categoria: this.detallesForm.get('categoria')?.value || undefined,
-        detalles: detalles 
+        detalles: detalles
       };
+
+      // Si hay adjunto, subir primero y asignar path
+      if (this.adjuntoFile) {
+        try {
+          const resp = await this.gastoService.uploadComprobante(this.adjuntoFile).toPromise();
+          if (resp && resp.path) {
+            (gastoCreacion as any).comprobantePath = resp.path;
+          }
+        } catch (err) {
+          this.snackBar.open('Error al subir el comprobante: ' + (err ? err : ''), 'Cerrar', { duration: 5000 });
+          this.guardando = false;
+          return;
+        }
+      }
 
       // ✅ BIFURCAR: Crear vs Actualizar
       if (this.modoEdicion) {
@@ -489,15 +537,15 @@ export class AltaGastosComponent implements OnInit, OnDestroy {
         this.snackBar.open('¡Gasto creado exitosamente!', 'Cerrar', { duration: 3000 });
       }
 
-      this.router.navigate(['/gastos'], { 
-        queryParams: { grupo: this.idGrupo } 
+      this.router.navigate(['/gastos'], {
+        queryParams: { grupo: this.idGrupo }
       });
 
     } catch (error) {
       console.error('Error al procesar gasto:', error);
       this.snackBar.open(
-        this.modoEdicion ? 'Error al actualizar el gasto' : 'Error al crear el gasto', 
-        'Cerrar', 
+        this.modoEdicion ? 'Error al actualizar el gasto' : 'Error al crear el gasto',
+        'Cerrar',
         { duration: 5000 }
       );
     } finally {

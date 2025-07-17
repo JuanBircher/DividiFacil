@@ -290,6 +290,22 @@ namespace DividiFacil.Services.Implementations
             return response;
         }
 
+        public async Task<ResponseDto> RegistrarTokenFcmAsync(string idUsuario, string tokenFcm)
+        {
+            if (!Guid.TryParse(idUsuario, out var guidUsuario))
+                return new ResponseDto { Exito = false, Mensaje = "ID de usuario inválido" };
+
+            var usuario = await _usuarioRepository.GetByIdAsync(guidUsuario);
+            if (usuario == null)
+                return new ResponseDto { Exito = false, Mensaje = "Usuario no encontrado" };
+
+            usuario.TokenNotificacion = tokenFcm;
+            await _usuarioRepository.UpdateAsync(usuario);
+            await _usuarioRepository.SaveAsync();
+
+            return new ResponseDto { Exito = true };
+        }
+
         #region Helper Methods
 
         private string HashPassword(string password)

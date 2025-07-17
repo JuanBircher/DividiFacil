@@ -28,6 +28,7 @@ import { UsuarioService } from '../../../core/services/usuario.service';
 import { Pago } from '../../../core/models/pago.model';
 import { Grupo } from '../../../core/models/grupo.model';
 import { AuthService } from '../../../core/auth.service';
+import { PlanHelperService } from '../../../core/helpers/plan-helper.service';
 import { ApiResponse, PaginatedResponse } from '../../../core/models/response.model';
 
 // Pipes
@@ -79,6 +80,9 @@ export class ListadoPagosComponent implements OnInit, OnDestroy {
   pagosRecibidos: Pago[] = [];
   gruposDisponibles: Grupo[] = [];
   usuarioActual: any;
+  pagosUsuario: number = 0;
+  limitePagosFree: number = 10;
+  superoLimite: boolean = false;
   todosLosPagos: any[] = [];
 
   // Filtros
@@ -106,7 +110,8 @@ export class ListadoPagosComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private snackBar: MatSnackBar,
     private cdr: ChangeDetectorRef,
-    private usuarioService: UsuarioService
+    private usuarioService: UsuarioService,
+    public planHelper: PlanHelperService
   ) {
     this.filtrosForm = this.fb.group({
       idGrupo: [''],
@@ -119,7 +124,14 @@ export class ListadoPagosComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.usuarioActual = this.authService.obtenerUsuario();
-    
+    if (this.planHelper.esFree(this.usuarioActual)) {
+      this.pagoService.obtenerPagosUsuario(this.usuarioActual.idUsuario).pipe(takeUntil(this.destroy$)).subscribe((response: any) => {
+        if (response.exito && response.data) {
+          this.pagosUsuario = Array.isArray(response.data) ? response.data.length : 0;
+          this.superoLimite = this.pagosUsuario >= this.limitePagosFree;
+        }
+      });
+    }
     this.route.queryParams
       .pipe(takeUntil(this.destroy$))
       .subscribe(params => {
@@ -232,9 +244,12 @@ export class ListadoPagosComponent implements OnInit, OnDestroy {
    * 💰 CREAR NUEVO PAGO
    */
   crearPago(): void {
+    if (this.superoLimite) {
+      this.snackBar.open('Límite de 10 pagos alcanzado para el plan Free. Actualiza tu plan para crear más pagos.', 'Cerrar', { duration: 4000 });
+      return;
+    }
     const queryParams = this.idGrupoPreseleccionado ?
       { idGrupo: this.idGrupoPreseleccionado } : {};
-
     this.router.navigate(['/alta-pagos'], { queryParams });
   }
 
@@ -428,6 +443,10 @@ obtenerIconoEstado(estado: string): string {
    */
   eliminarPago(pago: Pago): void {
     this.snackBar.open('Pago eliminado correctamente', 'Cerrar', { duration: 3000 });
+  }
+
+  irAUpgrade() {
+    this.router.navigate(['/perfil/upgrade']);
   }
 }
 

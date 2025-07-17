@@ -104,7 +104,7 @@
                 <mat-label>Categoría</mat-label>
                 <mat-select formControlName="categoria">
                   <mat-option value="">Sin categoría</mat-option>
-                  <mat-option *ngFor="let categoria of categorias" [value]="categoria">
+                  <mat-option *ngFor="let categoria of categoriasDisponibles" [value]="categoria">
                     <mat-icon [ngSwitch]="categoria">
                       <ng-container *ngSwitchCase="'Alimentación'">restaurant</ng-container>
                       <ng-container *ngSwitchCase="'Transporte'">directions_car</ng-container>
@@ -119,6 +119,15 @@
                   </mat-option>
                 </mat-select>
               </mat-form-field>
+
+              <!-- Campo de adjunto solo para Premium/Pro -->
+              <ng-container *ngIf="planHelper.esPremium(usuarioActual) || planHelper.esPro(usuarioActual)">
+                <mat-form-field appearance="outline" class="adjunto-field">
+                  <mat-label>Adjuntar comprobante (opcional)</mat-label>
+                  <input matInput type="file" (change)="onAdjuntoChange($event)" accept="image/*,application/pdf">
+                  <mat-hint>Solo imágenes o PDF. Máx 5MB.</mat-hint>
+                </mat-form-field>
+              </ng-container>
             </div>
 
             <div class="form-row">

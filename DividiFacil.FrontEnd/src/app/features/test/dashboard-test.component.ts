@@ -10,6 +10,7 @@ import { GrupoService } from '../../core/services/grupo.service';
 import { BalanceService } from '../../core/services/balance.service';
 import { NotificacionService } from '../../core/services/notificacion.service';
 import { NavbarComponent } from '../../layout/navbar/navbar.component';
+import { PlanHelperService } from '../../core/helpers/plan-helper.service';
 
 @Component({
   selector: 'app-dashboard-test',
@@ -158,7 +159,8 @@ export class DashboardTestComponent implements OnInit {
     private gastoService: GastoService,
     private grupoService: GrupoService,
     private balanceService: BalanceService,
-    private notificacionService: NotificacionService
+    private notificacionService: NotificacionService,
+    private planHelper: PlanHelperService
   ) {}
 
   ngOnInit(): void {
@@ -272,6 +274,13 @@ export class DashboardTestComponent implements OnInit {
     const idUsuario = usuario.idUsuario;
     if (!idUsuario) {
       this.notificacionesPendientes = { error: 'Usuario no autenticado' };
+      return;
+    }
+    if (!this.planHelper.esPremium(usuario) && !this.planHelper.esPro(usuario)) {
+      this.notificacionesPendientes = { error: 'Solo usuarios Premium o Pro pueden recibir notificaciones push. ¡Mejora tu plan para acceder!' };
+      // Si tienes MatSnackBar disponible aquí, puedes agregar feedback visual y navegación a upgrade:
+      // this.snackBar.open('Solo Premium/Pro pueden recibir notificaciones push', 'Mejorar', { duration: 5000 })
+      //   .onAction().subscribe(() => this.router.navigate(['/upgrade']));
       return;
     }
     this.notificacionService.obtenerPendientes().subscribe({

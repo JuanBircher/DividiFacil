@@ -6,6 +6,7 @@ export interface UsuarioDto {
   telefono?: string;       
   fechaRegistro: string;    
   plan: string; // free, premium, pro
+  tokenFcm?: string; // Firebase Cloud Messaging
 }
 
 export interface UsuarioRegistroDto {

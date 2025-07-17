@@ -6,6 +6,8 @@ import { environment } from '../../environments/environment';
 import { Usuario, UsuarioLoginDto, UsuarioRegistroDto } from './models/usuario.model';
 import { ApiResponse } from './models/response.model';
 import { Router } from '@angular/router';
+import { PushService } from '../shared/services/push.service';
+import { PlanHelperService } from '../core/helpers/plan-helper.service';
 
 interface LoginResponseDto {
   token: string;
@@ -25,9 +27,10 @@ export class AuthService {
 
   constructor(
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    private pushService: PushService,
+    private planHelper: PlanHelperService
   ) {
-    // console.log('AuthService inicializado');
     this.inicializarUsuario();
   }
 
@@ -113,7 +116,6 @@ export class AuthService {
     localStorage.setItem('token', data.token);
     localStorage.setItem('refreshToken', data.refreshToken);
     localStorage.setItem('usuario', JSON.stringify(data.usuario));
-    // Guardar idUsuario y nombreUsuario por compatibilidad con el layout
     if (data.usuario?.idUsuario) {
       localStorage.setItem('idUsuario', data.usuario.idUsuario);
     }
@@ -121,6 +123,15 @@ export class AuthService {
       localStorage.setItem('nombreUsuario', data.usuario.nombre);
     }
     this.usuarioActualSubject.next(data.usuario);
+
+    // Registrar token FCM solo si es Premium/Pro
+    if (this.planHelper.esPremium(data.usuario) || this.planHelper.esPro(data.usuario)) {
+      this.pushService.obtenerToken().then(token => {
+        if (token) {
+          this.http.post(`${environment.apiUrl}/api/auth/registrar-token-fcm`, { token }).subscribe();
+        }
+      });
+    }
   }
 
   private limpiarSesion(): void {

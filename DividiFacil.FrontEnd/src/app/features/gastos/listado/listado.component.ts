@@ -23,7 +23,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { GastoService } from '../../../core/services/gasto.service';
 import { GrupoService } from '../../../core/services/grupo.service';
 import { GastoDto } from '../../../core/models/gasto.model';
-import { GrupoDto } from '../../../core/models/grupo.model';
+import { PlanHelperService } from '../../../core/helpers/plan-helper.service';
 
 // ✅ PIPES
 import { DateFormatPipe } from '../../../shared/pipes/date-format.pipe';
@@ -77,6 +77,42 @@ export class ListadoGastosComponent implements OnInit, OnDestroy {
     { valor: 'monto_asc', nombre: 'Menor monto' },
     { valor: 'descripcion_asc', nombre: 'Descripción A-Z' }
   ];
+
+  /**
+   * Exporta los gastos del grupo actual llamando al servicio y descarga el archivo.
+   * Muestra feedback al usuario.
+   */
+  exportarGastos(): void {
+    if (!this.idGrupoActual) {
+      this.snackBar.open('No se encontró el grupo para exportar.', 'Cerrar', { duration: 3000 });
+      return;
+    }
+    if (!this.planHelper.tieneAcceso(this.usuarioActual, 'exportar')) {
+      this.snackBar.open('La exportación está disponible solo para usuarios Premium o Pro. ¡Mejora tu plan para acceder!', 'Mejorar', {
+        duration: 5000
+      }).onAction().subscribe(() => {
+        this.router.navigate(['/upgrade']);
+      });
+      return;
+    }
+    this.gastoService.exportarGastosPorGrupo(this.idGrupoActual).subscribe({
+      next: (blob) => {
+        // Crear un enlace temporal para descargar el archivo
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `gastos_grupo_${this.idGrupoActual}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        this.snackBar.open('Exportación exitosa.', 'Cerrar', { duration: 3000 });
+      },
+      error: () => {
+        this.snackBar.open('Error al exportar los gastos.', 'Cerrar', { duration: 3000 });
+      }
+    });
+  }
   
   private destroy$ = new Subject<void>();
   private idGrupoActual: string | null = null;
@@ -90,7 +126,8 @@ export class ListadoGastosComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    public planHelper: PlanHelperService
   ) {
     this.filtrosForm = this.fb.group({
       busqueda: [''],

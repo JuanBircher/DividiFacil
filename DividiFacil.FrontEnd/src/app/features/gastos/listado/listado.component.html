@@ -25,6 +25,18 @@
         <mat-icon>add</mat-icon>
         Nuevo Gasto
       </button>
+      <ng-container *ngIf="planHelper?.tieneAcceso(usuarioActual, 'exportar'); else noExport">
+        <button mat-stroked-button color="accent" (click)="exportarGastos()" aria-label="Exportar gastos">
+          <mat-icon>file_download</mat-icon>
+          Exportar
+        </button>
+      </ng-container>
+      <ng-template #noExport>
+        <button mat-stroked-button color="warn" (click)="exportarGastos()" aria-label="Exportar gastos (requiere upgrade)">
+          <mat-icon>lock</mat-icon>
+          Exportar
+        </button>
+      </ng-template>
     </div>
   </div>
 

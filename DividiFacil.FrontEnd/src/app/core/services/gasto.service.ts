@@ -1,3 +1,4 @@
+
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
@@ -18,6 +19,19 @@ export class GastoService {
   private readonly apiUrl = `${environment.apiUrl}/api/gastos`;
 
   constructor(private http: HttpClient) {}
+
+  /**
+   * Sube un comprobante de gasto y retorna la ruta relativa.
+   */
+
+  /**
+   * Sube un comprobante de gasto y retorna la ruta relativa.
+   */
+  uploadComprobante(file: File): Observable<{ path: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<{ path: string }>(`${this.apiUrl}/upload-comprobante`, formData);
+  }
 
   // ✅ MÉTODO 1: CrearGastoAsync
   crearGasto(gastoCreacion: GastoCreacionDto): Observable<ResponseDto<GastoDto>> {
@@ -257,5 +271,16 @@ export class GastoService {
   actualizarGasto(idGasto: string, gasto: GastoCreacionDto): Observable<any> {
     // console.log('[GastoService] actualizarGasto', { idGasto, gasto });
     return this.http.put<any>(`/api/gastos/${idGasto}`, gasto);
+  }
+  /**
+   * Exporta los gastos de un grupo en formato archivo (Excel, CSV, etc.).
+   * El backend debe devolver un archivo (blob) para descargar.
+   * @param idGrupo ID del grupo cuyos gastos se exportan
+   */
+  exportarGastosPorGrupo(idGrupo: string): Observable<Blob> {
+    // El endpoint debe ser: GET /api/gastos/exportar/{idGrupo}
+    return this.http.get(`${this.apiUrl}/exportar/${idGrupo}`, {
+      responseType: 'blob'
+    });
   }
 }

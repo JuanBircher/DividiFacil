@@ -19,6 +19,7 @@ import { PagoService, PagoCreacionDto } from '../../../core/services/pago.servic
 import { GrupoService } from '../../../core/services/grupo.service';
 import { Grupo } from '../../../core/models/grupo.model';
 import { AuthService } from '../../../core/auth.service';
+import { PlanHelperService } from '../../../core/helpers/plan-helper.service';
 import { ResponseDto } from '../../../core/models/response.model';
 import { MiembroGrupoDto } from '../../../core/models/miembro.model';
 import { CardComponent } from '../../../shared/components/card/card.component';
@@ -56,6 +57,9 @@ export class AltaPagosComponent implements OnInit, OnDestroy {
   gruposDisponibles: Grupo[] = [];
   miembrosGrupo: MiembroGrupoDto[] = [];
   usuarioActual: any;
+  superoLimite: boolean = false;
+  pagosUsuario: number = 0;
+  limitePagosFree: number = 10;
 
   // Filtros
   idGrupoPreseleccionado = '';
@@ -67,7 +71,8 @@ export class AltaPagosComponent implements OnInit, OnDestroy {
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private planHelper: PlanHelperService
   ) {
     this.pagoForm = this.fb.group({
       idGrupo: ['', Validators.required],
@@ -79,7 +84,15 @@ export class AltaPagosComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.usuarioActual = this.authService.obtenerUsuario();
-
+    if (this.planHelper.esFree(this.usuarioActual)) {
+      // Contar pagos realizados por el usuario
+      this.pagoService.obtenerPagosUsuario(this.usuarioActual.idUsuario).pipe(takeUntil(this.destroy$)).subscribe((response: any) => {
+        if (response.exito && response.data) {
+          this.pagosUsuario = Array.isArray(response.data) ? response.data.length : 0;
+          this.superoLimite = this.pagosUsuario >= this.limitePagosFree;
+        }
+      });
+    }
     this.route.queryParams
       .pipe(takeUntil(this.destroy$))
       .subscribe(params => {
@@ -152,16 +165,17 @@ export class AltaPagosComponent implements OnInit, OnDestroy {
    */
   crearPago(): void {
     if (!this.pagoForm.valid) return;
-
+    if (this.superoLimite) {
+      this.snackBar.open('Límite de 10 pagos alcanzado para el plan Free. Actualiza tu plan para crear más pagos.', 'Cerrar', { duration: 4000 });
+      return;
+    }
     this.guardando = true;
-
     const pagoData: PagoCreacionDto = {
       idGrupo: this.pagoForm.get('idGrupo')?.value,
       idReceptor: this.pagoForm.get('idReceptor')?.value,
       monto: Number(this.pagoForm.get('monto')?.value),
       concepto: this.pagoForm.get('concepto')?.value
     };
-
     this.pagoService.crearPago(pagoData)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -172,8 +186,6 @@ export class AltaPagosComponent implements OnInit, OnDestroy {
               duration: 3000,
               panelClass: ['success-snackbar']
             });
-
-            // Navegar a listado-pagos
             this.router.navigate(['/listado-pagos'], {
               queryParams: { idGrupo: pagoData.idGrupo }
             });
