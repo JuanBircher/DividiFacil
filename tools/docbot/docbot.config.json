@@ -1,0 +1,6 @@
+{
+  "backendGlobs": ["../DividiFacil.Api/Controllers/*Controller.cs"],
+  "frontendGlobs": ["../DividiFacil.Web/src/app/**/*.component.ts"],
+  "outputDir": "../../docs",
+  "useLLM": false
+}

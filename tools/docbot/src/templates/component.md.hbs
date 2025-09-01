@@ -1,0 +1,22 @@
+# {{name}} (Angular)
+
+**Archivo:** `{{filePath}}`  
+**Selector:** `<{{selector}}>`  
+
+## Resumen
+{{description}}
+
+## Inputs
+{{#if inputs.length}}
+{{#each inputs}}- `@Input() {{name}}: {{type}}`{{/each}}
+{{else}}(sin @Inputs){{/if}}
+
+## Outputs
+{{#if outputs.length}}
+{{#each outputs}}- `@Output() {{name}}: {{type}}`{{/each}}
+{{else}}(sin @Outputs){{/if}}
+
+## Servicios inyectados
+{{#if providers.length}}
+{{#each providers}}- `{{this}}`{{/each}}
+{{else}}(ninguno detectado){{/if}}

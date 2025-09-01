@@ -1,0 +1,15 @@
+# {{name}}
+
+**Archivo:** `{{filePath}}`  
+**Ruta base:** `{{baseRoute}}`
+
+## Resumen
+{{description}}
+
+## Endpoints
+{{#each endpoints}}
+### {{httpMethod}} `{{route}}`
+- **Acción:** `{{actionName}}({{params}})`
+- **Resumen IA:** {{summary}}
+- **Devuelve:** {{returns}}
+{{/each}}
